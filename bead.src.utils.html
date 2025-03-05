@@ -1,0 +1,1465 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils package &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="bead.src.trainers package" href="bead.src.trainers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">bead</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bead.html">bead package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="bead.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="bead.src.html">bead.src package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#bead-bead-module">bead.bead module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#module-bead">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">bead</a></li>
+          <li class="breadcrumb-item"><a href="bead.html">bead package</a></li>
+          <li class="breadcrumb-item"><a href="bead.src.html">bead.src package</a></li>
+      <li class="breadcrumb-item active">bead.src.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/bead.src.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bead-src-utils-package">
+<h1>bead.src.utils package<a class="headerlink" href="#bead-src-utils-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-bead.src.utils.conversion">
+<span id="bead-src-utils-conversion-module"></span><h2>bead.src.utils.conversion module<a class="headerlink" href="#module-bead.src.utils.conversion" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.conversion.append_to_hdf5">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.conversion.</span></span><span class="sig-name descname"><span class="pre">append_to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_chunk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/conversion.html#append_to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.conversion.append_to_hdf5" title="Link to this definition"></a></dt>
+<dd><p>Append a data chunk to an existing resizable HDF5 dataset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.conversion.calculate_jet_properties_numba">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.conversion.</span></span><span class="sig-name descname"><span class="pre">calculate_jet_properties_numba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/conversion.html#calculate_jet_properties_numba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.conversion.calculate_jet_properties_numba" title="Link to this definition"></a></dt>
+<dd><p>Numba-accelerated calculation of jet properties using vectorized NumPy operations.
+Processes all constituents in a jet simultaneously.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.conversion.convert_csv_to_hdf5_npy_parallel">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.conversion.</span></span><span class="sig-name descname"><span class="pre">convert_csv_to_hdf5_npy_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'h5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/conversion.html#convert_csv_to_hdf5_npy_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.conversion.convert_csv_to_hdf5_npy_parallel" title="Link to this definition"></a></dt>
+<dd><p>Convert CSV to HDF5 (or .npy) using homogeneous 2D arrays.
+Here, we build each dataset as a 2D array (with fixed number of columns)
+so that later you can access columns by index (e.g. jets[:,4] for jet_pt).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.conversion.csv_chunk_generator">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.conversion.</span></span><span class="sig-name descname"><span class="pre">csv_chunk_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/conversion.html#csv_chunk_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.conversion.csv_chunk_generator" title="Link to this definition"></a></dt>
+<dd><p>Generator yielding CSV file chunks (lists of rows) to avoid loading the entire file.
+Skips empty rows and rows with ‘evtwt’ in the first column.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.conversion.process_chunk">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.conversion.</span></span><span class="sig-name descname"><span class="pre">process_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_evt_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/conversion.html#process_chunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.conversion.process_chunk" title="Link to this definition"></a></dt>
+<dd><p>Process a chunk of CSV rows into homogeneous 2D arrays.
+Instead of creating structured arrays (with named fields), we build
+plain lists of lists and convert them to a homogeneous NumPy array.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.conversion.process_event">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.conversion.</span></span><span class="sig-name descname"><span class="pre">process_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evt_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/conversion.html#process_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.conversion.process_event" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Process a single event row:</dt><dd><ul class="simple">
+<li><p>Convert string data to floats.</p></li>
+<li><p>Extract event-level data.</p></li>
+<li><p>Loop over jets and their constituents.</p></li>
+<li><p>Use vectorized (Numba) calculation for jet properties.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bead.src.utils.data_processing">
+<span id="bead-src-utils-data-processing-module"></span><h2>bead.src.utils.data_processing module<a class="headerlink" href="#module-bead.src.utils.data_processing" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.data_processing.decode_pid">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.data_processing.</span></span><span class="sig-name descname"><span class="pre">decode_pid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoded_tensor_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_map_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoded_tensor_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/data_processing.html#decode_pid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.data_processing.decode_pid" title="Link to this definition"></a></dt>
+<dd><p>Reads the encoded tensor and pid map, decodes the pids back to their original values,
+and saves the decoded tensor.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.data_processing.encode_pid_parallel">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.data_processing.</span></span><span class="sig-name descname"><span class="pre">encode_pid_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constits_tensor_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoded_tensor_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_map_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/data_processing.html#encode_pid_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.data_processing.encode_pid_parallel" title="Link to this definition"></a></dt>
+<dd><p>Parallelized: Reads the constituent-level tensor and encodes the pid column using categorical encoding.
+Saves the new tensor and the pid map for later retrieval.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.data_processing.load_data">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.data_processing.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'h5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/data_processing.html#load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.data_processing.load_data" title="Link to this definition"></a></dt>
+<dd><p>Load data from either an HDF5 file or .npy files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.data_processing.preproc_inputs">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.data_processing.</span></span><span class="sig-name descname"><span class="pre">preproc_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/data_processing.html#preproc_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.data_processing.preproc_inputs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.data_processing.process_and_save_tensors">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.data_processing.</span></span><span class="sig-name descname"><span class="pre">process_and_save_tensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/data_processing.html#process_and_save_tensors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.data_processing.process_and_save_tensors" title="Link to this definition"></a></dt>
+<dd><p>Process the input file, parallelize selections, and save the results as PyTorch tensors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.data_processing.select_top_jets_and_constituents">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.data_processing.</span></span><span class="sig-name descname"><span class="pre">select_top_jets_and_constituents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_constits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/data_processing.html#select_top_jets_and_constituents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.data_processing.select_top_jets_and_constituents" title="Link to this definition"></a></dt>
+<dd><p>Select top n_jets per event and, for each selected jet, top n_constits constituents.</p>
+<p>Returns:
+- jets_out: (num_events, n_jets, jets.shape[1])
+- constits_out: (num_events, n_jets * n_constits, constituents.shape[1])</p>
+</dd></dl>
+
+</section>
+<section id="module-bead.src.utils.diagnostics">
+<span id="bead-src-utils-diagnostics-module"></span><h2>bead.src.utils.diagnostics module<a class="headerlink" href="#module-bead.src.utils.diagnostics" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.diagnostics.c_profile">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.diagnostics.</span></span><span class="sig-name descname"><span class="pre">c_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/diagnostics.html#c_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.diagnostics.c_profile" title="Link to this definition"></a></dt>
+<dd><p>Profile the function func with cProfile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>callable</em>) – The function to be profiled.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the function <cite>func</cite> execution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>result</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.diagnostics.dict_to_square_matrix">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.diagnostics.</span></span><span class="sig-name descname"><span class="pre">dict_to_square_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">array</span></span></span><a class="reference internal" href="_modules/bead/src/utils/diagnostics.html#dict_to_square_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.diagnostics.dict_to_square_matrix" title="Link to this definition"></a></dt>
+<dd><p>Function changes an input dictionary into a square np.array. Adds NaNs when the dimension of a dict key is less than of the final square matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_dict</strong> (<em>dict</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>square_matrix (np.array)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.diagnostics.get_mean_node_activations">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.diagnostics.</span></span><span class="sig-name descname"><span class="pre">get_mean_node_activations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/bead/src/utils/diagnostics.html#get_mean_node_activations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.diagnostics.get_mean_node_activations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.diagnostics.nap_diagnose">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.diagnostics.</span></span><span class="sig-name descname"><span class="pre">nap_diagnose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bead/src/utils/diagnostics.html#nap_diagnose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.diagnostics.nap_diagnose" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.diagnostics.plot">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.diagnostics.</span></span><span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bead/src/utils/diagnostics.html#plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.diagnostics.plot" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.diagnostics.pytorch_profile">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.diagnostics.</span></span><span class="sig-name descname"><span class="pre">pytorch_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/diagnostics.html#pytorch_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.diagnostics.pytorch_profile" title="Link to this definition"></a></dt>
+<dd><p>This function performs PyTorch profiling of CPU, GPU time and memory
+consumed by the function f execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>callable</em>) – The function to be profiled.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the function <cite>f</cite> execution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>result</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="bead-src-utils-ggl-module">
+<h2>bead.src.utils.ggl module<a class="headerlink" href="#bead-src-utils-ggl-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-bead.src.utils.helper">
+<span id="bead-src-utils-helper-module"></span><h2>bead.src.utils.helper module<a class="headerlink" href="#module-bead.src.utils.helper" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.helper.ChainedScaler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">ChainedScaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#ChainedScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.ChainedScaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerMixin</span></code></p>
+<p>Chains a list of scaler transformations.
+The transformation is applied sequentially (in the order provided)
+and the inverse transformation is applied in reverse order.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.ChainedScaler.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#ChainedScaler.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.ChainedScaler.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.ChainedScaler.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#ChainedScaler.inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.ChainedScaler.inverse_transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.ChainedScaler.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#ChainedScaler.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.ChainedScaler.transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.helper.CustomDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">CustomDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#CustomDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.CustomDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.helper.EarlyStopping">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">EarlyStopping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#EarlyStopping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.EarlyStopping" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to perform early stopping during model training.
+.. attribute:: patience</p>
+<blockquote>
+<div><p>The number of epochs to wait before stopping the training process if the
+validation loss doesn’t improve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bead.src.utils.helper.EarlyStopping.min_delta">
+<span class="sig-name descname"><span class="pre">min_delta</span></span><a class="headerlink" href="#bead.src.utils.helper.EarlyStopping.min_delta" title="Link to this definition"></a></dt>
+<dd><p>The minimum difference between the new loss and the previous best loss
+for the new loss to be considered an improvement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bead.src.utils.helper.EarlyStopping.counter">
+<span class="sig-name descname"><span class="pre">counter</span></span><a class="headerlink" href="#bead.src.utils.helper.EarlyStopping.counter" title="Link to this definition"></a></dt>
+<dd><p>Counts the number of times the validation loss hasn’t improved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bead.src.utils.helper.EarlyStopping.best_loss">
+<span class="sig-name descname"><span class="pre">best_loss</span></span><a class="headerlink" href="#bead.src.utils.helper.EarlyStopping.best_loss" title="Link to this definition"></a></dt>
+<dd><p>The best validation loss observed so far.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bead.src.utils.helper.EarlyStopping.early_stop">
+<span class="sig-name descname"><span class="pre">early_stop</span></span><a class="headerlink" href="#bead.src.utils.helper.EarlyStopping.early_stop" title="Link to this definition"></a></dt>
+<dd><p>Flag that indicates whether early stopping criteria have been met.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.helper.L2Normalizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">L2Normalizer</span></span><a class="reference internal" href="_modules/bead/src/utils/helper.html#L2Normalizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.L2Normalizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerMixin</span></code></p>
+<p>L2 normalization per feature of data</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.L2Normalizer.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#L2Normalizer.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.L2Normalizer.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.L2Normalizer.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#L2Normalizer.inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.L2Normalizer.inverse_transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.L2Normalizer.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#L2Normalizer.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.L2Normalizer.transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.helper.LRScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">LRScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#LRScheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.LRScheduler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A learning rate scheduler that adjusts the learning rate of an optimizer based on the training loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<em>torch.optim.Optimizer</em>) – The optimizer whose learning rate will be adjusted.</p></li>
+<li><p><strong>patience</strong> (<em>int</em>) – The number of epochs with no improvement in training loss after which the learning rate
+will be reduced.</p></li>
+<li><p><strong>min_lr</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum learning rate that can be reached (default: 1e-6).</p></li>
+<li><p><strong>factor</strong> (<em>float</em><em>, </em><em>optional</em>) – The factor by which the learning rate will be reduced (default: 0.1).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bead.src.utils.helper.LRScheduler.lr_scheduler">
+<span class="sig-name descname"><span class="pre">lr_scheduler</span></span><a class="headerlink" href="#bead.src.utils.helper.LRScheduler.lr_scheduler" title="Link to this definition"></a></dt>
+<dd><p>The PyTorch learning rate scheduler that
+actually performs the adjustments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.optim.lr_scheduler.ReduceLROnPlateau</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="simple">
+<dt>Example usage:</dt><dd><p>optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+lr_scheduler = LRScheduler(optimizer, patience=3, min_lr=1e-6, factor=0.5)
+for epoch in range(num_epochs):
+train_loss = train(model, train_data_loader)
+lr_scheduler(train_loss)
+# …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.helper.Log1pScaler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">Log1pScaler</span></span><a class="reference internal" href="_modules/bead/src/utils/helper.html#Log1pScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.Log1pScaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerMixin</span></code></p>
+<p>Log(1+x) transformer for positive-skewed HEP features</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.Log1pScaler.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#Log1pScaler.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.Log1pScaler.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.Log1pScaler.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#Log1pScaler.inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.Log1pScaler.inverse_transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.Log1pScaler.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#Log1pScaler.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.Log1pScaler.transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.helper.SinCosTransformer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">SinCosTransformer</span></span><a class="reference internal" href="_modules/bead/src/utils/helper.html#SinCosTransformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.SinCosTransformer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerMixin</span></code></p>
+<p>Transforms an angle (in radians) into two features:
+[sin(angle), cos(angle)]. Inverse transformation uses arctan2.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.SinCosTransformer.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#SinCosTransformer.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.SinCosTransformer.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.SinCosTransformer.inverse_transform">
+<span class="sig-name descname"><span class="pre">inverse_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#SinCosTransformer.inverse_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.SinCosTransformer.inverse_transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.helper.SinCosTransformer.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#SinCosTransformer.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.SinCosTransformer.transform" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.add_sig_bkg_label">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">add_sig_bkg_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/bead/src/utils/helper.html#add_sig_bkg_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.add_sig_bkg_label" title="Link to this definition"></a></dt>
+<dd><p>Adds a new feature to the last dimension of each tensor in the tuple.
+The new feature is filled with 0 for “bkg” and 1 for “sig”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensors</strong> – A tuple of three tensors (events, jets, constituents).</p></li>
+<li><p><strong>label</strong> – A string, either “bkg” or “sig”, to determine the value of the new feature.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of the three tensors with the new feature added to the last dimension.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.calculate_in_shape">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">calculate_in_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#calculate_in_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.calculate_in_shape" title="Link to this definition"></a></dt>
+<dd><p>Calculates the input shapes for the models based on the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray</em>) – The data you wish to calculate the input shapes for.</p></li>
+<li><p><strong>config</strong> (<em>dataClass</em>) – Base class selecting user inputs.</p></li>
+<li><p><strong>test_mode</strong> (<em>bool</em>) – A flag to indicate if the function is being called in test mode.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the input shapes for the models.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.call_forward">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">call_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#call_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.call_forward" title="Link to this definition"></a></dt>
+<dd><p>Calls the <cite>forward</cite> method of the given object.
+If the return value is not a tuple, packs it into a tuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – An object that has a <cite>forward</cite> method.</p></li>
+<li><p><strong>inputs</strong> – The input data to pass to the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the result(s) of the <cite>forward</cite> method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.convert_to_tensor">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">convert_to_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#convert_to_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.convert_to_tensor" title="Link to this definition"></a></dt>
+<dd><p>Converts ndarray to torch.Tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>ndarray</em>) – The data you wish to convert from ndarray to torch.Tensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Your data as a tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.create_datasets">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">create_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events_train_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_train_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_train_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events_val_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_val_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_val_label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#create_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.create_datasets" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.data_label_split">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">data_label_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#data_label_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.data_label_split" title="Link to this definition"></a></dt>
+<dd><p>Splits the data into features and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>ndarray</em>) – The data you wish to split into features and labels.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing two ndarrays:</dt><dd><ul class="simple">
+<li><p>data: The features of the data.</p></li>
+<li><p>labels: The labels of the data.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.decoder_saver">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">decoder_saver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bead/src/utils/helper.html#decoder_saver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.decoder_saver" title="Link to this definition"></a></dt>
+<dd><p>Saves the Decoder state dictionary as a <cite>.pt</cite> file to the given path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – The PyTorch model to save.</p></li>
+<li><p><strong>model_path</strong> (<em>str</em>) – String defining the models save path.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saved decoder state dictionary as <cite>.pt</cite> file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.detach_device">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">detach_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#detach_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.detach_device" title="Link to this definition"></a></dt>
+<dd><p>Detaches a given tensor to ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tensor</strong> (<em>torch.Tensor</em>) – The PyTorch tensor one wants to convert to a ndarray</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Converted torch.Tensor to ndarray</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.encoder_saver">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">encoder_saver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bead/src/utils/helper.html#encoder_saver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.encoder_saver" title="Link to this definition"></a></dt>
+<dd><p>Saves the Encoder state dictionary as a <cite>.pt</cite> file to the given path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – The PyTorch model to save.</p></li>
+<li><p><strong>model_path</strong> (<em>str</em>) – String defining the models save path.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saved encoder state dictionary as <cite>.pt</cite> file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.get_device">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">get_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#get_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.get_device" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Returns the appropriate processing device. IF cuda is available it returns “cuda:0”</dt><dd><p>Otherwise it returns “cpu”</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Device string, either “cpu” or “cuda:0”</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.get_loss">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">get_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#get_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.get_loss" title="Link to this definition"></a></dt>
+<dd><p>Returns the loss_object based on the string provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>loss_function</strong> (<em>str</em>) – The loss function you wish to use. Options include:
+- ‘mse’: Mean Squared Error
+- ‘bce’: Binary Cross Entropy
+- ‘mae’: Mean Absolute Error
+- ‘huber’: Huber Loss
+- ‘l1’: L1 Loss
+- ‘l2’: L2 Loss
+- ‘smoothl1’: Smooth L1 Loss</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loss function object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.get_optimizer">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">get_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#get_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.get_optimizer" title="Link to this definition"></a></dt>
+<dd><p>Returns a PyTorch optimizer configured with optimal arguments for training a large VAE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer_name</strong> (<em>str</em>) – One of “adam”, “adamw”, “rmsprop”, “sgd”, “radam”, “adagrad”.</p></li>
+<li><p><strong>parameters</strong> (<em>iterable</em>) – The parameters (or parameter groups) of your model.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – The learning rate for the optimizer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instantiated optimizer with specified hyperparameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.optim.Optimizer</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If an unsupported optimizer name is provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.invert_normalize_data">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">invert_normalize_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#invert_normalize_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.invert_normalize_data" title="Link to this definition"></a></dt>
+<dd><p>Inverts a chained normalization transformation.</p>
+<p>This function accepts normalized data (for example, the output of a VAE’s preprocessed input)
+and the scaler (or ChainedScaler) that was used to perform the forward transformation.
+It then returns the original data by calling the scaler’s inverse_transform method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normalized_data</strong> (<em>np.ndarray</em>) – The transformed data array.</p></li>
+<li><p><strong>scaler</strong> – The scaler object (or a ChainedScaler instance) used for the forward transformation,
+which must implement an <cite>inverse_transform</cite> method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The data mapped back to its original scale.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.load_augment_tensors">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">load_augment_tensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#load_augment_tensors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.load_augment_tensors" title="Link to this definition"></a></dt>
+<dd><p>Searches through the specified folder for all ‘.pt’ files whose names contain the specified
+keyword (e.g., ‘bkg_train’, ‘bkg_test’, or ‘sig_test’). Files are then categorized by whether
+their filename contains one of the three substrings: ‘jets’, ‘events’, or ‘constituents’.</p>
+<p>For ‘bkg_train’, each file must contain one of the generator names: ‘herwig’, ‘pythia’, or ‘sherpa’.
+For each file, the tensor is loaded and a new feature is appended along the last dimension:
+- 0 for files containing ‘herwig’
+- 1 for files containing ‘pythia’
+- 2 for files containing ‘sherpa’</p>
+<p>For ‘bkg_test’ and ‘sig_test’, the appended new feature is filled with -1, since generator info
+is not available at test time.</p>
+<p>Finally, for each category the resulting tensors are concatenated along axis=0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_path</strong> (<em>str</em>) – The path to the folder to search.</p></li>
+<li><p><strong>keyword</strong> (<em>str</em>) – The keyword to filter files (e.g., ‘bkg_train’, ‘bkg_test’, or ‘sig_test’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple of three PyTorch tensors: (jets_tensor, events_tensor, constituents_tensor)</dt><dd><p>corresponding to the concatenated tensors for each category.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If any category does not have at least one file for each generator type.
+    The error message is:
+    “required files not found. please run the –mode convert_csv and prepare inputs before retrying”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.load_model">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.load_model" title="Link to this definition"></a></dt>
+<dd><p>Loads the state dictionary of the trained model into a model variable. This variable is then used for passing
+data through the encoding and decoding functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_object</strong> (<em>object</em>) – Object with the models attributes</p></li>
+<li><p><strong>model_path</strong> (<em>str</em>) – Path to model</p></li>
+<li><p><strong>n_features</strong> (<em>int</em>) – Input dimension size</p></li>
+<li><p><strong>z_dim</strong> (<em>int</em>) – Latent space size</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: nn.Module: Returns a model object with the attributes of the model class, with the selected state
+dictionary loaded into it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.load_tensors">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">load_tensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sig_test'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#load_tensors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.load_tensors" title="Link to this definition"></a></dt>
+<dd><p>Searches through the specified folder for all ‘.pt’ files containing the given keyword in their names.
+Categorizes these files based on the presence of ‘jets’, ‘events’, or ‘constituents’ in their filenames,
+loads them into PyTorch tensors, concatenates them along axis=0, and returns the resulting tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_path</strong> (<em>str</em>) – The path to the folder to search.</p></li>
+<li><p><strong>keyword</strong> (<em>str</em>) – The keyword to filter files (‘bkg_train’, ‘bkg_test’, or ‘sig_test’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing three PyTorch tensors: (jets_tensor, events_tensor, constituents_tensor).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If any specific category (‘jets’, ‘events’, ‘constituents’) has no matching files.
+    The error message is:
+    “Required files not found. Please run the –mode convert_csv and prepare inputs before retrying.”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.model_init">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">model_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#model_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.model_init" title="Link to this definition"></a></dt>
+<dd><p>Initializing the models attributes to a model_object variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_name</strong> (<em>str</em>) – The name of the model you wish to initialize. This should correspond to what your Model name.</p></li>
+<li><p><strong>init</strong> (<em>str</em>) – The initialization method you wish to use (Xavier support currently). Default is None.</p></li>
+<li><p><strong>config</strong> (<em>dataClass</em>) – Base class selecting user inputs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Object with the models class attributes</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.normalize_data">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">normalize_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#normalize_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.normalize_data" title="Link to this definition"></a></dt>
+<dd><p>Normalizes jet data for VAE-based anomaly detection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – 2D numpy array (n_jets, n_features)</p></li>
+<li><p><strong>normalization_type</strong> – A string indicating the normalization method(s).
+It can be a single method or a chain of methods separated by ‘+’.
+Valid options include:
+‘minmax’  - MinMaxScaler (scales features to [0,1])
+‘standard’- StandardScaler (zero mean, unit variance)
+‘robust’  - RobustScaler (less sensitive to outliers)
+‘log’     - Log1pScaler (applies log1p transformation)
+‘l2’      - L2Normalizer (scales each feature by its L2 norm)
+‘power’   - PowerTransformer (using Yeo-Johnson)
+‘quantile’- QuantileTransformer (transforms features to follow a normal or uniform distribution)
+‘maxabs’  - MaxAbsScaler (scales each feature by its maximum absolute value)
+‘sincos’  - SinCosTransformer (converts angles to sin/cos features)
+Example: ‘log+standard’ applies a log transformation followed by standard scaling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transformed data array.
+scaler: Fitted scaler object (or chained scaler) for inverse transformations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>normalized_data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.numpy_to_tensor">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">numpy_to_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#numpy_to_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.numpy_to_tensor" title="Link to this definition"></a></dt>
+<dd><p>Converts ndarray to torch.Tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>ndarray</em>) – The data you wish to convert from ndarray to torch.Tensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Your data as a tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.save_loss_components">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">save_loss_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'loss_outputs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#save_loss_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.save_loss_components" title="Link to this definition"></a></dt>
+<dd><p>This function unpacks loss_data into separate components, converts each into a NumPy array,
+and saves each array as a .npy file with a filename of the form:
+&lt;component_name&gt;_&lt;suffix&gt;.npy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss_data</strong> (<em>-</em>) – a list of tuples, where each tuple contains loss components</p></li>
+<li><p><strong>component_names</strong> (<em>-</em>) – a list of strings naming each component in the tuple</p></li>
+<li><p><strong>suffix</strong> (<em>-</em>) – a string keyword to be appended (separated by ‘_’) to each filename</p></li>
+<li><p><strong>save_dir</strong> (<em>-</em>) – directory to save .npy files (default “loss_outputs”)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.save_model">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bead/src/utils/helper.html#save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.save_model" title="Link to this definition"></a></dt>
+<dd><p>Saves the models state dictionary as a <cite>.pt</cite> file to the given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – The PyTorch model to save.</p></li>
+<li><p><strong>model_path</strong> (<em>str</em>) – String defining the models save path.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saved model state dictionary as <cite>.pt</cite> file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.select_features">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">select_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jets_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#select_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.select_features" title="Link to this definition"></a></dt>
+<dd><p>Process the jets_tensor and constituents_tensor based on the input_features flag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jets_tensor</strong> (<em>torch.Tensor</em>) – Tensor with features
+[evt_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi_sin, jet_phi_cos, generator_id]</p></li>
+<li><p><strong>constituents_tensor</strong> (<em>torch.Tensor</em>) – Tensor with features
+[evt_id, jet_id, constit_id, b_tagged, constit_pt, constit_eta, constit_phi_sin, constit_phi_cos, generator_id]</p></li>
+<li><p><strong>input_features</strong> (<em>str</em>) – The flag to determine which features to select.
+Options:
+- ‘all’: return tensors as is.
+- ‘4momentum’: select [pt, eta, phi_sin, phi_cos, generator_id] for both.
+- ‘4momentum_btag’: select [b_tagged, pt, eta, phi_sin, phi_cos, generator_id] for both.
+- ‘pj_custom’: select everything except [evt_id, jet_id] for jets and except [evt_id, jet_id, constit_id] for constituents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Processed jets_tensor and constituents_tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.helper.train_val_split">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.helper.</span></span><span class="sig-name descname"><span class="pre">train_val_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/helper.html#train_val_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.helper.train_val_split" title="Link to this definition"></a></dt>
+<dd><p>Splits a tensor into training and validation sets based on the specified train_ratio.
+The split is done by sampling indices randomly ensuring that the data is shuffled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensor</strong> (<em>torch.Tensor</em>) – The input tensor to be split.</p></li>
+<li><p><strong>train_ratio</strong> (<em>float</em>) – Proportion of data to be used for training (e.g., 0.8 for 80% training data).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing two tensors:</dt><dd><ul class="simple">
+<li><p>train_tensor: Tensor containing the training data.</p></li>
+<li><p>val_tensor: Tensor containing the validation data.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If train_ratio is not between 0 and 1.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bead.src.utils.loss">
+<span id="bead-src-utils-loss-module"></span><h2>bead.src.utils.loss module<a class="headerlink" href="#module-bead.src.utils.loss" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.BaseLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">BaseLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#BaseLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.BaseLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for all loss functions.
+Each subclass must implement the calculate() method.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.BaseLoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#BaseLoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.BaseLoss.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.BinaryCrossEntropyLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">BinaryCrossEntropyLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#BinaryCrossEntropyLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.BinaryCrossEntropyLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Binary Cross Entropy Loss for binary classification tasks.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>use_logits: Boolean indicating if the predictions are raw logits (default: True).</p></li>
+<li><p>reduction: Reduction method for the loss (‘mean’, ‘sum’, etc., default: ‘mean’).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Note: Not supported for full_chain mode yet</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.BinaryCrossEntropyLoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#BinaryCrossEntropyLoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.BinaryCrossEntropyLoss.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculate the binary cross entropy loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predictions</strong> (<em>Tensor</em>) – Predicted outputs (logits or probabilities).</p></li>
+<li><p><strong>targets</strong> (<em>Tensor</em>) – Ground truth binary labels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed binary cross entropy loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.ContrastiveLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">ContrastiveLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#ContrastiveLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.ContrastiveLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Contrastive loss to cluster latent vectors by event generator.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>margin: minimum distance desired between dissimilar pairs (default: 1.0)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.ContrastiveLoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator_flags</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#ContrastiveLoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.ContrastiveLoss.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.KLDivergenceLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">KLDivergenceLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#KLDivergenceLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.KLDivergenceLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>KL Divergence loss for VAE latent space regularization.</p>
+<dl class="simple">
+<dt>Uses the formula:</dt><dd><p>KL = -0.5 * sum(1 + logvar - mu^2 - exp(logvar))</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.KLDivergenceLoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#KLDivergenceLoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.KLDivergenceLoss.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.L1Regularization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">L1Regularization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#L1Regularization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.L1Regularization" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Computes L1 regularization over model parameters.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>weight: scaling factor for the L1 regularization (default: 1e-4)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.L1Regularization.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#L1Regularization.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.L1Regularization.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.L2Regularization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">L2Regularization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#L2Regularization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.L2Regularization" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Computes L2 regularization over model parameters.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>weight: scaling factor for the L2 regularization (default: 1e-4)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.L2Regularization.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#L2Regularization.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.L2Regularization.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.ReconstructionLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">ReconstructionLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#ReconstructionLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.ReconstructionLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Reconstruction loss for AE/VAE models.
+Supports both MSE and L1 losses based on configuration.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>loss_type: ‘mse’ (default) or ‘l1’</p></li>
+<li><p>reduction: reduction method (default ‘mean’ or ‘sum’)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.ReconstructionLoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#ReconstructionLoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.ReconstructionLoss.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAEFlowLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Loss for VAE models augmented with a normalizing flow.
+Includes the log_det_jacobian term from the flow transformation.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>reconstruction: dict for ReconstructionLoss config.</p></li>
+<li><p>kl: dict for KLDivergenceLoss config.</p></li>
+<li><p>kl_weight: weight for the KL divergence term.</p></li>
+<li><p>flow_weight: weight for the log_det_jacobian term.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLoss.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLossEMD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAEFlowLossEMD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLossEMD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLossEMD" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.VAEFlowLoss" title="bead.src.utils.loss.VAEFlowLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VAEFlowLoss</span></code></a></p>
+<p>VAE loss augmented with an Earth Mover’s Distance (EMD) term.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>emd_weight: weight for the EMD term.</p></li>
+<li><p>emd: dict for WassersteinLoss config.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLossEMD.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLossEMD.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLossEMD.calculate" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>In addition to the standard VAE inputs, this loss requires:</dt><dd><ul class="simple">
+<li><p>emd_p: first distribution tensor (e.g. a predicted histogram)</p></li>
+<li><p>emd_q: second distribution tensor (e.g. a target histogram)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLossL1">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAEFlowLossL1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLossL1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLossL1" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.VAEFlowLoss" title="bead.src.utils.loss.VAEFlowLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VAEFlowLoss</span></code></a></p>
+<p>VAE loss augmented with an L1 regularization term.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>l1_weight: weight for the L1 regularization term.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLossL1.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLossL1.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLossL1.calculate" title="Link to this definition"></a></dt>
+<dd><p>‘parameters’ should be a list of model parameters to regularize.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLossL2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAEFlowLossL2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLossL2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLossL2" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.VAEFlowLoss" title="bead.src.utils.loss.VAEFlowLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VAEFlowLoss</span></code></a></p>
+<p>VAE loss augmented with an L2 regularization term.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>l2_weight: weight for the L2 regularization term.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAEFlowLossL2.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAEFlowLossL2.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAEFlowLossL2.calculate" title="Link to this definition"></a></dt>
+<dd><p>‘parameters’ should be a list of model parameters to regularize.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAELoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Total loss for VAE training.
+Combines reconstruction loss and KL divergence loss.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>reconstruction: dict for ReconstructionLoss config.</p></li>
+<li><p>kl: dict for KLDivergenceLoss config.</p></li>
+<li><p>kl_weight: scaling factor for KL loss (default: 1.0)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELoss.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELossEMD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAELossEMD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELossEMD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELossEMD" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.VAELoss" title="bead.src.utils.loss.VAELoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VAELoss</span></code></a></p>
+<p>VAE loss augmented with an Earth Mover’s Distance (EMD) term.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>emd_weight: weight for the EMD term.</p></li>
+<li><p>emd: dict for WassersteinLoss config.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELossEMD.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELossEMD.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELossEMD.calculate" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>In addition to the standard VAE inputs, this loss requires:</dt><dd><ul class="simple">
+<li><p>emd_p: first distribution tensor (e.g. a predicted histogram)</p></li>
+<li><p>emd_q: second distribution tensor (e.g. a target histogram)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELossL1">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAELossL1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELossL1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELossL1" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.VAELoss" title="bead.src.utils.loss.VAELoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VAELoss</span></code></a></p>
+<p>VAE loss augmented with an L1 regularization term.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>l1_weight: weight for the L1 regularization term.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELossL1.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELossL1.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELossL1.calculate" title="Link to this definition"></a></dt>
+<dd><p>‘parameters’ should be a list of model parameters to regularize.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELossL2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">VAELossL2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELossL2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELossL2" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.VAELoss" title="bead.src.utils.loss.VAELoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VAELoss</span></code></a></p>
+<p>VAE loss augmented with an L2 regularization term.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>l2_weight: weight for the L2 regularization term.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.VAELossL2.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_det_jacobian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#VAELossL2.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.VAELossL2.calculate" title="Link to this definition"></a></dt>
+<dd><p>‘parameters’ should be a list of model parameters to regularize.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.utils.loss.WassersteinLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.utils.loss.</span></span><span class="sig-name descname"><span class="pre">WassersteinLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#WassersteinLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.WassersteinLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.utils.loss.BaseLoss" title="bead.src.utils.loss.BaseLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoss</span></code></a></p>
+<p>Computes an approximation of the Earth Mover’s Distance (Wasserstein Loss)
+between two 1D probability distributions.</p>
+<p>Assumes inputs are tensors of shape (batch_size, n) representing histograms or distributions.</p>
+<dl class="simple">
+<dt>Config parameters:</dt><dd><ul class="simple">
+<li><p>dim: dimension along which to compute the cumulative sum (default: 1)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.utils.loss.WassersteinLoss.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/loss.html#WassersteinLoss.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.loss.WassersteinLoss.calculate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bead.src.utils.normalization">
+<span id="bead-src-utils-normalization-module"></span><h2>bead.src.utils.normalization module<a class="headerlink" href="#module-bead.src.utils.normalization" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.normalization.invert_normalize_constit_pj_custom">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.normalization.</span></span><span class="sig-name descname"><span class="pre">invert_normalize_constit_pj_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/normalization.html#invert_normalize_constit_pj_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.normalization.invert_normalize_constit_pj_custom" title="Link to this definition"></a></dt>
+<dd><p>Inverts the normalization applied by normalize_jet_data_np_chained.</p>
+<dl class="simple">
+<dt>The input normalized_data is assumed to be a NumPy array of shape (N, 8) with columns:</dt><dd><p>0: event_id              (unchanged)
+1: jet_id                (unchanged)
+2: num_constituents_norm (normalized via “robust”)
+3: b_tagged              (unchanged)
+4: jet_pt_norm           (normalized via “log+standard”)
+5: jet_eta_norm          (normalized via “standard”)
+6-7: jet_phi_sin, jet_phi_cos (normalized via “sin_cos”)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>NumPy array of shape (N, 7) with columns:</dt><dd><p>[event_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi]</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>original_data</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The scaler for jet_pt (chain “log+standard”) is expected to invert first the StandardScaler then the Log1pScaler,
+so that the original jet_pt is recovered.</p></li>
+<li><p>The scaler for jet_phi (chain “sin_cos”) converts the 2 columns back to the original angle using arctan2.</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.normalization.invert_normalize_jet_pj_custom">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.normalization.</span></span><span class="sig-name descname"><span class="pre">invert_normalize_jet_pj_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/normalization.html#invert_normalize_jet_pj_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.normalization.invert_normalize_jet_pj_custom" title="Link to this definition"></a></dt>
+<dd><p>Inverts the normalization applied by normalize_jet_data_np_chained.</p>
+<dl class="simple">
+<dt>The input normalized_data is assumed to be a NumPy array of shape (N, 8) with columns:</dt><dd><p>0: event_id              (unchanged)
+1: jet_id                (unchanged)
+2: num_constituents_norm (normalized via “robust”)
+3: b_tagged              (unchanged)
+4: jet_pt_norm           (normalized via “log+standard”)
+5: jet_eta_norm          (normalized via “standard”)
+6-7: jet_phi_sin, jet_phi_cos (normalized via “sin_cos”)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>NumPy array of shape (N, 7) with columns:</dt><dd><p>[event_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi]</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>original_data</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The scaler for jet_pt (chain “log+standard”) is expected to invert first the StandardScaler then the Log1pScaler,
+so that the original jet_pt is recovered.</p></li>
+<li><p>The scaler for jet_phi (chain “sin_cos”) converts the 2 columns back to the original angle using arctan2.</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.normalization.normalize_constit_pj_custom">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.normalization.</span></span><span class="sig-name descname"><span class="pre">normalize_constit_pj_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/normalization.html#normalize_constit_pj_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.normalization.normalize_constit_pj_custom" title="Link to this definition"></a></dt>
+<dd><p>Normalizes jet data for HEP analysis using a chained normalization approach.</p>
+<dl class="simple">
+<dt>Input data is expected as a NumPy array of shape (N, 7) with columns in the order:</dt><dd><p>0: event_id         (unchanged)
+1: jet_id           (unchanged)
+2: constit_id       (unchanged)
+3: b_tagged         (unchanged)
+4: constit_pt           (to be normalized via “log+standard”)
+5: constit_eta          (to be normalized via “standard”)
+6: constit_phi          (to be normalized via “sin_cos” transformation)</p>
+</dd>
+<dt>The output array will have 8 columns:</dt><dd><p>[event_id, jet_id, constit_id, b_tagged, constit_pt_norm, constit_eta_norm, constit_phi_sin, constit_phi_cos]</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>np.ndarray</em>) – Input array of shape (N, 7).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output array of shape (N, 8).
+scalers (dict): Dictionary containing the fitted scalers for each feature.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>normalized_data (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.utils.normalization.normalize_jet_pj_custom">
+<span class="sig-prename descclassname"><span class="pre">bead.src.utils.normalization.</span></span><span class="sig-name descname"><span class="pre">normalize_jet_pj_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/utils/normalization.html#normalize_jet_pj_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.utils.normalization.normalize_jet_pj_custom" title="Link to this definition"></a></dt>
+<dd><p>Normalizes jet data for HEP analysis using a chained normalization approach.</p>
+<p>Input data is expected as a NumPy array of shape (N, 7) with columns in the order:
+0: event_id         (unchanged)
+1: jet_id           (unchanged)
+2: num_constituents (to be normalized via “robust”)
+3: b_tagged         (already integer; left unchanged)
+4: jet_pt           (to be normalized via “log+standard”)
+5: jet_eta          (to be normalized via “standard”)
+6: jet_phi          (to be normalized via “sin_cos” transformation)</p>
+<p>The output array will have 8 columns:
+[event_id, jet_id, num_constituents_norm, b_tagged, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>np.ndarray</em>) – Input array of shape (N, 7).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output array of shape (N, 8).
+scalers (dict): Dictionary containing the fitted scalers for each feature.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>normalized_data (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="bead-src-utils-plotting-module">
+<h2>bead.src.utils.plotting module<a class="headerlink" href="#bead-src-utils-plotting-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-bead.src.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bead.src.utils" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bead.src.trainers.html" class="btn btn-neutral float-left" title="bead.src.trainers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

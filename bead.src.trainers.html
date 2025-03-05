@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.trainers package &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="bead.src.utils package" href="bead.src.utils.html" />
+    <link rel="prev" title="bead.src.models package" href="bead.src.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">bead</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bead.html">bead package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="bead.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="bead.src.html">bead.src package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#bead-bead-module">bead.bead module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#module-bead">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">bead</a></li>
+          <li class="breadcrumb-item"><a href="bead.html">bead package</a></li>
+          <li class="breadcrumb-item"><a href="bead.src.html">bead.src package</a></li>
+      <li class="breadcrumb-item active">bead.src.trainers package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/bead.src.trainers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bead-src-trainers-package">
+<h1>bead.src.trainers package<a class="headerlink" href="#bead-src-trainers-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-bead.src.trainers.inference">
+<span id="bead-src-trainers-inference-module"></span><h2>bead.src.trainers.inference module<a class="headerlink" href="#module-bead.src.trainers.inference" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.trainers.inference.infer">
+<span class="sig-prename descclassname"><span class="pre">bead.src.trainers.inference.</span></span><span class="sig-name descname"><span class="pre">infer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events_bkg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_bkg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_bkg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events_sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/trainers/inference.html#infer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.trainers.inference.infer" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Does the entire training loop by calling the <cite>fit()</cite> and <cite>validate()</cite>. Appart from this, this is the main function where the data is converted</dt><dd><p>to the correct type for it to be trained, via <cite>torch.Tensor()</cite>. Furthermore, the batching is also done here, based on <cite>config.batch_size</cite>,
+and it is the <cite>torch.utils.data.DataLoader</cite> doing the splitting.
+Applying either <cite>EarlyStopping</cite> or <cite>LR Scheduler</cite> is also done here, all based on their respective <cite>config</cite> arguments.
+For reproducibility, the seeds can also be fixed in this function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>modelObject</em>) – The model you wish to train</p></li>
+<li><p><strong>data</strong> (<em>Tuple</em>) – Tuple containing the training and validation data</p></li>
+<li><p><strong>project_path</strong> (<em>string</em>) – Path to the project directory</p></li>
+<li><p><strong>config</strong> (<em>dataClass</em>) – Base class selecting user inputs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fully trained model ready to perform compression and decompression</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>modelObject</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.trainers.inference.seed_worker">
+<span class="sig-prename descclassname"><span class="pre">bead.src.trainers.inference.</span></span><span class="sig-name descname"><span class="pre">seed_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/trainers/inference.html#seed_worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.trainers.inference.seed_worker" title="Link to this definition"></a></dt>
+<dd><p>PyTorch implementation to fix the seeds
+:param worker_id ():</p>
+</dd></dl>
+
+</section>
+<section id="module-bead.src.trainers.training">
+<span id="bead-src-trainers-training-module"></span><h2>bead.src.trainers.training module<a class="headerlink" href="#module-bead.src.trainers.training" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.trainers.training.fit">
+<span class="sig-prename descclassname"><span class="pre">bead.src.trainers.training.</span></span><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/trainers/training.html#fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.trainers.training.fit" title="Link to this definition"></a></dt>
+<dd><p>This function trains the model on the train set. It computes the losses and does the backwards propagation, and updates the optimizer as well.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dataClass</em>) – Base class selecting user inputs</p></li>
+<li><p><strong>model</strong> (<em>modelObject</em>) – The model you wish to train</p></li>
+<li><p><strong>train_dl</strong> (<em>torch.DataLoader</em>) – Defines the batched data which the model is trained on</p></li>
+<li><p><strong>loss</strong> (<em>lossObject</em>) – Defines the loss function used to train the model</p></li>
+<li><p><strong>reg_param</strong> (<em>float</em>) – Determines proportionality constant to balance different components of the loss.</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim</em>) – Chooses optimizer for gradient descent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Training losses, Epoch_loss and trained model</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, model object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.trainers.training.seed_worker">
+<span class="sig-prename descclassname"><span class="pre">bead.src.trainers.training.</span></span><span class="sig-name descname"><span class="pre">seed_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/trainers/training.html#seed_worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.trainers.training.seed_worker" title="Link to this definition"></a></dt>
+<dd><p>PyTorch implementation to fix the seeds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>)</strong> (<em>worker_id</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.trainers.training.train">
+<span class="sig-prename descclassname"><span class="pre">bead.src.trainers.training.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">events_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jets_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constituents_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/trainers/training.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.trainers.training.train" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Does the entire training loop by calling the <cite>fit()</cite> and <cite>validate()</cite>. Appart from this, this is the main function where the data is converted</dt><dd><p>to the correct type for it to be trained, via <cite>torch.Tensor()</cite>. Furthermore, the batching is also done here, based on <cite>config.batch_size</cite>,
+and it is the <cite>torch.utils.data.DataLoader</cite> doing the splitting.
+Applying either <cite>EarlyStopping</cite> or <cite>LR Scheduler</cite> is also done here, all based on their respective <cite>config</cite> arguments.
+For reproducibility, the seeds can also be fixed in this function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>modelObject</em>) – The model you wish to train</p></li>
+<li><p><strong>data</strong> (<em>Tuple</em>) – Tuple containing the training and validation data</p></li>
+<li><p><strong>project_path</strong> (<em>string</em>) – Path to the project directory</p></li>
+<li><p><strong>config</strong> (<em>dataClass</em>) – Base class selecting user inputs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fully trained model ready to perform compression and decompression</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>modelObject</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.trainers.training.validate">
+<span class="sig-prename descclassname"><span class="pre">bead.src.trainers.training.</span></span><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg_param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/trainers/training.html#validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.trainers.training.validate" title="Link to this definition"></a></dt>
+<dd><p>Function used to validate the training. Not necessary for doing compression, but gives a good indication of wether the model selected is a good fit or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>modelObject</em>) – Defines the model one wants to validate. The model used here is passed directly from <cite>fit()</cite>.</p></li>
+<li><p><strong>test_dl</strong> (<em>torch.DataLoader</em>) – Defines the batched data which the model is validated on</p></li>
+<li><p><strong>model_children</strong> (<em>list</em>) – List of model parameters</p></li>
+<li><p><strong>reg_param</strong> (<em>float</em>) – Determines proportionality constant to balance different components of the loss.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Validation loss</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bead.src.trainers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bead.src.trainers" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bead.src.models.html" class="btn btn-neutral float-left" title="bead.src.models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bead.src.utils.html" class="btn btn-neutral float-right" title="bead.src.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
