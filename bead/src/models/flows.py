@@ -335,3 +335,40 @@ class NSF_AR(nn.Module):
             )
             logdets += ld
         return z, logdets
+
+class Radial(nn.Module):
+    def __init__(self, dim):
+        super(Radial, self).__init__()
+
+        self.z0 = nn.Parameter(torch.randn(1, dim))  # Center of radial flow
+        self.alpha = nn.Parameter(torch.randn(1))    # Scaling factor
+        self.beta = nn.Parameter(torch.randn(1))     # Determines effect of transformation
+
+        self.softplus = nn.Softplus()  # Ensures positive alpha
+
+    def forward(self, zk):
+        """
+        zk: (batch_size, dim) - Input to the radial flow
+        Returns:
+        - Transformed zk (z')
+        - Log-determinant of Jacobian
+        """
+
+        # Compute radius r = ||z - z0||
+        r = torch.norm(zk - self.z0, dim=1, keepdim=True)
+
+        # Ensure alpha is positive
+        alpha = self.softplus(self.alpha)
+
+        # Compute h(r) = 1 / (alpha + r)
+        hr = 1 / (alpha + r)
+
+        # Transform z using radial flow
+        z = zk + self.beta * hr * (zk - self.z0)
+
+        # Compute log determinant of Jacobian
+        dhr = -1 / (alpha + r) ** 2  # Derivative of h(r)
+        log_det_jacobian = (zk.shape[1] - 1) * torch.log(1 + self.beta * hr) + \
+                           torch.log(1 + self.beta * hr + self.beta * dhr * r)
+
+        return z, log_det_jacobian.squeeze()

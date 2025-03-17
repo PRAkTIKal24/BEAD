@@ -85,7 +85,7 @@ def main():
     elif mode == "detect":
         ggl.run_inference(paths, config, verbose)
     elif mode == "plot":
-        ggl.run_plots(paths, config, verbose)
+        ggl.run_plots(paths["output_path"], config, verbose)
     elif mode == "diagnostics":
         ggl.run_diagnostics(paths, config, verbose)
     elif mode == "chain":

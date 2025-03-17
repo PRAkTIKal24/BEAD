@@ -460,7 +460,7 @@ def train(
         if config.intermittent_model_saving:
             if epoch % config.intermittent_saving_patience == 0:
                 path = os.path.join(output_path, "models", f"model_{epoch}.pt")
-                helper.model_saver(model, path)
+                helper.save_model(model, path)
 
         # Implementing Early Stopping
         if config.early_stopping:

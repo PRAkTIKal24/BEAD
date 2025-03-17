@@ -34,7 +34,8 @@ def loss_plot(path_to_loss_data, output_path, config):
     train_loss = loss_data[0]
     val_loss = loss_data[1]
     conf_list = [
-        len(train_loss),
+        1,
+        #len(train_loss),
         config.model_name,
         config.reg_param,
         config.lr,
@@ -52,7 +53,7 @@ def loss_plot(path_to_loss_data, output_path, config):
     plt.yscale("log")
     plt.ylabel("Loss")
     plt.legend(loc="best")
-    plt.savefig(os.path.join(output_path, "plotting", "Loss_plot.pdf"))
+    plt.savefig(os.path.join(output_path, "plots", "Loss_plot.pdf"))
     # plt.show()
 
 

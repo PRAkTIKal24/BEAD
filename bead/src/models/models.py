@@ -23,7 +23,6 @@ from torch.autograd import Function, Variable
 from ..utils import helper
 from . import flows
 
-
 class AE(nn.Module):
     # This class is a modified version of the original class by George Dialektakis found at
     # https://github.com/Autoencoders-compression-anomaly/Deep-Autoencoders-Data-Compression-GSoC-2021
@@ -373,6 +372,47 @@ class Planar_ConvVAE(ConvVAE):
         x_decoded = self.decode(z[-1])
 
         return x_decoded, z_mu, z_var, self.log_det_j, z[0], z[-1]
+
+class Radial_ConvVAE(ConvVAE):
+    """
+    Variational Auto-Encoder with Radial Normalizing Flows.
+    """
+
+    def __init__(self, in_shape, z_dim, *args, **kwargs):
+        super().__init__(in_shape, z_dim, *args, **kwargs)
+
+        # Initialize log-det-jacobian to zero
+        self.log_det_j = 0
+
+        # Flow parameters
+        flow = flows.Radial
+        self.num_flows = 6  # Number of normalizing flows
+
+        # Normalizing flow layers
+        for k in range(self.num_flows):
+            flow_k = flow(self.z_size)  # Pass z_size to Radial
+            self.add_module("flow_" + str(k), flow_k)
+
+    def forward(self, x):
+        self.log_det_j = 0
+
+        out, z_mu, z_var = self.encode(x)
+        batch_size = x.size(0)
+
+        # Sample z_0
+        z = [self.reparameterize(z_mu, z_var)]
+
+        # Normalizing flows
+        for k in range(self.num_flows):
+            flow_k = getattr(self, "flow_" + str(k))  # Get flow layer
+            z_k, log_det_jacobian = flow_k(z[k])  # Radial flow only takes z
+            z.append(z_k)
+            self.log_det_j += log_det_jacobian  # Accumulate log det J
+
+        x_decoded = self.decode(z[-1])
+
+        return x_decoded, z_mu, z_var, self.log_det_j, z[0], z[-1]
+
 
 
 class OrthogonalSylvester_ConvVAE(ConvVAE):

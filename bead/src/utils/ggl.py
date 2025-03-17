@@ -19,6 +19,7 @@ from torch.utils.data import DataLoader
 
 from . import conversion, data_processing, helper, plotting, diagnostics
 from ..trainers import training, inference
+from src.utils import ggl  # Ensure ggl is imported
 
 
 def get_arguments():
@@ -565,7 +566,7 @@ def run_plots(output_path, config, verbose: bool):
         print("Plotting...")
         print(f"Saving plots to {output_path}")
     ggl.loss_plotter(
-        os.path.join(output_path, "training", "loss_data.npy"), output_path, config
+        os.path.join(output_path,"results","loss_train.npy"), output_path, config
     )
     ggl.plotter(output_path, config)
 
