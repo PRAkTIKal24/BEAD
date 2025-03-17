@@ -50,7 +50,7 @@ class ReconstructionLoss(BaseLoss):
     def __init__(self, config):
         super(ReconstructionLoss, self).__init__(config)
         self.reg_param = config.reg_param
-        self.component_names = ['reco']
+        self.component_names = ["reco"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         self.loss_type = "mse"
@@ -78,7 +78,7 @@ class KLDivergenceLoss(BaseLoss):
 
     def __init__(self, config):
         super(KLDivergenceLoss, self).__init__(config)
-        self.component_names = ['kl']
+        self.component_names = ["kl"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
@@ -103,7 +103,7 @@ class WassersteinLoss(BaseLoss):
     def __init__(self, config):
         super(WassersteinLoss, self).__init__(config)
         self.dim = 1
-        self.component_names = ['emd']
+        self.component_names = ["emd"]
 
     def calculate(self, p, q):
         # Normalize if not already probability distributions
@@ -129,7 +129,7 @@ class L1Regularization(BaseLoss):
     def __init__(self, config):
         super(L1Regularization, self).__init__(config)
         self.weight = self.config.reg_param
-        self.component_names = ['l1']
+        self.component_names = ["l1"]
 
     def calculate(self, parameters):
         l1_loss = 0.0
@@ -149,7 +149,7 @@ class L2Regularization(BaseLoss):
     def __init__(self, config):
         super(L2Regularization, self).__init__(config)
         self.weight = self.config.reg_param
-        self.component_names = ['l2']
+        self.component_names = ["l2"]
 
     def calculate(self, parameters):
         l2_loss = 0.0
@@ -176,9 +176,11 @@ class BinaryCrossEntropyLoss(BaseLoss):
         super(BinaryCrossEntropyLoss, self).__init__(config)
         self.use_logits = True
         self.reduction = "mean"
-        self.component_names = ['bce']
+        self.component_names = ["bce"]
 
-    def calculate(self, predictions, targets, mu, logvar, parameters, log_det_jacobian=0):
+    def calculate(
+        self, predictions, targets, mu, logvar, parameters, log_det_jacobian=0
+    ):
         """
         Calculate the binary cross entropy loss.
 
@@ -223,13 +225,15 @@ class VAELoss(BaseLoss):
         self.reduction = "mean"
         self.kl_loss_fn = KLDivergenceLoss(config)
         self.kl_weight = torch.tensor(self.config.reg_param, requires_grad=True)
-        self.component_names = ['loss', 'reco', 'kl']
+        self.component_names = ["loss", "reco", "kl"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         recon_loss = self.recon_loss_fn.calculate(
             recon, target, mu, logvar, parameters, log_det_jacobian=0
         )
-        kl_loss = self.kl_loss_fn.calculate(recon, target, mu, logvar, parameters, log_det_jacobian=0)
+        kl_loss = self.kl_loss_fn.calculate(
+            recon, target, mu, logvar, parameters, log_det_jacobian=0
+        )
         loss = recon_loss[0] + self.kl_weight * kl_loss[0]
         return loss, recon_loss[0], kl_loss[0]
 
@@ -257,13 +261,15 @@ class VAEFlowLoss(BaseLoss):
         self.kl_loss_fn = KLDivergenceLoss(config)
         self.kl_weight = torch.tensor(self.config.reg_param, requires_grad=True)
         self.flow_weight = torch.tensor(self.config.reg_param, requires_grad=True)
-        self.component_names = ['loss', 'reco', 'kl']
+        self.component_names = ["loss", "reco", "kl"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         recon_loss = self.recon_loss_fn.calculate(
             recon, target, mu, logvar, parameters, log_det_jacobian=0
         )
-        kl_loss = self.kl_loss_fn.calculate(recon, target, mu, logvar, parameters, log_det_jacobian=0)
+        kl_loss = self.kl_loss_fn.calculate(
+            recon, target, mu, logvar, parameters, log_det_jacobian=0
+        )
         # Subtract the log-det term (maximizing likelihood).
         total_loss = (
             recon_loss[0]
@@ -287,7 +293,7 @@ class ContrastiveLoss(BaseLoss):
     def __init__(self, config):
         super(ContrastiveLoss, self).__init__(config)
         self.margin = 1.0
-        self.component_names = ['contrastive']
+        self.component_names = ["contrastive"]
 
     def calculate(self, latent, generator_flags):
         batch_size = latent.size(0)
@@ -317,7 +323,7 @@ class VAELossEMD(VAELoss):
         super(VAELossEMD, self).__init__(config)
         self.emd_weight = self.config.reg_param
         self.emd_loss_fn = WassersteinLoss(config)
-        self.component_names = ['loss', 'vae_loss', 'reco', 'kl', 'emd']
+        self.component_names = ["loss", "vae_loss", "reco", "kl", "emd"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         """
@@ -350,7 +356,7 @@ class VAELossL1(VAELoss):
         super(VAELossL1, self).__init__(config)
         self.l1_weight = self.config.reg_param
         self.l1_reg_fn = L1Regularization(config)
-        self.component_names = ['loss', 'vae_loss', 'reco', 'kl', 'l1']
+        self.component_names = ["loss", "vae_loss", "reco", "kl", "l1"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         """
@@ -377,7 +383,7 @@ class VAELossL2(VAELoss):
         super(VAELossL2, self).__init__(config)
         self.l2_weight = self.config.reg_param
         self.l2_reg_fn = L2Regularization(config)
-        self.component_names = ['loss', 'vae_loss', 'reco', 'kl', 'l2']
+        self.component_names = ["loss", "vae_loss", "reco", "kl", "l2"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         """
@@ -408,7 +414,7 @@ class VAEFlowLossEMD(VAEFlowLoss):
         super(VAEFlowLossEMD, self).__init__(config)
         self.emd_weight = self.config.reg_param
         self.emd_loss_fn = WassersteinLoss(config)
-        self.component_names = ['loss', 'vae_flow_loss', 'reco', 'kl', 'emd']
+        self.component_names = ["loss", "vae_flow_loss", "reco", "kl", "emd"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         """
@@ -441,7 +447,7 @@ class VAEFlowLossL1(VAEFlowLoss):
         super(VAEFlowLossL1, self).__init__(config)
         self.l1_weight = self.config.reg_param
         self.l1_reg_fn = L1Regularization(config)
-        self.component_names = ['loss', 'vae_flow_loss', 'reco', 'kl', 'l1']
+        self.component_names = ["loss", "vae_flow_loss", "reco", "kl", "l1"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         """
@@ -468,7 +474,7 @@ class VAEFlowLossL2(VAEFlowLoss):
         super(VAEFlowLossL2, self).__init__(config)
         self.l2_weight = self.config.reg_param
         self.l2_reg_fn = L2Regularization(config)
-        self.component_names = ['loss', 'vae_flow_loss', 'reco', 'kl', 'l2']
+        self.component_names = ["loss", "vae_flow_loss", "reco", "kl", "l2"]
 
     def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
         """

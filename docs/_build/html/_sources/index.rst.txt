@@ -6,6 +6,8 @@
 BEAD documentation
 ==================
 
+**Background Enrichment for Anomaly Detection** || *{Background Enrichis pour (la Détection d'Anomalies) Anomalie Détection}*
+
 BEAD is a Python package that uses deep learning based methods for anomaly detection in HEP data for new physics searches.
 BEAD has been designed with modularity in mind, to enable usage of various unsupervised latent variable models for any task.
 
@@ -15,11 +17,13 @@ BEAD has five main running modes:
 
    2. Training: Train your model to learn implicit representations of your background data that may come from multiple sources/generators to get a single, encriched latent representation of it.
 
-   3. Inference: Using a model trained on an enriched background, feed in samples you want to detect anomalies in using the '--detect or -d' mode. 
+   3. Inference: Using a model trained on an enriched background, feed in samples you want to detect anomalies in and watch the magic happen.
 
    4. Plotting: After running Inference, or Training you can generate plots similar towhat is shown in the paper. These include performance plots as well as different visualizations of the learned data.
 
    5. Diagnostics: Enabling this mode allows running profilers that measure a host of metrics connected to the usage of the compute node you run on to help you optimize the code if needed(using CPU-GPU metrics).
+
+For more information, follow the install instructions here: https://github.com/PRAkTIKal24/BEAD and from ./BEAD/bead/ run the command ```poetry run bead -h``` to get detailed instructions on running the package and the available customizations
 
 .. note::
 

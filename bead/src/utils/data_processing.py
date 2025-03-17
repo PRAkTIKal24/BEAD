@@ -3,7 +3,6 @@ import sys
 import numpy as np
 import h5py
 import torch
-from concurrent.futures import ProcessPoolExecutor
 from sklearn.preprocessing import LabelEncoder
 from loky import get_reusable_executor
 import pickle
@@ -20,9 +19,9 @@ def load_data(file_path, file_type="h5", verbose: bool = False):
         print(f"Loading data from {file_path}...")
     if file_type == "h5":
         with h5py.File(file_path, "r") as h5file:
-            events = np.array(h5file["events"])
-            jets = np.array(h5file["jets"])
-            constituents = np.array(h5file["constituents"])
+            events = h5file["events"][:]
+            jets = h5file["jets"][:]
+            constituents = h5file["constituents"][:]
     elif file_type == "npy":
         raise NotImplementedError(
             "Loading .npy files is not yet supported. Please retry with --mode = convert_csv and --options = h5 first."
@@ -103,100 +102,80 @@ def decode_pid(encoded_tensor_path, pid_map_path, decoded_tensor_path):
     print(f"Decoded tensor saved to {decoded_tensor_path}")
 
 
-def process_event(
-    evt_id, evt_jets, evt_constits, n_jets=3, n_constits=15, verbose: bool = False
+def select_top_jets_and_constituents(
+    jets, constituents, n_jets=3, n_constits=15, verbose=False
 ):
     """
-    Process a single event to select top jets and their top constituents.
+    Select top n_jets per event and, for each selected jet, top n_constits constituents.
+
+    Returns:
+    - jets_out: (num_events, n_jets, jets.shape[1])
+    - constits_out: (num_events, n_jets * n_constits, constituents.shape[1])
+
     """
+    # --- Pre-sort jets ---
+    # Sort by event id (ascending) then by descending pT (column 4).
+    sort_idx_j = np.lexsort((-jets[:, 4], jets[:, 0]))
+    jets_sorted = jets[sort_idx_j]
 
-    if verbose:
-        print(
-            f"Processing event {evt_id} with {len(evt_jets)} jets and {len(evt_constits)} constituents..."
-        )
-
-    # Sort jets by pT (column 4)
-    evt_jets = evt_jets[np.argsort(-evt_jets[:, 4])]
-
-    # Select the top n_jets, zero-pad if necessary
-    selected_jets = np.zeros((n_jets, evt_jets.shape[1]), dtype=evt_jets.dtype)
-    selected_jets[:, 0] = evt_id  # Retain event ID for all jets
-    selected_jets[: len(evt_jets), :] = evt_jets[:n_jets]
-
-    # For each selected jet, select its top n_constits, zero-padding as needed
-    selected_constits = np.zeros(
-        (n_jets * n_constits, evt_constits.shape[1]), dtype=evt_constits.dtype
+    # --- Pre-sort constituents ---
+    # Sort by event id, then by jet id, then by descending pT.
+    sort_idx_c = np.lexsort(
+        (-constituents[:, 4], constituents[:, 1], constituents[:, 0])
     )
-    selected_constits[:, 0] = evt_id  # Retain event ID for all constituents
+    constits_sorted = constituents[sort_idx_c]
 
-    for jet_idx in range(min(len(evt_jets), n_jets)):
-        jet_id = evt_jets[jet_idx, 1]  # Jet ID within the event
-        jet_constits = evt_constits[evt_constits[:, 1] == jet_id]
-        jet_btag = evt_jets[jet_idx, 3]
+    # --- Group jets by event ---
+    evt_ids, evt_start, evt_counts = np.unique(
+        jets_sorted[:, 0], return_index=True, return_counts=True
+    )
+    num_events = len(evt_ids)
 
-        # Sort constituents by pT (column 4), remove PiD and select the top n_constits
-        jet_constits = jet_constits[np.argsort(-jet_constits[:, 4])]
-        jet_constits[:, 3] = (
-            jet_btag  # Replace constituent pid with btag info of corresponding jet
-        )
-        num_constits = min(len(jet_constits), n_constits)
-        start_idx = jet_idx * n_constits
-        end_idx = start_idx + num_constits
+    # Pre-allocate output arrays:
+    jets_out = np.zeros((num_events, n_jets, jets.shape[1]), dtype=jets.dtype)
+    constits_out = np.zeros(
+        (num_events, n_jets * n_constits, constituents.shape[1]),
+        dtype=constituents.dtype,
+    )
 
-        selected_constits[start_idx:end_idx, :] = jet_constits[:num_constits]
-        selected_constits[start_idx:end_idx, 1] = jet_id  # Retain jet ID
+    # Process each event:
+    for i, evt_id in enumerate(evt_ids):
+        # --- Select jets for this event ---
+        start_j = evt_start[i]
+        count_j = evt_counts[i]
+        evt_jets = jets_sorted[start_j : start_j + count_j]
+        n_used_jets = min(n_jets, evt_jets.shape[0])
+        jets_out[i, :n_used_jets, :] = evt_jets[:n_used_jets]
 
-    return selected_jets, selected_constits
+        # --- Extract constituents for this event ---
+        left_c = np.searchsorted(constits_sorted[:, 0], evt_id, side="left")
+        right_c = np.searchsorted(constits_sorted[:, 0], evt_id, side="right")
+        evt_constits = constits_sorted[left_c:right_c]
 
-
-def parallel_select_top_jets_and_constituents(
-    jets, constituents, n_jets=3, n_constits=15, n_workers=4, verbose: bool = False
-):
-    """
-    Parallelized selection of top jets and constituents.
-    """
-
-    if verbose:
-        print(
-            f"Selecting top {n_jets} jets and their top {n_constits} constituents in parallel..."
-        )
-
-    # Group jets and constituents by event ID
-    event_ids = np.unique(jets[:, 0])
-    event_data = []
-
-    for evt_id in event_ids:
-        evt_jets = jets[jets[:, 0] == evt_id]
-        evt_constits = constituents[constituents[:, 0] == evt_id]
-        event_data.append((evt_id, evt_jets, evt_constits))
-
-    # Parallel processing of events
-    if verbose:
-        print(
-            f"Processing {len(event_data)} events in parallel using {n_workers} workers..."
-        )
-    jet_results = []
-    constits_results = []
-    with ProcessPoolExecutor(max_workers=n_workers) as executor:
-        futures = [
-            executor.submit(process_event, *event, n_jets, n_constits)
-            for event in event_data
-        ]
-        for future in futures:
-            jets, constits = future.result()
-            jet_results.append(jets)
-            constits_results.append(constits)
-
-    # Combine results into single arrays
-    jet_selection = np.array(jet_results)
-    constits_selection = np.array(constits_results)
+        # Fill constituent slots sequentially
+        constit_idx = 0
+        for j in range(n_used_jets):
+            jet = jets_out[i, j, :]
+            jet_id = jet[1]
+            jet_btag = jet[3]
+            # Filter constituents that belong to this jet.
+            mask = evt_constits[:, 1] == jet_id
+            jet_constits = evt_constits[mask]
+            n_used_constits = min(n_constits, jet_constits.shape[0])
+            # Fill the flat constituent array
+            constits_out[i, constit_idx : constit_idx + n_used_constits, :] = (
+                jet_constits[:n_used_constits]
+            )
+            # Ensure correct jet id and btag
+            constits_out[i, constit_idx : constit_idx + n_used_constits, 1] = jet_id
+            constits_out[i, constit_idx : constit_idx + n_used_constits, 3] = jet_btag
+            constit_idx += n_constits  # Move to next jet slot
 
     if verbose:
-        print(
-            f"shape of jet_selection: {jet_selection.shape}\nshape of constits_selection: {constits_selection.shape}"
-        )
+        print(f"Jets shape after selection: {jets_out.shape}")
+        print(f"Constitutents shape after selection: {constits_out.shape}")
 
-    return jet_selection, constits_selection
+    return jets_out, constits_out
 
 
 def process_and_save_tensors(
@@ -248,12 +227,12 @@ def process_and_save_tensors(
             )
 
     # Parallel processing for top jets and constituents
-    if verbose:
-        print(
-            f"Selecting top {n_jets} jets and their top {n_constits} constituents in parallel..."
-        )
-    jet_selection, constits_selection = parallel_select_top_jets_and_constituents(
-        jets_norm, constituents_norm, n_jets, n_constits, n_workers
+    # if verbose:
+    #     print(
+    #         f"Selecting top {n_jets} jets and their top {n_constits} constituents in parallel..."
+    #     )
+    jet_selection, constits_selection = select_top_jets_and_constituents(
+        jets_norm, constituents_norm, n_jets, n_constits, verbose
     )
     if verbose:
         print(
@@ -302,12 +281,14 @@ def process_and_save_tensors(
 
 def preproc_inputs(paths, config, keyword, verbose: bool = False):
     # Load data from files whose names start with 'bkg'
-    input_path = os.path.join(paths["data_path"], config.file_type, "tensors", "processed")
+    input_path = os.path.join(
+        paths["data_path"], config.file_type, "tensors", "processed"
+    )
 
     try:
         events_tensor, jets_tensor, constituents_tensor = helper.load_tensors(
-                input_path, keyword
-            )
+            input_path, keyword
+        )
     except ValueError as e:
         print(e)
         sys.exit(1)

@@ -40,7 +40,7 @@ def fit(
     optimizer,
 ):
     """This function trains the model on the train set. It computes the losses and does the backwards propagation, and updates the optimizer as well.
-    
+
     Args:
         config (dataClass): Base class selecting user inputs
         model (modelObject): The model you wish to train
@@ -48,7 +48,7 @@ def fit(
         loss (lossObject): Defines the loss function used to train the model
         reg_param (float): Determines proportionality constant to balance different components of the loss.
         optimizer (torch.optim): Chooses optimizer for gradient descent.
-    
+
     Returns:
         list, model object: Training losses, Epoch_loss and trained model
     """
@@ -60,7 +60,7 @@ def fit(
     running_loss = 0.0
 
     for idx, batch in enumerate(tqdm(dataloader)):
-        
+
         inputs, labels = batch
         # Set previous gradients to zero
         optimizer.zero_grad()
@@ -96,13 +96,13 @@ def fit(
 
 def validate(config, model, dataloader, loss_fn, reg_param):
     """Function used to validate the training. Not necessary for doing compression, but gives a good indication of wether the model selected is a good fit or not.
-    
+
     Args:
         model (modelObject): Defines the model one wants to validate. The model used here is passed directly from `fit()`.
         test_dl (torch.DataLoader): Defines the batched data which the model is validated on
         model_children (list): List of model parameters
         reg_param (float): Determines proportionality constant to balance different components of the loss.
-    
+
     Returns:
         float: Validation loss
     """
@@ -115,7 +115,7 @@ def validate(config, model, dataloader, loss_fn, reg_param):
 
     with torch.no_grad():
         for idx, batch in enumerate(tqdm(dataloader)):
-    
+
             inputs, labels = batch
 
             out = helper.call_forward(model, inputs)
@@ -142,7 +142,7 @@ def validate(config, model, dataloader, loss_fn, reg_param):
 
 def seed_worker(worker_id):
     """PyTorch implementation to fix the seeds
-    
+
     Args:
         worker_id ():
     """
@@ -152,12 +152,8 @@ def seed_worker(worker_id):
 
 
 def train(
-    events_train,
-    jets_train,
-    constituents_train,
-    events_val,
-    jets_val,
-    constituents_val,
+    data,
+    labels,
     output_path,
     config,
     verbose: bool = False,
@@ -167,37 +163,21 @@ def train(
         and it is the `torch.utils.data.DataLoader` doing the splitting.
         Applying either `EarlyStopping` or `LR Scheduler` is also done here, all based on their respective `config` arguments.
         For reproducibility, the seeds can also be fixed in this function.
-    
+
     Args:
         model (modelObject): The model you wish to train
         data (Tuple): Tuple containing the training and validation data
+        labels (Tuple): Tuple containing the training and validation labels
         project_path (string): Path to the project directory
         config (dataClass): Base class selecting user inputs
-    
+
     Returns:
         modelObject: fully trained model ready to perform compression and decompression
     """
 
-    if verbose:
-        print("Events - Training set size:         ", events_train.size(0))
-        print("Events - Validation set size:       ", events_val.size(0))
-        print("Jets - Training set size:           ", jets_train.size(0))
-        print("Jets - Validation set size:         ", jets_val.size(0))
-        print("Constituents - Training set size:   ", constituents_train.size(0))
-        print("Constituents - Validation set size: ", constituents_val.size(0))
-
     # Get the device and move tensors to the device
     device = helper.get_device()
 
-    labeled_data = (
-        events_train,
-        jets_train,
-        constituents_train,
-        events_val,
-        jets_val,
-        constituents_val,
-    )
-    
     (
         events_train,
         jets_train,
@@ -205,34 +185,16 @@ def train(
         events_val,
         jets_val,
         constituents_val,
-    ) = [
-        x.to(device)
-        for x in labeled_data
-    ]
-
-    # Split data and labels
-    if verbose:
-        print("Splitting data and labels")
-    data, labels = helper.data_label_split(labeled_data)
-
-    # Reshape tensors to pass to conv layers
-    (
-    events_train,
-    jets_train,
-    constituents_train,
-    events_val,
-    jets_val,
-    constituents_val,
-    ) = data
+    ) = [x.to(device) for x in data]
 
     (
-    events_train_label,
-    jets_train_label,
-    constituents_train_label,
-    events_val_label,
-    jets_val_label,
-    constituents_val_label,
-    ) = labels
+        events_train_label,
+        jets_train_label,
+        constituents_train_label,
+        events_val_label,
+        jets_val_label,
+        constituents_val_label,
+    ) = [x.to(device) for x in labels]
 
     # Reshape tensors to pass to conv layers
     if "ConvVAE" in config.model_name:
@@ -245,18 +207,33 @@ def train(
             constituents_val,
         ) = [
             x.unsqueeze(1).float()
-            for x in [events_train, jets_train, constituents_train, events_val, jets_val, constituents_val]
+            for x in [
+                events_train,
+                jets_train,
+                constituents_train,
+                events_val,
+                jets_val,
+                constituents_val,
+            ]
         ]
 
-        data = (
-            events_train,
-            jets_train,
-            constituents_train,
-            events_val,
-            jets_val,
-            constituents_val,
-        )
-    
+    data = (
+        events_train,
+        jets_train,
+        constituents_train,
+        events_val,
+        jets_val,
+        constituents_val,
+    )
+    labels = (
+        events_train_label,
+        jets_train_label,
+        constituents_train_label,
+        events_val_label,
+        jets_val_label,
+        constituents_val_label,
+    )
+
     # Create datasets
     ds = helper.create_datasets(*data, *labels)
 
@@ -274,8 +251,13 @@ def train(
         print("Events - Validation set labels shape:       ", events_val_label.shape)
         print("Jets - Training set labels shape:           ", jets_train_label.shape)
         print("Jets - Validation set labels shape:         ", jets_val_label.shape)
-        print("Constituents - Training set labels shape:   ", constituents_train_label.shape)
-        print("Constituents - Validation set labels shape: ", constituents_val_label.shape)
+        print(
+            "Constituents - Training set labels shape:   ",
+            constituents_train_label.shape,
+        )
+        print(
+            "Constituents - Validation set labels shape: ", constituents_val_label.shape
+        )
 
     # Calculate the input shapes to initialize the model
     in_shape = helper.calculate_in_shape(data, config)
@@ -290,7 +272,7 @@ def train(
         else:
             print("Model initialized using default PyTorch initialization")
         print(f"Model architecture:\n{model}")
-    
+
     model = model.to(device)
     if verbose:
         print(f"Device used for training: {device}")
@@ -340,11 +322,23 @@ def train(
         ]
     else:
         train_dl_list = [
-            DataLoader(ds, batch_size=config.batch_size, shuffle=False, drop_last=True, num_workers=config.parallel_workers,)
+            DataLoader(
+                ds,
+                batch_size=config.batch_size,
+                shuffle=False,
+                drop_last=True,
+                num_workers=config.parallel_workers,
+            )
             for ds in [ds["events_train"], ds["jets_train"], ds["constituents_train"]]
         ]
         valid_dl_list = [
-            DataLoader(ds, batch_size=config.batch_size, shuffle=False, drop_last=True, num_workers=config.parallel_workers,)
+            DataLoader(
+                ds,
+                batch_size=config.batch_size,
+                shuffle=False,
+                drop_last=True,
+                num_workers=config.parallel_workers,
+            )
             for ds in [ds["events_val"], ds["jets_val"], ds["constituents_val"]]
         ]
     # Unpacking the DataLoader lists
@@ -472,6 +466,27 @@ def train(
 
     end = time.time()
 
+    # Run a final forward pass on training data to get final latent space representation
+    # Output Lists
+    mu_data = []
+    logvar_data = []
+    z0_data = []
+    zk_data = []
+    log_det_jacobian_data = []
+
+    with torch.no_grad():
+        for idx, batch in enumerate(tqdm(train_dl)):
+            inputs, labels = batch
+
+            out = helper.call_forward(model, inputs)
+            recon, mu, logvar, ldj, z0, zk = out
+
+            mu_data.append(mu.detach().cpu().numpy())
+            logvar_data.append(logvar.detach().cpu().numpy())
+            log_det_jacobian_data.append(ldj.detach().cpu().numpy())
+            z0_data.append(z0.detach().cpu().numpy())
+            zk_data.append(zk.detach().cpu().numpy())
+
     # Saving activations values
     if config.activation_extraction:
         activations = diagnostics.dict_to_square_matrix(model.get_activations())
@@ -492,9 +507,66 @@ def train(
         np.array(val_loss),
     )
 
-    helper.save_loss_components(loss_data=train_loss_data, component_names=loss_fn.component_names, suffix="train", save_dir=save_dir)
-    helper.save_loss_components(loss_data=val_loss_data, component_names=loss_fn.component_names, suffix="val", save_dir=save_dir)
-    
+    # Convert all the data to numpy arrays
+    (
+        mu_data,
+        logvar_data,
+        z0_data,
+        zk_data,
+        log_det_jacobian_data,
+    ) = [
+        np.array(x)
+        for x in [
+            mu_data,
+            logvar_data,
+            z0_data,
+            zk_data,
+            log_det_jacobian_data,
+        ]
+    ]
+
+    # Reshape the data
+    (mu_data, logvar_data, z0_data, zk_data) = [
+        x.reshape(x.shape[0] * x.shape[1], *x.shape[2:])
+        for x in [mu_data, logvar_data, z0_data, zk_data]
+    ]
+
+    # Save all the data
+    save_dir = os.path.join(output_path, "results")
+    np.save(
+        os.path.join(save_dir, "train_mu_data.npy"),
+        mu_data,
+    )
+    np.save(
+        os.path.join(save_dir, "train_logvar_data.npy"),
+        logvar_data,
+    )
+    np.save(
+        os.path.join(save_dir, "train_z0_data.npy"),
+        z0_data,
+    )
+    np.save(
+        os.path.join(save_dir, "train_zk_data.npy"),
+        zk_data,
+    )
+    np.save(
+        os.path.join(save_dir, "train_log_det_jacobian_data.npy"),
+        log_det_jacobian_data,
+    )
+
+    helper.save_loss_components(
+        loss_data=train_loss_data,
+        component_names=loss_fn.component_names,
+        suffix="train",
+        save_dir=save_dir,
+    )
+    helper.save_loss_components(
+        loss_data=val_loss_data,
+        component_names=loss_fn.component_names,
+        suffix="val",
+        save_dir=save_dir,
+    )
+
     if verbose:
         print("Loss data saved to path: ", save_dir)
 

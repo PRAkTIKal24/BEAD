@@ -318,7 +318,7 @@ class ConvVAE(ConvAE):
         out, mean, logvar = self.encode(x)
         z = self.reparameterize(mean, logvar)
         out = self.decode(z)
-        return out, mean, logvar, self.ldj, z, z
+        return out, mean, logvar, z, z, z
 
 
 class Planar_ConvVAE(ConvVAE):

@@ -1,450 +1,503 @@
-# Copyright 2022 Baler Contributors
-
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-
-#     http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+# Description: This file contains a function to generate plots for training epoch loss data and loss component data for train, val and test sets based on what files exist in the output directory.
 import os
-
+import numpy as np
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib.patches as mpatches
 from tqdm.rich import tqdm
 
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from sklearn.metrics import roc_curve, auc
+from sklearn.neighbors import NearestNeighbors
+import trimap
 
-def loss_plot(path_to_loss_data, output_path, config):
-    """This function Plots the loss from the training and saves it
-
-    Args:
-        path_to_loss_data (string): Path to file containing loss plot data generated during training
-        output_path (path): Directory path to which the loss plot is saved
-        config (dataclass): The config class containing attributes set in the config file
+def plot_losses(output_dir, save_dir, config, verbose: bool = False):
     """
-    loss_data = np.load(path_to_loss_data)
-    str_list = ["Epochs:", "Model Name:", "Reg. Param:", "lr:", "BS:"]
+    Generates plots for training epoch loss data and loss component data for train, val and test sets based on what files exist in the output directory.
 
-    train_loss = loss_data[0]
-    val_loss = loss_data[1]
-    conf_list = [
-        1,
-        #len(train_loss),
-        config.model_name,
-        config.reg_param,
-        config.lr,
-        config.batch_size,
-    ]
+    Parameters:
+        output_dir (str): The path to the directory containing output .npy files.
+        save_dir (str): The path to the directory where the plots will be saved.
+        config: A config object that defines user choices.
+        verbose (bool): If True, print progress messages.
 
-    plt.figure(figsize=(10, 7))
-    plt.title("Loss plot")
-    plt.plot(train_loss, color="orange", label="Train Loss")
-    if config.test_size:
-        plt.plot(val_loss, color="red", label="Validation Loss")
-    for i in range(len(conf_list)):
-        plt.plot([], [], " ", label=str_list[i] + " " + str(conf_list[i]))
-    plt.xlabel("Epochs")
-    plt.yscale("log")
-    plt.ylabel("Loss")
-    plt.legend(loc="best")
-    plt.savefig(os.path.join(output_path, "plots", "Loss_plot.pdf"))
-    # plt.show()
+    """
+    if verbose:
+        print("Making Loss Plots...")
+    # --------- Plot Train & Validation Epoch Losses ---------
+    train_loss_file = os.path.join(output_dir, "train_epoch_loss_data.npy")
+    val_loss_file = os.path.join(output_dir, "val_epoch_loss_data.npy")
+
+    if os.path.exists(train_loss_file) and os.path.exists(val_loss_file):
+        # Load epoch-wise loss arrays (assumed 1D arrays with one value per epoch)
+        train_epoch_loss = np.load(train_loss_file)
+        val_epoch_loss = np.load(val_loss_file)
+
+        epochs = np.arange(1, len(train_epoch_loss) + 1)
+
+        plt.figure(figsize=(8, 6))
+        plt.plot(epochs, train_epoch_loss, label="Train Loss", marker="o")
+        plt.plot(epochs, val_epoch_loss, label="Validation Loss", marker="o")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title(config.project_name)
+        plt.legend()
+        plt.tight_layout()
+
+        # Save plot as PDF
+        plt.savefig(os.path.join(save_dir, "train_metrics.pdf"))
+        plt.close()
+    else:
+        raise FileNotFoundError(
+            "Epoch loss data files not found. Make sure to run the train mode first."
+        )
+
+    # --------- Plot Loss Components ---------
+    # Define the prefixes and categories of interest
+    prefixes = ["loss", "reco", "kl", "emd", "l1", "l2"]
+    categories = ["train", "val", "test"]
+
+    # Iterate over each category
+    for cat in categories:
+        files_for_cat = []
+        # For each prefix, build the file path and check if it exists.
+        for prefix in prefixes:
+            file_path = os.path.join(output_dir, f"{prefix}_{cat}.npy")
+            if os.path.exists(file_path):
+                files_for_cat.append(file_path)
+
+        # If any files are found for the current category, process and plot them.
+        if files_for_cat:
+            plt.figure(figsize=(8, 6))
+
+            for file in files_for_cat:
+                data = np.load(file)
+                num_epochs = config.epochs
+                total_length = len(data)
+
+                # Determine the number of events per epoch.
+                # Assumes that total_length divides evenly by config.epochs.
+                events_per_epoch = total_length // num_epochs
+
+                avg_losses = []
+                for epoch in range(num_epochs):
+                    start_idx = epoch * events_per_epoch
+                    end_idx = start_idx + events_per_epoch
+                    epoch_data = data[start_idx:end_idx]
+                    avg_losses.append(np.mean(epoch_data))
+                avg_losses = np.array(avg_losses)
+
+                epochs = np.arange(1, num_epochs + 1)
+                # Use the file prefix (without the _category.npy) as the label.
+                base_name = os.path.basename(file)
+                label = os.path.splitext(base_name)[0]
+
+                plt.plot(epochs, avg_losses, label=label, marker="o")
+
+            plt.xlabel("Epoch")
+            plt.ylabel("Average Loss")
+            plt.title(config.project_name)
+            plt.legend()
+            plt.tight_layout()
+
+            # Save the plot to a file with category in its name.
+            save_filename = os.path.join(save_dir, f"loss_components_{cat}.pdf")
+            plt.savefig(save_filename)
+            plt.close()
+
+        else:
+            print(
+                f"No loss component data files found for {cat} set. Make sure to run the appropriate {cat} mode first."
+            )
+
+    if verbose:
+        print("Loss plots generated successfully and saved to: ", save_dir)
 
 
-def get_index_to_cut(column_index, cut, array):
-    """Given an array column index and a threshold, this function returns the index of the
-        entries not passing the threshold.
+def reduce_dim_subsampled(data, method="trimap", n_components=2, n_samples=None, verbose=False):
+    """
+    Reduce the dimensionality of the input data using the specified method.
+    Supports subsampling and PCA preprocessing for large datasets.
 
-    Args:
-        column_index (int): The index for the column where cuts should be applied
-        cut (float): Threshold for which values below will have the whole entry removed
-        array (np.array): The full array to be edited
+    Parameters:
+        data (np.ndarray): Input data of shape (n_samples, n_features).
+        method (str): Dimensionality reduction method ("pca", "tsne", or "trimap").
+        n_components (int): Number of dimensions to reduce to.
+        n_samples (int): Number of samples to use for subsampling. If None, use all data.
+        verbose (bool): If True, print progress messages.
 
     Returns:
-        _type_: returns the index of the rows to be removed
+        reduced (np.ndarray): Data reduced to n_components dimensions.
+        method_used (str): The method used for dimensionality reduction.
     """
-    indices_to_cut = np.argwhere(array[column_index] < cut).flatten()
-    return indices_to_cut
-
-
-def plot_box_and_whisker(names, residual, pdf):
-    """Plots Box and Whisker plots of 1D data
-
-    Args:
-        project_path (string): The path to the project directory
-        config (dataclass): The config class containing attributes set in the config file
-    """
-    column_names = [i.split(".")[-1] for i in names]
-
-    fig1, ax1 = plt.subplots()
-
-    boxes = ax1.boxplot(list(residual), showfliers=False, vert=False)
-    whiskers = np.concatenate([item.get_xdata() for item in boxes["whiskers"]])
-    edges = max([abs(min(whiskers)), max(whiskers)])
-
-    ax1.set_yticks(np.arange(1, len(column_names) + 1, 1))
-    ax1.set_yticklabels(column_names)
-
-    ax1.grid()
-    fig1.tight_layout()
-    ax1.set_xlabel("Residual")
-    ax1.set_xlim(-edges - edges * 0.1, edges + edges * 0.1)
-    pdf.savefig()
-
-
-def plot_1D(output_path: str, config):
-    """General plotting for 1D data, for example data from a '.csv' file. This function generates a pdf
-        document where each page contains the before/after performance
-        of each column of the 1D data
-
-    Args:
-        output_path (path): The path to the project directory
-        config (dataclass): The config class containing attributes set in the config file
-    """
-
-    before_path = config.input_path
-    after_path = os.path.join(output_path, "decompressed_output", "decompressed.npz")
-
-    before = np.transpose(np.load(before_path)["data"])
-    after = np.transpose(np.load(after_path)["data"])
-    names = np.load(config.input_path)["names"]
-
-    index_to_cut = get_index_to_cut(3, 1e-6, before)
-    before = np.delete(before, index_to_cut, axis=1)
-    after = np.delete(after, index_to_cut, axis=1)
-
-    response = np.divide(np.subtract(after, before), before) * 100
-    residual = np.subtract(after, before)
-
-    with PdfPages(os.path.join(output_path, "plotting", "comparison.pdf")) as pdf:
-        plot_box_and_whisker(names, residual, pdf)
-        fig = plt.figure(constrained_layout=True, figsize=(10, 4))
-        subfigs = fig.subfigures(1, 2, wspace=0.07, width_ratios=[1, 1])
-
-        axsLeft = subfigs[0].subplots(2, 1, sharex=True)
-        ax1 = axsLeft[0]
-        ax3 = axsLeft[1]
-        axsRight = subfigs[1].subplots(2, 1, sharex=False)
-        ax2 = axsRight[0]
-        ax4 = axsRight[1]
-
-        number_of_columns = len(names)
-
-        print("=== Plotting ===")
-
-        for index, column in enumerate(tqdm(names)):
-            column_name = column.split(".")[-1]
-            rms = np.sqrt(np.mean(np.square(response[index])))
-            residual_RMS = np.sqrt(np.mean(np.square(residual[index])))
-
-            x_min = min(before[index] + after[index])
-            x_max = max(before[index] + after[index])
-            x_diff = abs(x_max - x_min)
-
-            # Before Histogram
-            counts_before, bins_before = np.histogram(
-                before[index],
-                bins=np.linspace(x_min - 0.1 * x_diff, x_max + 0.1 * x_diff, 200),
-            )
-            ax1.hist(
-                bins_before[:-1], bins_before, weights=counts_before, label="Before"
-            )
-
-            # After Histogram
-            counts_after, bins_after = np.histogram(
-                after[index],
-                bins=np.linspace(x_min - 0.1 * x_diff, x_max + 0.1 * x_diff, 200),
-            )
-            ax1.hist(
-                bins_after[:-1],
-                bins_after,
-                weights=counts_after,
-                label="After",
-                histtype="step",
-            )
-
-            ax1.set_ylabel("Counts", ha="right", y=1.0)
-            ax1.set_yscale("log")
-            ax1.legend(loc="best")
-            ax1.set_xlim(x_min - 0.1 * x_diff, x_max + 0.1 * x_diff)
-            ax1.set_ylim(ymin=1)
-
-            data_bin_centers = bins_after[:-1] + (bins_after[1:] - bins_after[:-1]) / 2
-            ax3.scatter(
-                data_bin_centers, (counts_after - counts_before), marker="."
-            )  # FIXME: Dividing by zero
-            ax3.axhline(y=0, linewidth=0.2, color="black")
-            ax3.set_xlabel(f"{column_name}", ha="right", x=1.0)
-            ax3.set_ylim(
-                -max(counts_after - counts_before)
-                - 0.05 * max(counts_after - counts_before),
-                max(counts_after - counts_before)
-                + 0.05 * max(counts_after - counts_before),
-            )
-            ax3.set_ylabel("Residual")
-
-            # Response Histogram
-            counts_response, bins_response = np.histogram(
-                response[index], bins=np.arange(-20, 20, 0.1)
-            )
-            ax2.hist(
-                bins_response[:-1],
-                bins_response,
-                weights=counts_response,
-                label="Response",
-            )
-            ax2.axvline(
-                np.mean(response[index]),
-                color="k",
-                linestyle="dashed",
-                linewidth=1,
-                label=f"Mean {round(np.mean(response[index]),4)} %",
-            )
-            ax2.plot([], [], " ", label=f"RMS: {round(rms,4)} %")
-
-            ax2.set_xlabel(f"{column_name} Response [%]", ha="right", x=1.0)
-            ax2.set_ylabel("Counts", ha="right", y=1.0)
-            ax2.legend(loc="best", bbox_to_anchor=(1, 1.05))
-
-            # Residual Histogram
-            counts_residual, bins_residual = np.histogram(
-                residual[index], bins=np.arange(-1, 1, 0.01)
-            )
-            ax4.hist(
-                bins_residual[:-1],
-                bins_residual,
-                weights=counts_residual,
-                label="Residual",
-            )
-            ax4.axvline(
-                np.mean(residual[index]),
-                color="k",
-                linestyle="dashed",
-                linewidth=1,
-                label=f"Mean {round(np.mean(residual[index]),6)}",
-            )
-            ax4.plot([], [], " ", label=f"RMS: {round(residual_RMS,6)}")
-            ax4.plot([], [], " ", label=f"Max: {round(max(residual[index]),6)}")
-            ax4.plot([], [], " ", label=f"Min: {round(min(residual[index]),6)}")
-
-            ax4.set_xlabel(f"{column_name} Residual", ha="right", x=1.0)
-            ax4.set_ylabel("Counts", ha="right", y=1.0)
-            ax4.set_xlim(-1, 1)
-            ax4.legend(loc="best", bbox_to_anchor=(1, 1.05))
-
-            pdf.savefig()
-            ax2.clear()
-            ax1.clear()
-            ax3.clear()
-            ax4.clear()
-
-
-def plot_2D_old(project_path, config):
-    """General plotting for 2D data, for example 2D arraysfrom computational fluid
-        dynamics or other image like data. This function generates a pdf
-        document where each page contains the before/after performance
-        of each column of the 1D data
-
-    Args:
-        project_path (string): The path to the project directory
-        config (dataclass): The config class containing attributes set in the config file
-    """
-
-    data = np.load(config.input_path)["data"]
-    data_decompressed = np.load(project_path + "/decompressed_output/decompressed.npz")[
-        "data"
-    ]
-
-    if data.shape[0] > 1:
-        num_tiles = data.shape[0]
+    # Subsampling for large datasets
+    if n_samples is not None and data.shape[0] > n_samples:
+        if verbose:
+            print(f"Subsampling {data.shape[0]} points to {n_samples} points...")
+        indices = np.random.choice(data.shape[0], n_samples, replace=False)
+        data = data[indices]
     else:
-        num_tiles = 1
+        indices = np.arange(data.shape[0])  # Use all data
 
-    if config.model_type == "convolutional" and config.model_name == "Conv_AE_3D":
-        data_decompressed = data_decompressed.reshape(
-            data_decompressed.shape[0] * data_decompressed.shape[2],
-            1,
-            data_decompressed.shape[3],
-            data_decompressed.shape[4],
-        )
+    # PCA preprocessing for high-dimensional data
+    if data.shape[1] > 50:
+        if verbose:
+            print(f"Applying PCA to reduce from {data.shape[1]} to 50 dimensions...")
+        data = PCA(n_components=50).fit_transform(data)
 
-    print("=== Plotting ===")
-    for ind in trange(num_tiles):
-        if config.model_type == "convolutional":
-            tile_data_decompressed = data_decompressed[ind][0] * 0.04 * 1000
-        elif config.model_type == "dense":
-            tile_data_decompressed = data_decompressed[ind] * 0.04 * 1000
-        tile_data = data[ind] * 0.04 * 1000
-
-        diff = tile_data - tile_data_decompressed
-
-        fig, axs = plt.subplots(
-            1, 3, figsize=(29.7 * (1 / 2.54), 10 * (1 / 2.54)), sharey=True
-        )
-        axs[0].set_title("Original", fontsize=11)
-        im1 = axs[0].imshow(
-            tile_data,
-            vmin=-0.5,
-            vmax=3.0,
-            cmap="CMRmap",
-            interpolation="nearest",
-        )
-        axis = axs[0]
-        axis.tick_params(axis="both", which="major")
-        plt.ylim(0, 50)
-        plt.xlim(0, 50)
-        axis.set_ylabel("y [m]")
-        axis.set_xlabel("x [m]")
-        axis.set_xticks([10, 20, 30, 40, 50])
-        axis.set_xticklabels([0.4, 0.8, 1.2, 1.6, 2.0])
-        axis.set_yticks([10, 20, 30, 40, 50])
-        axis.set_yticklabels([0.4, 0.8, 1.2, 1.6, 2.0])
-
-        axs[1].set_title("Reconstructed", fontsize=11)
-        im2 = axs[1].imshow(
-            tile_data_decompressed,
-            vmin=-0.5,
-            vmax=3.0,
-            cmap="CMRmap",
-            interpolation="nearest",
-        )
-        axis = axs[1]
-        axis.tick_params(axis="both", which="major")
-        plt.ylim(0, 50)
-        plt.xlim(0, 50)
-        axis.set_ylabel("y [m]")
-        axis.set_xlabel("x [m]")
-        axis.set_xticks([10, 20, 30, 40, 50])
-        axis.set_xticklabels([0.4, 0.8, 1.2, 1.6, 2.0])
-        axis.set_yticks([10, 20, 30, 40, 50])
-        axis.set_yticklabels([0.4, 0.8, 1.2, 1.6, 2.0])
-
-        axs[2].set_title("Difference", fontsize=11)
-        im3 = axs[2].imshow(
-            diff,
-            vmin=-0.5,
-            vmax=3.0,
-            cmap="CMRmap",
-            interpolation="nearest",
-        )
-        # cb2 = plt.colorbar(im3, ax=[axs[2]], location="right", fraction=0.046, pad=0.1)
-        # cb2.set_label("x-velocity [mm/s]")
-        axis = axs[2]
-        axis.tick_params(axis="both", which="major")
-        plt.ylim(0, 50)
-        plt.xlim(0, 50)
-        axis.set_ylabel("y [m]")
-        axis.set_xlabel("x [m]")
-        axis.set_xticks([10, 20, 30, 40, 50])
-        axis.set_xticklabels([0.4, 0.8, 1.2, 1.6, 2.0])
-        axis.set_yticks([10, 20, 30, 40, 50])
-        axis.set_yticklabels([0.4, 0.8, 1.2, 1.6, 2.0])
-
-        fig.subplots_adjust(right=0.8)
-        cbar_ax = fig.add_axes([0.815, 0.2, 0.02, 0.59])
-        cb2 = fig.colorbar(im3, cax=cbar_ax, location="right", aspect=10)
-        cb2.set_label("x-velocity [m/s]")
-        # fig.colorbar(im3, cax=cbar_ax)
-
-        fig.savefig(
-            project_path + "/plotting/CFD" + str(ind) + ".png", bbox_inches="tight"
-        )
-        # sys.exit()
-
-    # import imageio.v2 as imageio
-
-    # with imageio.get_writer(project_path + "/plotting/CFD.gif", mode="I") as writer:
-    #     for i in range(0, 60):
-    #         path = project_path + "/plotting/CFD" + str(i) + ".jpg"
-    #         print(path)
-    #         image = imageio.imread(path)
-    #         writer.append_data(image)
-
-
-def plot_2D(project_path, config):
-    import sys
-
-    """General plotting for 2D data, for example 2D arraysfrom computational fluid
-        dynamics or other image like data. This function generates a pdf
-        document where each page contains the before/after performance
-        of each column of the 1D data
-
-    Args:
-        project_path (string): The path to the project directory
-        config (dataclass): The config class containing attributes set in the config file
-    """
-
-    data = np.load(config.input_path)["data"]
-    data_decompressed = np.load(project_path + "/decompressed_output/decompressed.npz")[
-        "data"
-    ]
-
-    if config.convert_to_blocks:
-        data_decompressed = data_decompressed.reshape(
-            data.shape[0], data.shape[1], data.shape[2]
-        )
-
-    if data.shape[0] > 1:
-        num_tiles = data.shape[0]
+    # Apply the selected dimensionality reduction method
+    method = method.lower()
+    if method == "pca":
+        if verbose:
+            print("Reducing to 2 dimensions using PCA...")
+        reducer = PCA(n_components=n_components)
+        reduced = reducer.fit_transform(data)
+        method_used = "pca"
+    elif method == "tsne":
+        if verbose:
+            print("Reducing to 2 dimensions using t-SNE...")
+        reducer = TSNE(n_components=n_components, random_state=42)
+        reduced = reducer.fit_transform(data)
+        method_used = "t-sne"
+    elif method == "trimap":
+        if verbose:
+            print("Reducing to 2 dimensions using TriMap...")
+        reducer = trimap.TRIMAP(n_dims=n_components)
+        reduced = reducer.fit_transform(data)
+        method_used = "trimap"
     else:
-        num_tiles = 1
+        raise ValueError(f"Invalid method: {method}. Must be 'pca', 'tsne', or 'trimap'.")
 
-    # if config.model_type == "convolutional" and config.model_name == "Conv_AE_3D":
-    #     data_decompressed = data_decompressed.reshape(
-    #         data_decompressed.shape[0] * data_decompressed.shape[2],
-    #         1,
-    #         data_decompressed.shape[3],
-    #         data_decompressed.shape[4],
-    #     )
-
-    print("=== Plotting ===")
-    for ind in tqdm(range(num_tiles)):
-        # if config.model_type == "convolutional":
-        #     tile_data_decompressed = data_decompressed[ind][0]
-        # elif config.model_type == "dense":
-        #     tile_data_decompressed = data_decompressed[ind][0]
-        tile_data = data[ind]
-        tile_data_decompressed = data_decompressed[ind]
-
-        diff = tile_data - tile_data_decompressed
-
-        max_value = np.amax([np.amax(tile_data), np.amax(tile_data_decompressed)])
-        min_value = np.amin([np.amin(tile_data), np.amin(tile_data_decompressed)])
-
-        fig, axs = plt.subplots(
-            1, 3, figsize=(29.7 * (1 / 2.54), 10 * (1 / 2.54)), sharey=True
-        )
-        axs[0].set_title("Original", fontsize=11)
-        im1 = axs[0].imshow(tile_data, vmax=max_value, vmin=min_value)
-        axs[1].set_title("Reconstructed", fontsize=11)
-        im2 = axs[1].imshow(tile_data_decompressed, vmax=max_value, vmin=min_value)
-        axs[2].set_title("Difference", fontsize=11)
-        im3 = axs[2].imshow(diff, vmax=max_value, vmin=min_value)
-
-        fig.subplots_adjust(right=0.8)
-        cbar_ax = fig.add_axes([0.815, 0.2, 0.02, 0.59])
-        cb2 = fig.colorbar(im3, cax=cbar_ax, location="right", aspect=10)
-
-        fig.savefig(
-            project_path + "/plotting/CFD" + str(ind) + ".png", bbox_inches="tight"
-        )
-        # sys.exit()
+    return reduced, method_used, indices
 
 
-def plot(output_path, config):
-    """Runs the appropriate plotting function based on the data dimension 1D or 2D
+def plot_latent_variables(config, paths, verbose=False):
+    prefixes = ["train_", "test_"]
+    
+    def reduce_dim(data):
+        if config.latent_space_size > 50:
+            if verbose:
+                print(f"Applying PCA to reduce latent space from {config.latent_space_size} to 50 dimensions...")
+            data = PCA(n_components=50).fit_transform(data)
+        
+        style = config.latent_space_plot_style.lower()
+        if style == "pca":
+            reducer = PCA(n_components=2)
+            method = "pca"
+        elif style == "tsne":
+            reducer = TSNE(n_components=2, random_state=42)
+            method = "t-sne"
+        elif style == "trimap":
+            reducer = trimap.TRIMAP(n_dims=2)
+            method = "trimap"
+        else:
+            raise ValueError(f"Invalid latent_space_plot_style: {style}. Must be 'pca', 'tsne', or 'trimap'.")
+        
+        if verbose:
+            print(f"Reducing to 2 dimensions using {method.upper()}...")
+        return reducer.fit_transform(data), method
 
-    Args:
-        output_path (path): The path to the project directory
-        config (dataclass): The config class containing attributes set in the config file
+    for prefix in prefixes:
+        # Construct file paths
+        label_path = os.path.join(paths["output_path"], "results", f"{prefix}{config.input_level}_label.npy")
+        gen_label_path = os.path.join(paths["data_path"], config.file_type, "tensors", "processed", f"{prefix}gen_label_{config.input_level}.npy")
+        z0_path = os.path.join(paths["output_path"], "results", f"{prefix}z0_data.npy")
+        zk_path = os.path.join(paths["output_path"], "results", f"{prefix}zk_data.npy")
+
+        # Check if required files exist
+        required_files = [gen_label_path, z0_path, zk_path]
+        if prefix == "test_":
+            required_files.append(label_path)  # Only test prefix requires label file
+
+        if not all(os.path.exists(f) for f in required_files):
+            if verbose:
+                print(f"Skipping {prefix} due to missing files")
+            continue
+
+        try:
+            gen_labels = np.load(gen_label_path)
+            z0 = np.load(z0_path)
+            zk = np.load(zk_path)
+            labels = np.load(label_path) if prefix == "test_" else None
+
+            # Determine minimum length among relevant arrays
+            if prefix == "train_":
+                min_length = min(len(gen_labels), len(z0), len(zk))
+            else:
+                min_length = min(len(gen_labels), len(z0), len(zk), len(labels))
+
+            # Clip arrays to min_length
+            gen_labels = gen_labels[:min_length]
+            z0 = z0[:min_length]
+            zk = zk[:min_length]
+            if prefix == "test_":
+                labels = labels[:min_length]
+
+            if prefix == "test_":
+                n_background = np.sum(labels == 0)
+                if len(gen_labels) != n_background:
+                    print(f"Skipping {prefix}: gen_label/label mismatch after clipping")
+                    continue
+
+        except Exception as e:
+            if verbose:
+                print(f"Error loading {prefix} files: {e}")
+            continue
+
+        # Define colors based on prefix
+        if prefix == "train_":
+            # Only Herwig, Pythia, and Sherpa classes for train prefix
+            colors = []
+            for i in range(len(gen_labels)):
+                if gen_labels[i] == 0: colors.append("green")
+                elif gen_labels[i] == 1: colors.append("blue")
+                elif gen_labels[i] == 2: colors.append("yellow")
+                else: colors.append("black")  # Fallback for unexpected labels
+        else:
+            # For test prefix, include signal (red) and background classes
+            colors = []
+            for i in range(n_background):
+                if gen_labels[i] == 0: colors.append("green")
+                elif gen_labels[i] == 1: colors.append("blue")
+                elif gen_labels[i] == 2: colors.append("yellow")
+                else: colors.append("black")
+            colors.extend(["red"] * (len(labels) - n_background))
+
+        # Plot latent variables
+        for data, latent_suffix in [(z0, "_z0"), (zk, "_zk")]:
+            if config.subsample_plot:
+                colors_z = []
+                reduced, method, indices = reduce_dim_subsampled(data, method=config.latent_space_plot_style, n_samples=config.subsample_size, verbose=verbose)
+                colors_z = [colors[i] for i in indices]
+            else:
+                reduced, method = reduce_dim(data)
+                colors_z = colors
+            plt.figure(figsize=(8,6))
+            plt.scatter(reduced[:,0], reduced[:,1], c=colors_z, alpha=0.7, edgecolors="w", s=60)
+            plt.title(f"{latent_suffix[1:].upper()} {method.upper()} Embedding ({prefix[:-1]})")
+            plt.xlabel("Component 1")
+            plt.ylabel("Component 2")
+            
+            # Create legend based on prefix
+            if prefix == "train_":
+                legend = [
+                    mpatches.Patch(color="green", label="Herwig"),
+                    mpatches.Patch(color="blue", label="Pythia"),
+                    mpatches.Patch(color="yellow", label="Sherpa")
+                ]
+            else:
+                legend = [
+                    mpatches.Patch(color="green", label="Herwig"),
+                    mpatches.Patch(color="blue", label="Pythia"),
+                    mpatches.Patch(color="yellow", label="Sherpa"),
+                    mpatches.Patch(color="red", label="Signal")
+                ]
+            plt.legend(handles=legend)
+            
+            save_path = os.path.join(paths["output_path"], "plots", "latent_space", 
+                                   f"{prefix[:-1]}{latent_suffix}.pdf")
+            plt.savefig(save_path, format="pdf")
+            plt.close()
+
+
+def plot_mu_logvar(config, paths, verbose=False):
+    prefixes = ["train_", "test_"]
+    
+    def reduce_dim(data):
+        if config.latent_space_size > 50:
+            data = PCA(n_components=50).fit_transform(data)
+        style = config.latent_space_plot_style.lower()
+        if style == "pca":
+            return PCA(n_components=2).fit_transform(data), "pca"
+        elif style == "tsne":
+            return TSNE(n_components=2, random_state=42).fit_transform(data), "t-sne"
+        elif style == "trimap":
+            return trimap.TRIMAP(n_dims=2).fit_transform(data), "trimap"
+        else:
+            raise ValueError("Invalid reduction method")
+
+    for prefix in prefixes:
+        mu_path = os.path.join(paths["output_path"], "results", f"{prefix}mu_data.npy")
+        logvar_path = os.path.join(paths["output_path"], "results", f"{prefix}logvar_data.npy")
+        label_path = os.path.join(paths["output_path"], "results", f"{prefix}{config.input_level}_label.npy")
+        gen_label_path = os.path.join(paths["data_path"], config.file_type, "tensors", "processed", f"{prefix}gen_label_{config.input_level}.npy")
+
+        # Check if required files exist
+        required_files = [mu_path, logvar_path, gen_label_path]
+        if prefix == "test_":
+            required_files.append(label_path)  # Only test prefix requires label file
+
+        if not all(os.path.exists(f) for f in required_files):
+            if verbose:
+                print(f"Skipping {prefix} due to missing files")
+            continue
+
+        try:
+            mu = np.load(mu_path)
+            logvar = np.load(logvar_path)
+            gen_labels = np.load(gen_label_path)
+            labels = np.load(label_path) if prefix == "test_" else None
+
+            # Determine minimum length among relevant arrays
+            if prefix == "train_":
+                min_length = min(len(gen_labels), len(mu), len(logvar))
+            else:
+                min_length = min(len(gen_labels), len(mu), len(logvar), len(labels))
+
+            # Clip arrays to min_length
+            gen_labels = gen_labels[:min_length]
+            mu = mu[:min_length]
+            logvar = logvar[:min_length]
+            if prefix == "test_":
+                labels = labels[:min_length]
+
+            if prefix == "test_":
+                n_background = np.sum(labels == 0)
+                if len(gen_labels) != n_background:
+                    print(f"Skipping {prefix}: gen_label/label mismatch after clipping")
+                    continue
+
+        except Exception as e:
+            if verbose:
+                print(f"Error loading {prefix} files: {e}")
+            continue
+
+        # Define colors based on prefix
+        if prefix == "train_":
+            # Only Herwig, Pythia, and Sherpa classes for train prefix
+            colors = []
+            for i in range(len(gen_labels)):
+                if gen_labels[i] == 0: colors.append("green")
+                elif gen_labels[i] == 1: colors.append("blue")
+                elif gen_labels[i] == 2: colors.append("yellow")
+                else: colors.append("black")
+        else:
+            # For test prefix, include signal (red) and background classes
+            colors = []
+            for i in range(n_background):
+                if gen_labels[i] == 0: colors.append("green")
+                elif gen_labels[i] == 1: colors.append("blue")
+                elif gen_labels[i] == 2: colors.append("yellow")
+                else: colors.append("black")
+            colors.extend(["red"] * (len(labels) - n_background))
+
+        # Plot latent means (mu)
+        if config.subsample_plot:
+            colors_z = []
+            reduced_mu, method, indices = reduce_dim_subsampled(mu, method=config.latent_space_plot_style, n_samples=config.subsample_size, verbose=verbose)
+            colors_z = [colors[i] for i in indices]
+        else:
+            reduced_mu, method = reduce_dim(mu)
+            colors_z = colors
+        plt.figure(figsize=(8,6))
+        plt.scatter(reduced_mu[:,0], reduced_mu[:,1], c=colors_z, alpha=0.7, edgecolors="w", s=60)
+        plt.title(f"Mu {method.upper()} Embedding ({prefix[:-1]})")
+        # Create legend based on prefix
+        if prefix == "train_":
+            legend = [
+                mpatches.Patch(color="green", label="Herwig"),
+                mpatches.Patch(color="blue", label="Pythia"),
+                mpatches.Patch(color="yellow", label="Sherpa")
+            ]
+        else:
+            legend = [
+                mpatches.Patch(color="green", label="Herwig"),
+                mpatches.Patch(color="blue", label="Pythia"),
+                mpatches.Patch(color="yellow", label="Sherpa"),
+                mpatches.Patch(color="red", label="Signal")
+            ]
+        plt.legend(handles=legend)
+        plt.savefig(os.path.join(paths["output_path"], "plots", "latent_space", 
+                               f"{config.project_name}_{prefix[:-1]}_mu.pdf"))
+        plt.close()
+
+        # Plot uncertainty
+        sigma = np.exp(0.5 * logvar)
+        uncertainty = np.mean(sigma, axis=1)
+        plt.figure(figsize=(8,6))
+        for color, values in zip(["green", "blue", "yellow", "red"], 
+                              [uncertainty[gen_labels == 0],
+                               uncertainty[gen_labels == 1],
+                               uncertainty[gen_labels == 2],
+                               uncertainty[len(gen_labels):] if prefix == "test_" else []]):
+            if len(values) > 0:
+                plt.hist(values, bins=30, alpha=0.6, color=color)
+        plt.title(f"Uncertainty Distribution ({prefix[:-1]})")
+        plt.savefig(os.path.join(paths["output_path"], "plots", "latent_space", 
+                               f"{prefix[:-1]}_uncertainty.pdf"))
+        plt.close()
+
+
+def plot_roc_curve(config, paths, verbose: bool = False):
     """
-    if config.data_dimension == 1:
-        plot_1D(output_path, config)
-    elif config.data_dimension == 2:
-        plot_2D(output_path, config)
+    Generates and saves ROC curves for available loss component files.
+
+    Parameters:
+      config (dataClass): An object with user defined config options
+      paths (dictionary): Dictionary of common paths used in the pipeline
+      verbose: If True, prints additional debug information.
+
+    """
+    # Load ground truth binary labels from 'label.npy'
+    label_path = os.path.join(
+        paths["output_path"], "results", config.input_level + "_label.npy"
+    )
+    output_dir = os.path.join(paths["output_path"], "results")
+    #check if the label file exists
+    if not os.path.exists(label_path):
+        raise FileNotFoundError(f"Label file not found: {label_path}")
+    else:
+        ground_truth = np.load(label_path)
+
+    # Ensure ground_truth is a 1D array
+    if ground_truth.ndim != 1:
+        raise ValueError("Ground truth labels must be a 1D array.")
+
+    # Define the loss component prefixes to search for.
+    loss_components = ["loss", "reco", "kl", "emd", "l1", "l2"]
+
+    # Iterate over each loss component and generate ROC curve.
+    plt.figure(figsize=(8, 6))
+
+    for component in loss_components:
+        file_path = os.path.join(output_dir, f"{component}_test.npy")
+
+        if not os.path.exists(file_path):
+            continue  # Skip if the file does not exist
+
+        # Load loss scores
+        data = np.load(file_path)
+
+        # Ensure that data is a 1D array (flatten if necessary).
+        if data.ndim > 1:
+            data = data.flatten()
+
+        # Check if the length of data matches the length of ground_truth
+        if len(data) != len(ground_truth):
+            raise ValueError(
+                f"Length mismatch: {file_path} has {len(data)} entries; "
+                f"ground truth has {len(ground_truth)} entries."
+            )
+
+        # Compute ROC curve and AUC.
+        fpr, tpr, thresholds = roc_curve(ground_truth, data)
+        roc_auc = auc(fpr, tpr)
+
+        # Plot the ROC curve.
+        plt.plot(fpr, tpr, label=f"{component.capitalize()}) AUC = {roc_auc:.2f}", lw=2)
+
+    plt.plot([0, 1], [0, 1], "k--", lw=2, label="Random Guess")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title(f"ROC Curve - {config.project_name}")
+    plt.legend(loc="lower right")
+    plt.tight_layout()
+
+    # Save the plot as a PDF file.
+    save_filename = os.path.join(paths["output_path"], "plots", "loss", "roc.pdf")
+    plt.savefig(save_filename)
+    plt.close()
+ plt.savefig(save_filename)
+    plt.close()

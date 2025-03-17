@@ -18,7 +18,7 @@ def normalize_jet_pj_custom(data):
     6: jet_phi          (to be normalized via "sin_cos" transformation)
 
     The output array will have 8 columns:
-    [event_id, jet_id, num_constituents_norm, b_tagged, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]    
+    [event_id, jet_id, num_constituents_norm, b_tagged, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]
 
     Args:
         data (np.ndarray): Input array of shape (N, 7).
