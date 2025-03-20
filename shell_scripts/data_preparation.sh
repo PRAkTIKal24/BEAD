@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKSPACE_NAME="physics_analysis"
+WORKSPACE_NAME="Kinsley_BEAD_Workspace"
 PROJECT_NAME="anomaly_detection"
 
 # Navigate to BEAD directory
