@@ -5,7 +5,10 @@ PROJECT_NAME="anomaly_detection"
 PLOT_TYPE=$1  # Optional argument: train_metrics, test_metrics, or all
 
 # Navigate to BEAD directory
-cd BEAD/bead
+if ! cd BEAD/bead; then
+    echo "Error: Directory BEAD/bead not found!"
+    exit 1
+fi
 
 # Generate plots based on the specified type
 if [ "$PLOT_TYPE" = "train_metrics" ]; then
