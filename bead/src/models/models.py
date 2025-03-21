@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import torch.nn.functional as F
+import torch.nn as nn
 from typing import List, Dict, Any, Tuple
 
 import torch
@@ -1061,125 +1063,48 @@ class TransformerAE(nn.Module):
         x = self.decoder(z)
         return x, z, z, z, z, z
 
-
-class TransformerVAE(nn.Module):
-    """Variational Autoencoder with Transformer architecture for both encoder and decoder
-    
-    This model combines the representational power of Transformers with the 
-    generative capabilities of VAEs for improved anomaly detection.
-    """
-
-    def __init__(self, in_shape, z_dim, n_heads=4, *args, **kwargs):
-        super(TransformerVAE, self).__init__(*args, **kwargs)
+class SimpleTransformerVAE(nn.Module):
+    def __init__(self, in_shape, z_dim, n_heads=2, h_dim=128):
+        super(SimpleTransformerVAE, self).__init__()
 
         self.in_shape = in_shape
         self.z_dim = z_dim
-        self.n_heads = n_heads
-        self.h_dim = 256
+        self.n_features = in_shape[-1] * in_shape[-2]
         self.flatten = nn.Flatten()
 
-        # Calculate flattened input dimension
-        self.n_features = in_shape[-1] * in_shape[-2]
-
-        # Encoder transformer blocks
+        # Encoder
         self.encoder_transformer = nn.TransformerEncoderLayer(
-            d_model=self.n_features,
-            nhead=self.n_heads,
-            dim_feedforward=self.h_dim,
-            batch_first=True,
-            activation=F.gelu
+            d_model=self.n_features, nhead=n_heads, dim_feedforward=h_dim, batch_first=True
         )
-
-        # Latent space projections
         self.fc_mu = nn.Linear(self.n_features, self.z_dim)
         self.fc_logvar = nn.Linear(self.n_features, self.z_dim)
 
-        # Decoder layers
+        # Decoder
         self.decoder_fc = nn.Linear(self.z_dim, self.n_features)
-
-        # Decoder transformer blocks
         self.decoder_transformer = nn.TransformerEncoderLayer(
-            d_model=self.n_features,
-            nhead=self.n_heads,
-            dim_feedforward=self.h_dim,
-            batch_first=True,
-            activation=F.gelu
+            d_model=self.n_features, nhead=n_heads, dim_feedforward=h_dim, batch_first=True
         )
-
-        # Final output projection
         self.output_projection = nn.Linear(self.n_features, self.n_features)
 
-        # Initialize weights
-        self._init_weights()
-
-    def _init_weights(self):
-        """Initialize weights using Xavier initialization"""
-        for m in self.modules():
-            if isinstance(m, nn.Linear):
-                nn.init.xavier_normal_(m.weight)
-                if m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
-
     def encode(self, x):
-        """Encode input to latent space parameters mu and logvar"""
-        # Flatten input
         x_flat = self.flatten(x)
-
-        # Add batch dimension for single samples
-        if len(x_flat.shape) == 1:
-            x_flat = x_flat.unsqueeze(0)
-
-        # Reshape for transformer (batch_size, 1, features)
-        x_transformer = x_flat.unsqueeze(1)
-
-        # Apply transformer encoder
-        h = self.encoder_transformer(x_transformer)
-
-        # Squeeze out the sequence dimension
-        h = h.squeeze(1)
-
-        # Get latent parameters
-        mu = self.fc_mu(h)
-        logvar = self.fc_logvar(h)
-
-        return mu, logvar
+        x_transformer = x_flat.unsqueeze(1)  # Add sequence dimension
+        h = self.encoder_transformer(x_transformer).squeeze(1)
+        return self.fc_mu(h), self.fc_logvar(h)
 
     def reparameterize(self, mu, logvar):
-        """Reparameterization trick: sample from latent space"""
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
-        z = mu + eps * std
-        return z
+        return mu + eps * std
 
     def decode(self, z):
-        """Decode latent vector to reconstruction"""
-        # Project from latent space to feature space
-        h = self.decoder_fc(z)
-
-        # Reshape for transformer (batch_size, 1, features)
-        h = h.unsqueeze(1)
-
-        # Apply transformer decoder
-        h = self.decoder_transformer(h)
-
-        # Final projection and reshape to original dimensions
-        h = h.squeeze(1)
-        h = self.output_projection(h)
-        x_recon = h.view(self.in_shape)
-
-        return x_recon
+        h = self.decoder_fc(z).unsqueeze(1)
+        h = self.decoder_transformer(h).squeeze(1)
+        return self.output_projection(h).view(self.in_shape)
 
     def forward(self, x):
-        """Forward pass through the model"""
-        # Encode
         mu, logvar = self.encode(x)
-
-        # Sample from latent space
         z = self.reparameterize(mu, logvar)
-
-        # Decode
         x_recon = self.decode(z)
-
-        # Return reconstruction and latent variables
-        # Format matches other models: (reconstruction, mean, logvar, ldj, z0, z_k)
+        # Return in format expected by BEAD: (reconstruction, mean, logvar, ldj, z0, z_k)
         return x_recon, mu, logvar, 0, z, z
