@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import torch.nn.functional as F
+import torch.nn as nn
 from typing import List, Dict, Any, Tuple
 
 import torch
@@ -1060,3 +1062,49 @@ class TransformerAE(nn.Module):
         z = self.encoder(x)
         x = self.decoder(z)
         return x, z, z, z, z, z
+
+class TransformerVAE(nn.Module):
+    def __init__(self, in_shape, z_dim, n_heads=2, h_dim=128):
+        super(TransformerVAE, self).__init__()
+
+        self.in_shape = in_shape
+        self.z_dim = z_dim
+        self.n_features = in_shape[-1] * in_shape[-2]
+        self.flatten = nn.Flatten()
+
+        # Encoder
+        self.encoder_transformer = nn.TransformerEncoderLayer(
+            d_model=self.n_features, nhead=n_heads, dim_feedforward=h_dim, batch_first=True
+        )
+        self.fc_mu = nn.Linear(self.n_features, self.z_dim)
+        self.fc_logvar = nn.Linear(self.n_features, self.z_dim)
+
+        # Decoder
+        self.decoder_fc = nn.Linear(self.z_dim, self.n_features)
+        self.decoder_transformer = nn.TransformerEncoderLayer(
+            d_model=self.n_features, nhead=n_heads, dim_feedforward=h_dim, batch_first=True
+        )
+        self.output_projection = nn.Linear(self.n_features, self.n_features)
+
+    def encode(self, x):
+        x_flat = self.flatten(x)
+        x_transformer = x_flat.unsqueeze(1)  # Add sequence dimension
+        h = self.encoder_transformer(x_transformer).squeeze(1)
+        return self.fc_mu(h), self.fc_logvar(h)
+
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std)
+        return mu + eps * std
+
+    def decode(self, z):
+        h = self.decoder_fc(z).unsqueeze(1)
+        h = self.decoder_transformer(h).squeeze(1)
+        return self.output_projection(h).view(self.in_shape)
+
+    def forward(self, x):
+        mu, logvar = self.encode(x)
+        z = self.reparameterize(mu, logvar)
+        x_recon = self.decode(z)
+        # Return in format expected by BEAD: (reconstruction, mean, logvar, ldj, z0, z_k)
+        return x_recon, mu, logvar, 0, z, z

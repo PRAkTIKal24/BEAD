@@ -1,3 +1,4 @@
 .DS_Store
 bead/__pycache__/__init__.cpython-310.pyc bead/__pycache__/bead.cpython-310.pyc
 __pycache__/
+shell_scripts/independent_scripts/
