@@ -1063,9 +1063,9 @@ class TransformerAE(nn.Module):
         x = self.decoder(z)
         return x, z, z, z, z, z
 
-class SimpleTransformerVAE(nn.Module):
+class TransformerVAE(nn.Module):
     def __init__(self, in_shape, z_dim, n_heads=2, h_dim=128):
-        super(SimpleTransformerVAE, self).__init__()
+        super(TransformerVAE, self).__init__()
 
         self.in_shape = in_shape
         self.z_dim = z_dim
