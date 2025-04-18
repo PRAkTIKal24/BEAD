@@ -1,0 +1,852 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.models package &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="bead.src.trainers package" href="bead.src.trainers.html" />
+    <link rel="prev" title="bead.src package" href="bead.src.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">bead</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="bead.html">bead package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="bead.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="bead.src.html">bead.src package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#bead-bead-module">bead.bead module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bead.html#module-bead">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">bead</a></li>
+          <li class="breadcrumb-item"><a href="bead.html">bead package</a></li>
+          <li class="breadcrumb-item"><a href="bead.src.html">bead.src package</a></li>
+      <li class="breadcrumb-item active">bead.src.models package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/bead.src.models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bead-src-models-package">
+<h1>bead.src.models package<a class="headerlink" href="#bead-src-models-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-bead.src.models.flows">
+<span id="bead-src-models-flows-module"></span><h2>bead.src.models.flows module<a class="headerlink" href="#module-bead.src.models.flows" title="Link to this heading"></a></h2>
+<p>Collection of flow strategies</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.flows.CNN_Flow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.flows.</span></span><span class="sig-name descname"><span class="pre">CNN_Flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnn_layers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_revert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#CNN_Flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.CNN_Flow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.CNN_Flow.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#CNN_Flow.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.CNN_Flow.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.flows.IAF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.flows.</span></span><span class="sig-name descname"><span class="pre">IAF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_flows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_hidden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forget_bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv2d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#IAF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.IAF" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.IAF.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#IAF.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.IAF.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.flows.NSF_AR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.flows.</span></span><span class="sig-name descname"><span class="pre">NSF_AR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim=15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K=64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B=3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim=8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_network=&lt;class</span> <span class="pre">'bead.src.models.layers.FCNN'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#NSF_AR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.NSF_AR" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Neural spline flow, auto-regressive.
+[Durkan et al. 2019]</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.NSF_AR.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#NSF_AR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.NSF_AR.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.NSF_AR.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#NSF_AR.reset_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.NSF_AR.reset_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.flows.Planar">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.flows.</span></span><span class="sig-name descname"><span class="pre">Planar</span></span><a class="reference internal" href="_modules/bead/src/models/flows.html#Planar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.Planar" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.Planar.der_h">
+<span class="sig-name descname"><span class="pre">der_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#Planar.der_h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.Planar.der_h" title="Link to this definition"></a></dt>
+<dd><p>Derivative of tanh</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.Planar.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#Planar.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.Planar.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.flows.Sylvester">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.flows.</span></span><span class="sig-name descname"><span class="pre">Sylvester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_ortho_vecs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#Sylvester"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.Sylvester" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Sylvester normalizing flow.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.Sylvester.der_h">
+<span class="sig-name descname"><span class="pre">der_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#Sylvester.der_h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.Sylvester.der_h" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.Sylvester.der_tanh">
+<span class="sig-name descname"><span class="pre">der_tanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#Sylvester.der_tanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.Sylvester.der_tanh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.Sylvester.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_ortho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_ldj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#Sylvester.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.Sylvester.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.flows.TriangularSylvester">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.flows.</span></span><span class="sig-name descname"><span class="pre">TriangularSylvester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#TriangularSylvester"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.TriangularSylvester" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Sylvester normalizing flow with Q=P or Q=I.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.TriangularSylvester.der_h">
+<span class="sig-name descname"><span class="pre">der_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#TriangularSylvester.der_h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.TriangularSylvester.der_h" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.TriangularSylvester.der_tanh">
+<span class="sig-name descname"><span class="pre">der_tanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#TriangularSylvester.der_tanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.TriangularSylvester.der_tanh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.flows.TriangularSylvester.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_ortho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_ldj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/flows.html#TriangularSylvester.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.flows.TriangularSylvester.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bead.src.models.layers">
+<span id="bead-src-models-layers-module"></span><h2>bead.src.models.layers module<a class="headerlink" href="#module-bead.src.models.layers" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.layers.CNN_Flow_Layer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">CNN_Flow_Layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#CNN_Flow_Layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.CNN_Flow_Layer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.CNN_Flow_Layer.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#CNN_Flow_Layer.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.CNN_Flow_Layer.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.layers.Dilation_Block">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">Dilation_Block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#Dilation_Block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.Dilation_Block" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.Dilation_Block.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#Dilation_Block.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.Dilation_Block.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.layers.FCNN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">FCNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#FCNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.FCNN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Simple fully connected neural network.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.FCNN.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#FCNN.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.FCNN.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.layers.GraphConvolution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">GraphConvolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#GraphConvolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.GraphConvolution" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Simple GCN layer, similar to <a class="reference external" href="https://arxiv.org/abs/1609.02907">https://arxiv.org/abs/1609.02907</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.GraphConvolution.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#GraphConvolution.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.GraphConvolution.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.GraphConvolution.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#GraphConvolution.reset_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.GraphConvolution.reset_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.layers.Identity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">Identity</span></span><a class="reference internal" href="_modules/bead/src/models/layers.html#Identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.Identity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.Identity.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#Identity.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.Identity.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedConv2d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">MaskedConv2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(3,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagonal_zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedConv2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedConv2d" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedConv2d.build_mask">
+<span class="sig-name descname"><span class="pre">build_mask</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedConv2d.build_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedConv2d.build_mask" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedConv2d.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedConv2d.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedConv2d.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedConv2d.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedConv2d.reset_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedConv2d.reset_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedLinear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">MaskedLinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagonal_zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedLinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedLinear" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedLinear.build_mask">
+<span class="sig-name descname"><span class="pre">build_mask</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedLinear.build_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedLinear.build_mask" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedLinear.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedLinear.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedLinear.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.layers.MaskedLinear.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#MaskedLinear.reset_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.MaskedLinear.reset_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.models.layers.RQS">
+<span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">RQS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormalized_widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormalized_heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormalized_derivatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_bin_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_bin_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_derivative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#RQS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.RQS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.models.layers.searchsorted">
+<span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">searchsorted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bin_locations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#searchsorted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.searchsorted" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bead.src.models.layers.unconstrained_RQS">
+<span class="sig-prename descclassname"><span class="pre">bead.src.models.layers.</span></span><span class="sig-name descname"><span class="pre">unconstrained_RQS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormalized_widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormalized_heights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormalized_derivatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_bin_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_bin_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_derivative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/layers.html#unconstrained_RQS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.layers.unconstrained_RQS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-bead.src.models.models">
+<span id="bead-src-models-models-module"></span><h2>bead.src.models.models module<a class="headerlink" href="#module-bead.src.models.models" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.AE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">AE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.decode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.detach_hooks">
+<span class="sig-name descname"><span class="pre">detach_hooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hooks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.detach_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.detach_hooks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.encode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.get_activations">
+<span class="sig-name descname"><span class="pre">get_activations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.get_activations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.get_activations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.get_hook">
+<span class="sig-name descname"><span class="pre">get_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.get_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.get_hook" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.get_layers">
+<span class="sig-name descname"><span class="pre">get_layers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.get_layers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.get_layers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE.store_hooks">
+<span class="sig-name descname"><span class="pre">store_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/bead/src/models/models.html#AE.store_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE.store_hooks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.AE_Dropout_BN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">AE_Dropout_BN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE_Dropout_BN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE_Dropout_BN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.AE" title="bead.src.models.models.AE"><code class="xref py py-class docutils literal notranslate"><span class="pre">AE</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE_Dropout_BN.dec_bn">
+<span class="sig-name descname"><span class="pre">dec_bn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE_Dropout_BN.dec_bn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE_Dropout_BN.dec_bn" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE_Dropout_BN.enc_bn">
+<span class="sig-name descname"><span class="pre">enc_bn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE_Dropout_BN.enc_bn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE_Dropout_BN.enc_bn" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.AE_Dropout_BN.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#AE_Dropout_BN.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.AE_Dropout_BN.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">ConvAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvAE.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvAE.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvAE.decode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvAE.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvAE.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvAE.encode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvFlow_ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">ConvFlow_ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvFlow_ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvFlow_ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvVAE" title="bead.src.models.models.ConvVAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvVAE</span></code></a></p>
+<p>Variational auto-encoder with convolutional flows in the decoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvFlow_ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvFlow_ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvFlow_ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvAE" title="bead.src.models.models.ConvAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvAE</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvVAE.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvVAE.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvVAE.decode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvVAE.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvVAE.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvVAE.encode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.ConvVAE.reparameterize">
+<span class="sig-name descname"><span class="pre">reparameterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#ConvVAE.reparameterize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.ConvVAE.reparameterize" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.HouseholderSylvester_ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">HouseholderSylvester_ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#HouseholderSylvester_ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.HouseholderSylvester_ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvVAE" title="bead.src.models.models.ConvVAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvVAE</span></code></a></p>
+<p>Variational auto-encoder with householder sylvester flows in the decoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.HouseholderSylvester_ConvVAE.batch_construct_orthogonal">
+<span class="sig-name descname"><span class="pre">batch_construct_orthogonal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#HouseholderSylvester_ConvVAE.batch_construct_orthogonal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.HouseholderSylvester_ConvVAE.batch_construct_orthogonal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.HouseholderSylvester_ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#HouseholderSylvester_ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.HouseholderSylvester_ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.IAF_ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">IAF_ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#IAF_ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.IAF_ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvVAE" title="bead.src.models.models.ConvVAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvVAE</span></code></a></p>
+<p>Variational auto-encoder with inverse autoregressive flows in the decoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.IAF_ConvVAE.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#IAF_ConvVAE.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.IAF_ConvVAE.encode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.IAF_ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#IAF_ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.IAF_ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.NSFAR_ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">NSFAR_ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#NSFAR_ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.NSFAR_ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvVAE" title="bead.src.models.models.ConvVAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvVAE</span></code></a></p>
+<p>Variational auto-encoder with auto-regressive neural spline flows in the decoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.NSFAR_ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#NSFAR_ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.NSFAR_ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.OrthogonalSylvester_ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">OrthogonalSylvester_ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#OrthogonalSylvester_ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.OrthogonalSylvester_ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvVAE" title="bead.src.models.models.ConvVAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvVAE</span></code></a></p>
+<p>Variational auto-encoder with orthogonal flows in the decoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.OrthogonalSylvester_ConvVAE.batch_construct_orthogonal">
+<span class="sig-name descname"><span class="pre">batch_construct_orthogonal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#OrthogonalSylvester_ConvVAE.batch_construct_orthogonal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.OrthogonalSylvester_ConvVAE.batch_construct_orthogonal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.OrthogonalSylvester_ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#OrthogonalSylvester_ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.OrthogonalSylvester_ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.Planar_ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">Planar_ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#Planar_ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.Planar_ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvVAE" title="bead.src.models.models.ConvVAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvVAE</span></code></a></p>
+<p>Variational auto-encoder with planar flows in the decoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.Planar_ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#Planar_ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.Planar_ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.TransformerAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">TransformerAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_dim=256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_heads=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_size=50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation=&lt;built-in</span> <span class="pre">function</span> <span class="pre">gelu&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#TransformerAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.TransformerAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Autoencoder mixed with the Transformer Encoder layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nn</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.TransformerAE.decoder">
+<span class="sig-name descname"><span class="pre">decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#TransformerAE.decoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.TransformerAE.decoder" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.TransformerAE.encoder">
+<span class="sig-name descname"><span class="pre">encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#TransformerAE.encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.TransformerAE.encoder" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.TransformerAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#TransformerAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.TransformerAE.forward" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bead.src.models.models.TriangularSylvester_ConvVAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bead.src.models.models.</span></span><span class="sig-name descname"><span class="pre">TriangularSylvester_ConvVAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#TriangularSylvester_ConvVAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.TriangularSylvester_ConvVAE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bead.src.models.models.ConvVAE" title="bead.src.models.models.ConvVAE"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvVAE</span></code></a></p>
+<p>Variational auto-encoder with triangular sylvester flows in the decoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bead.src.models.models.TriangularSylvester_ConvVAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bead/src/models/models.html#TriangularSylvester_ConvVAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bead.src.models.models.TriangularSylvester_ConvVAE.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bead.src.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bead.src.models" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bead.src.html" class="btn btn-neutral float-left" title="bead.src package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bead.src.trainers.html" class="btn btn-neutral float-right" title="bead.src.trainers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
