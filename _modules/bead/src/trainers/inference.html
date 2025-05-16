@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.trainers.inference &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.trainers.inference</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.trainers.inference</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2022 Baler Contributors</span>
+
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.rich</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">TqdmExperimentalWarning</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">ConcatDataset</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">helper</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">diagnostics</span>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">TqdmExperimentalWarning</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="seed_worker">
+<a class="viewcode-back" href="../../../../bead.src.trainers.html#bead.src.trainers.inference.seed_worker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">seed_worker</span><span class="p">(</span><span class="n">worker_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;PyTorch implementation to fix the seeds</span>
+<span class="sd">    Args:</span>
+<span class="sd">        worker_id ():</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">worker_seed</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">()</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">worker_seed</span><span class="p">)</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">worker_seed</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="infer">
+<a class="viewcode-back" href="../../../../bead.src.trainers.html#bead.src.trainers.inference.infer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span>
+    <span class="n">events_bkg</span><span class="p">,</span>
+    <span class="n">jets_bkg</span><span class="p">,</span>
+    <span class="n">constituents_bkg</span><span class="p">,</span>
+    <span class="n">events_sig</span><span class="p">,</span>
+    <span class="n">jets_sig</span><span class="p">,</span>
+    <span class="n">constituents_sig</span><span class="p">,</span>
+    <span class="n">model_path</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Does the entire training loop by calling the `fit()` and `validate()`. Appart from this, this is the main function where the data is converted</span>
+<span class="sd">       to the correct type for it to be trained, via `torch.Tensor()`. Furthermore, the batching is also done here, based on `config.batch_size`,</span>
+<span class="sd">       and it is the `torch.utils.data.DataLoader` doing the splitting.</span>
+<span class="sd">       Applying either `EarlyStopping` or `LR Scheduler` is also done here, all based on their respective `config` arguments.</span>
+<span class="sd">       For reproducibility, the seeds can also be fixed in this function.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model (modelObject): The model you wish to train</span>
+<span class="sd">        data (Tuple): Tuple containing the training and validation data</span>
+<span class="sd">        project_path (string): Path to the project directory</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        modelObject: fully trained model ready to perform compression and decompression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Print input shapes</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events - bkg shape:         &quot;</span><span class="p">,</span> <span class="n">events_bkg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets - bkg shape:           &quot;</span><span class="p">,</span> <span class="n">jets_bkg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents - bkg shape:   &quot;</span><span class="p">,</span> <span class="n">constituents_bkg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events - sig shape:         &quot;</span><span class="p">,</span> <span class="n">events_sig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets - sig shape:           &quot;</span><span class="p">,</span> <span class="n">jets_sig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents - sig shape:   &quot;</span><span class="p">,</span> <span class="n">constituents_sig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># Get the device and move tensors to the device</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span>
+
+    <span class="n">labeled_data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">events_bkg</span><span class="p">,</span>
+        <span class="n">jets_bkg</span><span class="p">,</span>
+        <span class="n">constituents_bkg</span><span class="p">,</span>
+        <span class="n">events_sig</span><span class="p">,</span>
+        <span class="n">jets_sig</span><span class="p">,</span>
+        <span class="n">constituents_sig</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="p">(</span>
+        <span class="n">events_bkg</span><span class="p">,</span>
+        <span class="n">jets_bkg</span><span class="p">,</span>
+        <span class="n">constituents_bkg</span><span class="p">,</span>
+        <span class="n">events_sig</span><span class="p">,</span>
+        <span class="n">jets_sig</span><span class="p">,</span>
+        <span class="n">constituents_sig</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">labeled_data</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Split data and labels</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Splitting data and labels&quot;</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">data_label_split</span><span class="p">(</span><span class="n">labeled_data</span><span class="p">)</span>
+
+    <span class="c1"># Reshape tensors to pass to conv layers</span>
+    <span class="p">(</span>
+    <span class="n">events_bkg</span><span class="p">,</span>
+    <span class="n">jets_bkg</span><span class="p">,</span>
+    <span class="n">constituents_bkg</span><span class="p">,</span>
+    <span class="n">events_sig</span><span class="p">,</span>
+    <span class="n">jets_sig</span><span class="p">,</span>
+    <span class="n">constituents_sig</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="p">(</span>
+    <span class="n">events_bkg_label</span><span class="p">,</span>
+    <span class="n">jets_bkg_label</span><span class="p">,</span>
+    <span class="n">constituents_bkg_label</span><span class="p">,</span>
+    <span class="n">events_sig_label</span><span class="p">,</span>
+    <span class="n">jets_sig_label</span><span class="p">,</span>
+    <span class="n">constituents_sig_label</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">labels</span>
+
+    <span class="c1"># Reshape tensors to pass to conv layers</span>
+    <span class="k">if</span> <span class="s2">&quot;ConvVAE&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span> <span class="ow">or</span> <span class="s2">&quot;ConvAE&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="p">:</span>
+        <span class="p">(</span>
+            <span class="n">events_bkg</span><span class="p">,</span>
+            <span class="n">jets_bkg</span><span class="p">,</span>
+            <span class="n">constituents_bkg</span><span class="p">,</span>
+            <span class="n">events_sig</span><span class="p">,</span>
+            <span class="n">jets_sig</span><span class="p">,</span>
+            <span class="n">constituents_sig</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">events_bkg</span><span class="p">,</span> <span class="n">jets_bkg</span><span class="p">,</span> <span class="n">constituents_bkg</span><span class="p">,</span> <span class="n">events_sig</span><span class="p">,</span> <span class="n">jets_sig</span><span class="p">,</span> <span class="n">constituents_sig</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">events_bkg</span><span class="p">,</span>
+            <span class="n">jets_bkg</span><span class="p">,</span>
+            <span class="n">constituents_bkg</span><span class="p">,</span>
+            <span class="n">events_sig</span><span class="p">,</span>
+            <span class="n">jets_sig</span><span class="p">,</span>
+            <span class="n">constituents_sig</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="c1"># Create datasets</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">create_datasets</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="c1"># Concatenate events, jets and constituents respectively</span>
+    <span class="n">ds_events</span> <span class="o">=</span> <span class="n">ConcatDataset</span><span class="p">([</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;events_train&quot;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;events_val&quot;</span><span class="p">]])</span>
+    <span class="n">ds_jets</span> <span class="o">=</span> <span class="n">ConcatDataset</span><span class="p">([</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;jets_train&quot;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;jets_val&quot;</span><span class="p">]])</span>
+    <span class="n">ds_constituents</span> <span class="o">=</span> <span class="n">ConcatDataset</span><span class="p">([</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;constituents_train&quot;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;constituents_val&quot;</span><span class="p">]])</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;events&quot;</span><span class="p">:</span> <span class="n">ds_events</span><span class="p">,</span>
+        <span class="s2">&quot;jets&quot;</span><span class="p">:</span> <span class="n">ds_jets</span><span class="p">,</span>
+        <span class="s2">&quot;constituents&quot;</span><span class="p">:</span> <span class="n">ds_constituents</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="c1"># Print input shapes</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events - bkg shape:         &quot;</span><span class="p">,</span> <span class="n">events_bkg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets - bkg shape:           &quot;</span><span class="p">,</span> <span class="n">jets_bkg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents - bkg shape:   &quot;</span><span class="p">,</span> <span class="n">constituents_bkg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events - sig shape:         &quot;</span><span class="p">,</span> <span class="n">events_sig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets - sig shape:           &quot;</span><span class="p">,</span> <span class="n">jets_sig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents - sig shape:   &quot;</span><span class="p">,</span> <span class="n">constituents_sig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># Print label shapes</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events - bkg labels shape:         &quot;</span><span class="p">,</span> <span class="n">events_bkg_label</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets - bkg labels shape:           &quot;</span><span class="p">,</span> <span class="n">jets_bkg_label</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents - bkg labels shape:   &quot;</span><span class="p">,</span> <span class="n">constituents_bkg_label</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events - sig labels shape:         &quot;</span><span class="p">,</span> <span class="n">events_sig_label</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets - sig labels shape:           &quot;</span><span class="p">,</span> <span class="n">jets_sig_label</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents - sig labels shape:   &quot;</span><span class="p">,</span> <span class="n">constituents_sig_label</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the input shapes to load the model</span>
+    <span class="n">in_shape</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">calculate_in_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+    <span class="c1"># Load the model and set to eval mode for inference</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span> <span class="n">in_shape</span><span class="o">=</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model loaded from </span><span class="si">{</span><span class="n">model_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model architecture:</span><span class="se">\n</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device used for inference: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inputs and model moved to device&quot;</span><span class="p">)</span>
+        <span class="c1"># Pushing input data into the torch-DataLoader object and combines into one DataLoader object (a basic wrapper</span>
+        <span class="c1"># around several DataLoader objects).</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Loading data into DataLoader and using batch size of &quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">deterministic_algorithm</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Deterministic algorithm is set to True&quot;</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">use_deterministic_algorithms</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">test_dl_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">ds</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">worker_init_fn</span><span class="o">=</span><span class="n">seed_worker</span><span class="p">,</span>
+                <span class="n">generator</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+                <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">parallel_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;jets&quot;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;constituents&quot;</span><span class="p">]]</span>
+        <span class="p">]</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">test_dl_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">DataLoader</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">parallel_workers</span><span class="p">,)</span>
+            <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;jets&quot;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;constituents&quot;</span><span class="p">]]</span>
+        <span class="p">]</span>
+        
+    <span class="c1"># Unpacking the DataLoader lists</span>
+    <span class="n">test_dl_events</span><span class="p">,</span> <span class="n">test_dl_jets</span><span class="p">,</span> <span class="n">test_dl_constituents</span> <span class="o">=</span> <span class="n">test_dl_list</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span> <span class="o">==</span> <span class="s2">&quot;pj_ensemble&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model is an ensemble model&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">input_level</span> <span class="o">==</span> <span class="s2">&quot;event&quot;</span><span class="p">:</span>
+            <span class="n">test_dl</span> <span class="o">=</span> <span class="n">test_dl_events</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">input_level</span> <span class="o">==</span> <span class="s2">&quot;jet&quot;</span><span class="p">:</span>
+            <span class="n">test_dl</span> <span class="o">=</span> <span class="n">test_dl_jets</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">input_level</span> <span class="o">==</span> <span class="s2">&quot;constituent&quot;</span><span class="p">:</span>
+            <span class="n">test_dl</span> <span class="o">=</span> <span class="n">test_dl_constituents</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input data is of </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">input_level</span><span class="si">}</span><span class="s2"> level&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Select Loss Function</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">loss_object</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">get_loss</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">loss_function</span><span class="p">)</span>
+        <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_object</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss Function: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">loss_function</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="c1"># Output Lists</span>
+    <span class="n">test_loss_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">reconstructed_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mu_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">logvar_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">z0_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">zk_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">log_det_jacobian_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Registering hooks for activation extraction</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">activation_extraction</span><span class="p">:</span>
+        <span class="n">hooks</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">store_hooks</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Beginning Inference&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Inference</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">test_dl</span><span class="p">)):</span>
+    
+            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">batch</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">call_forward</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+            <span class="n">recon</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">logvar</span><span class="p">,</span> <span class="n">ldj</span><span class="p">,</span> <span class="n">z0</span><span class="p">,</span> <span class="n">zk</span> <span class="o">=</span> <span class="n">out</span>
+
+            <span class="c1"># Compute the loss</span>
+            <span class="n">losses</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span>
+                <span class="n">recon</span><span class="o">=</span><span class="n">recon</span><span class="p">,</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+                <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+                <span class="n">logvar</span><span class="o">=</span><span class="n">logvar</span><span class="p">,</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+                <span class="n">log_det_jacobian</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">test_loss_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+            <span class="n">reconstructed_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recon</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">mu_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mu</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">logvar_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logvar</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">log_det_jacobian_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ldj</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">z0_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z0</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">zk_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zk</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Saving activations values</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">activation_extraction</span><span class="p">:</span>
+        <span class="n">activations</span> <span class="o">=</span> <span class="n">diagnostics</span><span class="o">.</span><span class="n">dict_to_square_matrix</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_activations</span><span class="p">())</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">detach_hooks</span><span class="p">(</span><span class="n">hooks</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;activations.npy&quot;</span><span class="p">),</span> <span class="n">activations</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training the model took </span><span class="si">{</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="si">:</span><span class="s2">.3</span><span class="si">}</span><span class="s2"> minutes&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Save all the data</span>
+    <span class="n">save_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;reconstructed_data.npy&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">reconstructed_data</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;mu_data.npy&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mu_data</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;logvar_data.npy&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">logvar_data</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;z0_data.npy&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">z0_data</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;zk_data.npy&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zk_data</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;log_det_jacobian_data.npy&quot;</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log_det_jacobian_data</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">helper</span><span class="o">.</span><span class="n">save_loss_components</span><span class="p">(</span><span class="n">loss_data</span><span class="o">=</span><span class="n">test_loss_data</span><span class="p">,</span> <span class="n">component_names</span><span class="o">=</span><span class="n">loss_fn</span><span class="o">.</span><span class="n">component_names</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
+    
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils.diagnostics &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.utils.diagnostics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.utils.diagnostics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.ticker</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pstats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cProfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pstats</span><span class="w"> </span><span class="kn">import</span> <span class="n">SortKey</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.profiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">profile</span><span class="p">,</span> <span class="n">record_function</span><span class="p">,</span> <span class="n">ProfilerActivity</span>
+
+
+<div class="viewcode-block" id="get_mean_node_activations">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.diagnostics.get_mean_node_activations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mean_node_activations</span><span class="p">(</span><span class="n">input_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">:</span>
+        <span class="n">output_dict_layer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
+            <span class="n">output_dict_layer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+        <span class="n">output_dict</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_dict_layer</span>
+    <span class="k">return</span> <span class="n">output_dict</span></div>
+
+
+
+<div class="viewcode-block" id="dict_to_square_matrix">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.diagnostics.dict_to_square_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dict_to_square_matrix</span><span class="p">(</span><span class="n">input_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function changes an input dictionary into a square np.array. Adds NaNs when the dimension of a dict key is less than of the final square matrix.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_dict (dict)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        square_matrix (np.array)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">means_dict</span> <span class="o">=</span> <span class="n">get_mean_node_activations</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span>
+    <span class="n">max_number_of_nodes</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">number_of_layers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="n">means_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means_dict</span><span class="p">[</span><span class="n">kk</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">max_number_of_nodes</span><span class="p">:</span>
+            <span class="n">max_number_of_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">means_dict</span><span class="p">[</span><span class="n">kk</span><span class="p">])</span>
+    <span class="n">square_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">number_of_layers</span><span class="p">,</span> <span class="n">max_number_of_nodes</span><span class="p">))</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">:</span>
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">means_dict</span><span class="p">[</span><span class="n">kk</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span> <span class="o">==</span> <span class="n">max_number_of_nodes</span><span class="p">:</span>
+            <span class="n">square_matrix</span><span class="p">[</span><span class="n">counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">layer</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_number_of_nodes</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="p">)</span>
+            <span class="n">square_matrix</span><span class="p">[</span><span class="n">counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">square_matrix</span></div>
+
+
+
+<div class="viewcode-block" id="plot">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.diagnostics.plot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">nodes_numbers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">])</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">NAP</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+        <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">CenteredNorm</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="n">colorbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">NAP</span><span class="p">)</span>
+    <span class="n">colorbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Activation&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Neural Activation Pattern&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Layers&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of nodes&quot;</span><span class="p">)</span>
+    <span class="n">xtick_loc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xticks</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">FixedLocator</span><span class="p">(</span><span class="n">xtick_loc</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;en1&quot;</span><span class="p">,</span> <span class="s2">&quot;en2&quot;</span><span class="p">,</span> <span class="s2">&quot;en3&quot;</span><span class="p">,</span> <span class="s2">&quot;de1&quot;</span><span class="p">,</span> <span class="s2">&quot;de2&quot;</span><span class="p">,</span> <span class="s2">&quot;de3&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">nodes_numbers</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;diagnostics.pdf&quot;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="nap_diagnose">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.diagnostics.nap_diagnose">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nap_diagnose</span><span class="p">(</span><span class="n">input_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+    <span class="n">plot</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;Diagnostics saved as diagnostics.pdf in the diagnostics folder of your project.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="pytorch_profile">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.diagnostics.pytorch_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pytorch_profile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function performs PyTorch profiling of CPU, GPU time and memory</span>
+<span class="sd">    consumed by the function f execution.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f (callable): The function to be profiled.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        result: The result of the function `f` execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">activities</span> <span class="o">=</span> <span class="p">[</span><span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CPU</span><span class="p">,</span> <span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CUDA</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">activities</span> <span class="o">=</span> <span class="p">[</span><span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CPU</span><span class="p">]</span>
+
+    <span class="c1"># Start profiler before the function will be executed</span>
+    <span class="k">with</span> <span class="n">profile</span><span class="p">(</span>
+        <span class="n">activities</span><span class="o">=</span><span class="n">activities</span><span class="p">,</span>
+        <span class="n">on_trace_ready</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">tensorboard_trace_handler</span><span class="p">(</span>
+            <span class="s2">&quot;log/baler&quot;</span><span class="p">,</span> <span class="n">worker_name</span><span class="o">=</span><span class="s2">&quot;worker0&quot;</span>
+        <span class="p">),</span>
+        <span class="n">schedule</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">record_shapes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">with_stack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">profile_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">prof</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">record_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="c1"># Call the function</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">prof</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">prof</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="c1"># Print the CPU time for each torch operation</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">key_averages</span><span class="p">()</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;cpu_time_total&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Store the information about CPU and GPU usage</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">prof</span><span class="o">.</span><span class="n">export_stacks</span><span class="p">(</span><span class="s2">&quot;profiler_stacks.json&quot;</span><span class="p">,</span> <span class="s2">&quot;self_cuda_time_total&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Store the results to the .json file</span>
+    <span class="n">prof</span><span class="o">.</span><span class="n">export_stacks</span><span class="p">(</span><span class="s2">&quot;/tmp/profiler_stacks.json&quot;</span><span class="p">,</span> <span class="s2">&quot;self_cpu_time_total&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="c_profile">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.diagnostics.c_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">c_profile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Profile the function func with cProfile.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func (callable): The function to be profiled.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        result: The result of the function `func` execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span>
+    <span class="n">pr</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+    <span class="c1"># Execute the function and get its result</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">pr</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">sortby</span> <span class="o">=</span> <span class="n">SortKey</span><span class="o">.</span><span class="n">CUMULATIVE</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="n">sortby</span><span class="p">)</span>
+    <span class="n">ps</span><span class="o">.</span><span class="n">print_stats</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
