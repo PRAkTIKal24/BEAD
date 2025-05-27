@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils.plotting &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.utils.plotting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.utils.plotting</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2022 Baler Contributors</span>
+
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.backends.backend_pdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">PdfPages</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.rich</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<div class="viewcode-block" id="loss_plot">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.plotting.loss_plot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loss_plot</span><span class="p">(</span><span class="n">path_to_loss_data</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function Plots the loss from the training and saves it</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_to_loss_data (string): Path to file containing loss plot data generated during training</span>
+<span class="sd">        output_path (path): Directory path to which the loss plot is saved</span>
+<span class="sd">        config (dataclass): The config class containing attributes set in the config file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loss_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_loss_data</span><span class="p">)</span>
+    <span class="n">str_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Epochs:&quot;</span><span class="p">,</span> <span class="s2">&quot;Model Name:&quot;</span><span class="p">,</span> <span class="s2">&quot;Reg. Param:&quot;</span><span class="p">,</span> <span class="s2">&quot;lr:&quot;</span><span class="p">,</span> <span class="s2">&quot;BS:&quot;</span><span class="p">]</span>
+
+    <span class="n">train_loss</span> <span class="o">=</span> <span class="n">loss_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">val_loss</span> <span class="o">=</span> <span class="n">loss_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">conf_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">train_loss</span><span class="p">),</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">reg_param</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Loss plot&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_loss</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train Loss&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">test_size</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">val_loss</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Validation Loss&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">conf_list</span><span class="p">)):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">str_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">conf_list</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epochs&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Loss&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;plotting&quot;</span><span class="p">,</span> <span class="s2">&quot;Loss_plot.pdf&quot;</span><span class="p">))</span></div>
+
+    <span class="c1"># plt.show()</span>
+
+
+<div class="viewcode-block" id="get_index_to_cut">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.plotting.get_index_to_cut">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_index_to_cut</span><span class="p">(</span><span class="n">column_index</span><span class="p">,</span> <span class="n">cut</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given an array column index and a threshold, this function returns the index of the</span>
+<span class="sd">        entries not passing the threshold.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        column_index (int): The index for the column where cuts should be applied</span>
+<span class="sd">        cut (float): Threshold for which values below will have the whole entry removed</span>
+<span class="sd">        array (np.array): The full array to be edited</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: returns the index of the rows to be removed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indices_to_cut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="n">column_index</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cut</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">indices_to_cut</span></div>
+
+
+
+<div class="viewcode-block" id="plot_box_and_whisker">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.plotting.plot_box_and_whisker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_box_and_whisker</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">residual</span><span class="p">,</span> <span class="n">pdf</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots Box and Whisker plots of 1D data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_path (string): The path to the project directory</span>
+<span class="sd">        config (dataclass): The config class containing attributes set in the config file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+
+    <span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+    <span class="n">boxes</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">residual</span><span class="p">),</span> <span class="n">showfliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">whiskers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">get_xdata</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">boxes</span><span class="p">[</span><span class="s2">&quot;whiskers&quot;</span><span class="p">]])</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">whiskers</span><span class="p">)),</span> <span class="nb">max</span><span class="p">(</span><span class="n">whiskers</span><span class="p">)])</span>
+
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span>
+
+    <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">fig1</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Residual&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="n">edges</span> <span class="o">-</span> <span class="n">edges</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">edges</span> <span class="o">+</span> <span class="n">edges</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">savefig</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="plot_1D">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.plotting.plot_1D">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_1D</span><span class="p">(</span><span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;General plotting for 1D data, for example data from a &#39;.csv&#39; file. This function generates a pdf</span>
+<span class="sd">        document where each page contains the before/after performance</span>
+<span class="sd">        of each column of the 1D data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_path (path): The path to the project directory</span>
+<span class="sd">        config (dataclass): The config class containing attributes set in the config file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">before_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">input_path</span>
+    <span class="n">after_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;decompressed_output&quot;</span><span class="p">,</span> <span class="s2">&quot;decompressed.npz&quot;</span><span class="p">)</span>
+
+    <span class="n">before</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">before_path</span><span class="p">)[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">after_path</span><span class="p">)[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_path</span><span class="p">)[</span><span class="s2">&quot;names&quot;</span><span class="p">]</span>
+
+    <span class="n">index_to_cut</span> <span class="o">=</span> <span class="n">get_index_to_cut</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">before</span><span class="p">)</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">index_to_cut</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">after</span><span class="p">,</span> <span class="n">index_to_cut</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">after</span><span class="p">,</span> <span class="n">before</span><span class="p">),</span> <span class="n">before</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="n">residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">after</span><span class="p">,</span> <span class="n">before</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">PdfPages</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;plotting&quot;</span><span class="p">,</span> <span class="s2">&quot;comparison.pdf&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">pdf</span><span class="p">:</span>
+        <span class="n">plot_box_and_whisker</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">residual</span><span class="p">,</span> <span class="n">pdf</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">subfigs</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">subfigures</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">axsLeft</span> <span class="o">=</span> <span class="n">subfigs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax1</span> <span class="o">=</span> <span class="n">axsLeft</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ax3</span> <span class="o">=</span> <span class="n">axsLeft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">axsRight</span> <span class="o">=</span> <span class="n">subfigs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="n">axsRight</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ax4</span> <span class="o">=</span> <span class="n">axsRight</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">number_of_columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Plotting ===&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">names</span><span class="p">)):</span>
+            <span class="n">column_name</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">index</span><span class="p">])))</span>
+            <span class="n">residual_RMS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">residual</span><span class="p">[</span><span class="n">index</span><span class="p">])))</span>
+
+            <span class="n">x_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">before</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">after</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="n">x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">before</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">after</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="n">x_diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span>
+
+            <span class="c1"># Before Histogram</span>
+            <span class="n">counts_before</span><span class="p">,</span> <span class="n">bins_before</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                <span class="n">before</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">x_diff</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">x_diff</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+                <span class="n">bins_before</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">bins_before</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">counts_before</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Before&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># After Histogram</span>
+            <span class="n">counts_after</span><span class="p">,</span> <span class="n">bins_after</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                <span class="n">after</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">x_diff</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">x_diff</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+                <span class="n">bins_after</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">bins_after</span><span class="p">,</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">counts_after</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;After&quot;</span><span class="p">,</span>
+                <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_min</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">x_diff</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">x_diff</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">data_bin_centers</span> <span class="o">=</span> <span class="n">bins_after</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">bins_after</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">bins_after</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                <span class="n">data_bin_centers</span><span class="p">,</span> <span class="p">(</span><span class="n">counts_after</span> <span class="o">-</span> <span class="n">counts_before</span><span class="p">),</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span>
+            <span class="p">)</span>  <span class="c1"># FIXME: Dividing by zero</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span>
+                <span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">counts_after</span> <span class="o">-</span> <span class="n">counts_before</span><span class="p">)</span>
+                <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">counts_after</span> <span class="o">-</span> <span class="n">counts_before</span><span class="p">),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">counts_after</span> <span class="o">-</span> <span class="n">counts_before</span><span class="p">)</span>
+                <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">counts_after</span> <span class="o">-</span> <span class="n">counts_before</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Residual&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Response Histogram</span>
+            <span class="n">counts_response</span><span class="p">,</span> <span class="n">bins_response</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                <span class="n">response</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+                <span class="n">bins_response</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">bins_response</span><span class="p">,</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">counts_response</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Response&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Mean </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;RMS: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">rms</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">)</span>
+
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2"> Response [%]&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">))</span>
+
+            <span class="c1"># Residual Histogram</span>
+            <span class="n">counts_residual</span><span class="p">,</span> <span class="n">bins_residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                <span class="n">residual</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+                <span class="n">bins_residual</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">bins_residual</span><span class="p">,</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">counts_residual</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Residual&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">residual</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Mean </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">residual</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;RMS: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">residual_RMS</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Max: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">residual</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Min: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">residual</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">ax4</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2"> Residual&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">))</span>
+
+            <span class="n">pdf</span><span class="o">.</span><span class="n">savefig</span><span class="p">()</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">ax4</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="plot_2D_old">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.plotting.plot_2D_old">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_2D_old</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;General plotting for 2D data, for example 2D arraysfrom computational fluid</span>
+<span class="sd">        dynamics or other image like data. This function generates a pdf</span>
+<span class="sd">        document where each page contains the before/after performance</span>
+<span class="sd">        of each column of the 1D data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_path (string): The path to the project directory</span>
+<span class="sd">        config (dataclass): The config class containing attributes set in the config file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_path</span><span class="p">)[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+    <span class="n">data_decompressed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">project_path</span> <span class="o">+</span> <span class="s2">&quot;/decompressed_output/decompressed.npz&quot;</span><span class="p">)[</span>
+        <span class="s2">&quot;data&quot;</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">num_tiles</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">num_tiles</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;convolutional&quot;</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span> <span class="o">==</span> <span class="s2">&quot;Conv_AE_3D&quot;</span><span class="p">:</span>
+        <span class="n">data_decompressed</span> <span class="o">=</span> <span class="n">data_decompressed</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">data_decompressed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_decompressed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="n">data_decompressed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+            <span class="n">data_decompressed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Plotting ===&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">num_tiles</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;convolutional&quot;</span><span class="p">:</span>
+            <span class="n">tile_data_decompressed</span> <span class="o">=</span> <span class="n">data_decompressed</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.04</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;dense&quot;</span><span class="p">:</span>
+            <span class="n">tile_data_decompressed</span> <span class="o">=</span> <span class="n">data_decompressed</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.04</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="n">tile_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.04</span> <span class="o">*</span> <span class="mi">1000</span>
+
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">tile_data</span> <span class="o">-</span> <span class="n">tile_data_decompressed</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">29.7</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.54</span><span class="p">),</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.54</span><span class="p">)),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Original&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">im1</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+            <span class="n">tile_data</span><span class="p">,</span>
+            <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">vmax</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;CMRmap&quot;</span><span class="p">,</span>
+            <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [m]&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [m]&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+
+        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Reconstructed&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">im2</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+            <span class="n">tile_data_decompressed</span><span class="p">,</span>
+            <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">vmax</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;CMRmap&quot;</span><span class="p">,</span>
+            <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [m]&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [m]&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+
+        <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Difference&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">im3</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+            <span class="n">diff</span><span class="p">,</span>
+            <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">vmax</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;CMRmap&quot;</span><span class="p">,</span>
+            <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># cb2 = plt.colorbar(im3, ax=[axs[2]], location=&quot;right&quot;, fraction=0.046, pad=0.1)</span>
+        <span class="c1"># cb2.set_label(&quot;x-velocity [mm/s]&quot;)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [m]&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [m]&quot;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">cbar_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.815</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.59</span><span class="p">])</span>
+        <span class="n">cb2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im3</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cbar_ax</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">cb2</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;x-velocity [m/s]&quot;</span><span class="p">)</span>
+        <span class="c1"># fig.colorbar(im3, cax=cbar_ax)</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+            <span class="n">project_path</span> <span class="o">+</span> <span class="s2">&quot;/plotting/CFD&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span>
+        <span class="p">)</span></div>
+
+        <span class="c1"># sys.exit()</span>
+
+    <span class="c1"># import imageio.v2 as imageio</span>
+
+    <span class="c1"># with imageio.get_writer(project_path + &quot;/plotting/CFD.gif&quot;, mode=&quot;I&quot;) as writer:</span>
+    <span class="c1">#     for i in range(0, 60):</span>
+    <span class="c1">#         path = project_path + &quot;/plotting/CFD&quot; + str(i) + &quot;.jpg&quot;</span>
+    <span class="c1">#         print(path)</span>
+    <span class="c1">#         image = imageio.imread(path)</span>
+    <span class="c1">#         writer.append_data(image)</span>
+
+
+<div class="viewcode-block" id="plot_2D">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.plotting.plot_2D">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_2D</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;General plotting for 2D data, for example 2D arraysfrom computational fluid</span>
+<span class="sd">        dynamics or other image like data. This function generates a pdf</span>
+<span class="sd">        document where each page contains the before/after performance</span>
+<span class="sd">        of each column of the 1D data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_path (string): The path to the project directory</span>
+<span class="sd">        config (dataclass): The config class containing attributes set in the config file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_path</span><span class="p">)[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+    <span class="n">data_decompressed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">project_path</span> <span class="o">+</span> <span class="s2">&quot;/decompressed_output/decompressed.npz&quot;</span><span class="p">)[</span>
+        <span class="s2">&quot;data&quot;</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">convert_to_blocks</span><span class="p">:</span>
+        <span class="n">data_decompressed</span> <span class="o">=</span> <span class="n">data_decompressed</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">num_tiles</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">num_tiles</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># if config.model_type == &quot;convolutional&quot; and config.model_name == &quot;Conv_AE_3D&quot;:</span>
+    <span class="c1">#     data_decompressed = data_decompressed.reshape(</span>
+    <span class="c1">#         data_decompressed.shape[0] * data_decompressed.shape[2],</span>
+    <span class="c1">#         1,</span>
+    <span class="c1">#         data_decompressed.shape[3],</span>
+    <span class="c1">#         data_decompressed.shape[4],</span>
+    <span class="c1">#     )</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Plotting ===&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_tiles</span><span class="p">)):</span>
+        <span class="c1"># if config.model_type == &quot;convolutional&quot;:</span>
+        <span class="c1">#     tile_data_decompressed = data_decompressed[ind][0]</span>
+        <span class="c1"># elif config.model_type == &quot;dense&quot;:</span>
+        <span class="c1">#     tile_data_decompressed = data_decompressed[ind][0]</span>
+        <span class="n">tile_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+        <span class="n">tile_data_decompressed</span> <span class="o">=</span> <span class="n">data_decompressed</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">tile_data</span> <span class="o">-</span> <span class="n">tile_data_decompressed</span>
+
+        <span class="n">max_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">tile_data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">tile_data_decompressed</span><span class="p">)])</span>
+        <span class="n">min_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">tile_data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">tile_data_decompressed</span><span class="p">)])</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">29.7</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.54</span><span class="p">),</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.54</span><span class="p">)),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Original&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">im1</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tile_data</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_value</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">min_value</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Reconstructed&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">im2</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tile_data_decompressed</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_value</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">min_value</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Difference&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">im3</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_value</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">min_value</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">cbar_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.815</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.59</span><span class="p">])</span>
+        <span class="n">cb2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im3</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cbar_ax</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+            <span class="n">project_path</span> <span class="o">+</span> <span class="s2">&quot;/plotting/CFD&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span>
+        <span class="p">)</span></div>
+
+        <span class="c1"># sys.exit()</span>
+
+
+<div class="viewcode-block" id="plot">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.plotting.plot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs the appropriate plotting function based on the data dimension 1D or 2D</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_path (path): The path to the project directory</span>
+<span class="sd">        config (dataclass): The config class containing attributes set in the config file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">data_dimension</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">plot_1D</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">data_dimension</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">plot_2D</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
