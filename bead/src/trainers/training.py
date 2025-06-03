@@ -429,9 +429,6 @@ def train(
         enabled=(config.use_amp and device.type == "cuda")
     )
 
-    # Initialize annealer for flexible hyperparameter scheduling
-    annealer = helper.Annealer(config, optimizer, early_stopper)
-
     # Initialize early stopping and learning rate scheduler if specified
     early_stopper = (
         helper.EarlyStopping(
@@ -445,6 +442,9 @@ def train(
         if config.lr_scheduler
         else None
     )
+
+    # Initialize annealer for flexible hyperparameter scheduling
+    annealer = Annealer(config, optimizer, early_stopper)
 
     # Containers for loss data
     train_loss_components_per_epoch = []
@@ -530,7 +530,9 @@ def train(
                     )
 
             # Only rank 0 (or non-DDP) performs annealing step, using validation loss for consistency with early stopping
-            annealer.step(epoch, loss=current_validation_epoch_loss_for_schedulers.item())
+            annealer.step(
+                epoch, loss=current_validation_epoch_loss_for_schedulers.item()
+            )
 
         # All ranks synchronize annealed parameters from rank 0 to ensure DDP consistency
         if is_ddp_active:
@@ -558,7 +560,7 @@ def train(
                     )
                 break
         else:
-            if early_stopper and early_stopping.early_stop:
+            if early_stopper and early_stopper.early_stop:
                 if verbose:
                     print(f"Early stopping at epoch {epoch + 1}.")
                 break
