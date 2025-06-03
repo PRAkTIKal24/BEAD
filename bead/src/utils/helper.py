@@ -1108,9 +1108,10 @@ class Annealer:
         config (dataClass): User configuration including annealing settings
         optimizer (torch.optim.Optimizer): Optimizer to update if learning rate is annealed
         early_stopper (EarlyStopping): Early stopping object, used for trigger-based annealing
+        verbose (bool): If True, print annealing actions
     """
 
-    def __init__(self, config, optimizer, early_stopper=None):
+    def __init__(self, config, optimizer, early_stopper=None, verbose=False):
         self.config = config
         self.optimizer = optimizer
         self.early_stopper = early_stopper
@@ -1118,6 +1119,8 @@ class Annealer:
         self.lr_scheduler = None
         self.lr_triggered_params = {}
         self.earlystop_triggered_params = {}
+        self.verbose = getattr(config, 'verbose', False) or verbose
+        self._constant_annealed = set()  # Track which params have printed for constant strategy
         if hasattr(config, "annealing"):
             for param, settings in config.annealing.items():
                 if settings.get("strategy") == "trigger":
@@ -1241,6 +1244,43 @@ class Annealer:
                             param_state["last_trigger"] = epoch
                             if param_state["current_idx"] >= len(values):
                                 param_state["active"] = False
+        # Verbose logging of annealing actions
+        for param, settings in self.annealing_config.items():
+            strategy = settings.get('strategy', 'constant')
+            prev_value = self._get_param_value(param)
+            new_value = prev_value
+            signal_type = settings.get('trigger_type', 'N/A')
+            # Determine new value based on strategy
+            if strategy == 'constant':
+                new_value = prev_value * settings.get('pace', 1.0)
+                if param not in self._constant_annealed and new_value != prev_value:
+                    if self.verbose:
+                        print(f"[Anneal] Param '{param}' (constant): initial anneal from {prev_value} to {new_value}")
+                    self._constant_annealed.add(param)
+            elif strategy == 'trigger':
+                if loss is not None:
+                    # For trigger-based, use the loss to potentially update the parameter
+                    idx = settings["trigger"]["current_idx"]
+                    values = settings["trigger"].get("trigger_values", [])
+                    if idx < len(values):
+                        new_value = values[idx]
+                        if self.verbose:
+                            print(f"[Anneal] Param '{param}' (trigger, signal={signal_type}): {prev_value} -> {new_value}")
+            elif strategy == 'hardcoded':
+                # For hardcoded, directly use the scheduled value if it exists for this epoch
+                schedule = settings.get("schedule", {})
+                if epoch in schedule:
+                    new_value = schedule[epoch]
+                    if new_value != prev_value:
+                        if self.verbose:
+                            print(f"[Anneal] Param '{param}' (hardcoded): {prev_value} -> {new_value}")
+            # Actually set the new value
+            if strategy == 'constant':
+                if param == "lr" and self.optimizer is not None:
+                    for g in self.optimizer.param_groups:
+                        g["lr"] = new_value
+                else:
+                    setattr(self.config, param, new_value)
 
     def sync_all(self):
         """
