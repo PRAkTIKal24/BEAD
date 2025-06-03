@@ -476,8 +476,13 @@ def train(
             verbose,
         )
 
-        # Anneal hyperparameters as configured
-        annealer.step(epoch, loss=current_train_epoch_loss_avg.item())
+        # Anneal hyperparameters as configured (only on rank 0 or if not DDP)
+        if not is_ddp_active or local_rank == 0:
+            annealer.step(epoch, loss=current_train_epoch_loss_avg.item())
+
+        # Synchronize annealed parameters across all ranks
+        if is_ddp_active:
+            annealer.sync_all()
 
         current_validation_epoch_loss_for_schedulers = current_train_epoch_loss_avg
         batch_validation_losses_components_for_log = batch_train_losses_components

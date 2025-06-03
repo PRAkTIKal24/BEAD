@@ -1149,7 +1149,17 @@ class Annealer:
                                 "last_trigger": -1,
                             }
 
-    def step(self, epoch, loss=None):
+    def sync_param(self, param, value, is_ddp_active, local_rank, device):
+        """
+        Synchronize a scalar parameter value from rank 0 to all other ranks.
+        """
+        if not is_ddp_active:
+            return value
+        tensor = torch.tensor([value], device=device, dtype=torch.float32)
+        dist.broadcast(tensor, src=0)
+        return tensor.item()
+
+    def step(self, epoch, loss=None, is_ddp_active=False, local_rank=0, device=None):
         if not hasattr(self.config, "annealing"):
             return
         # Handle constant and hardcoded strategies
@@ -1182,16 +1192,22 @@ class Annealer:
                 idx = param_state["current_idx"]
                 values = param_state["values"]
                 if values:
-                    new_value = values[idx % len(values)]
+                    # Only rank 0 decides the new value
+                    if local_rank == 0:
+                        new_value = values[idx % len(values)]
+                    else:
+                        new_value = getattr(self.config, param)
+                    # Synchronize across all ranks
+                    new_value = self.sync_param(param, new_value, is_ddp_active, local_rank, device)
                     setattr(self.config, param, new_value)
-                    param_state["current_idx"] += 1
-                    param_state["last_trigger"] = counter
+                    if local_rank == 0:
+                        param_state["current_idx"] += 1
+                        param_state["last_trigger"] = counter
         # 2. LR scheduler trigger
         if self.lr_scheduler is not None and loss is not None:
             prev_lr = [g["lr"] for g in self.optimizer.param_groups]
             self.lr_scheduler.step(loss)
             new_lr = [g["lr"] for g in self.optimizer.param_groups]
-            # If lr was reduced, trigger for all params using lr_scheduler
             if any(n < p for n, p in zip(new_lr, prev_lr)):
                 for param, param_state in self.lr_triggered_params.items():
                     if not param_state["active"]:
@@ -1199,9 +1215,16 @@ class Annealer:
                     idx = param_state["current_idx"]
                     values = param_state["values"]
                     if idx < len(values):
-                        new_value = values[idx]
+                        # Only rank 0 decides the new value
+                        if local_rank == 0:
+                            new_value = values[idx]
+                        else:
+                            new_value = getattr(self.config, param)
+                        # Synchronize across all ranks
+                        new_value = self.sync_param(param, new_value, is_ddp_active, local_rank, device)
                         setattr(self.config, param, new_value)
-                        param_state["current_idx"] += 1
-                        param_state["last_trigger"] = epoch
-                        if param_state["current_idx"] >= len(values):
-                            param_state["active"] = False
+                        if local_rank == 0:
+                            param_state["current_idx"] += 1
+                            param_state["last_trigger"] = epoch
+                            if param_state["current_idx"] >= len(values):
+                                param_state["active"] = False
