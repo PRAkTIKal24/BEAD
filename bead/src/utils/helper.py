@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 import torch
+import torch.distributed as dist
 import torch.nn as nn
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import (
@@ -1113,14 +1114,19 @@ class Annealer:
 
     def __init__(self, config, optimizer, early_stopper=None, verbose=False):
         self.config = config
+        self.is_ddp_active = config.is_ddp_active
+        self.local_rank = config.local_rank
+        self.device = get_device(config)
         self.optimizer = optimizer
         self.early_stopper = early_stopper
         self.state = {}
         self.lr_scheduler = None
         self.lr_triggered_params = {}
         self.earlystop_triggered_params = {}
-        self.verbose = getattr(config, 'verbose', False) or verbose
-        self._constant_annealed = set()  # Track which params have printed for constant strategy
+        self.verbose = getattr(config, "verbose", False) or verbose
+        self._constant_annealed = (
+            set()
+        )  # Track which params have printed for constant strategy
         if hasattr(config, "annealing"):
             for param, settings in config.annealing.items():
                 if settings.get("strategy") == "trigger":
@@ -1128,12 +1134,14 @@ class Annealer:
                     if param == "lr":
                         if trigger_type == "lr_scheduler" and optimizer is not None:
                             trig = settings["trigger"]
-                            self.lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                                optimizer,
-                                mode="min",
-                                patience=trig.get("patience", 10),
-                                factor=trig.get("factor", 0.5),
-                                min_lr=trig.get("min_lr", 1e-6),
+                            self.lr_scheduler = (
+                                torch.optim.lr_scheduler.ReduceLROnPlateau(
+                                    optimizer,
+                                    mode="min",
+                                    patience=trig.get("patience", 10),
+                                    factor=trig.get("factor", 0.5),
+                                    min_lr=trig.get("min_lr", 1e-6),
+                                )
                             )
                         elif trigger_type == "early_stopper":
                             # fallback to early stopper logic for lr if requested
@@ -1178,6 +1186,9 @@ class Annealer:
         """
         if not hasattr(self.config, "annealing"):
             return
+        is_ddp_active = self.is_ddp_active
+        local_rank = self.local_rank
+        device = self.device
         # Handle constant and hardcoded strategies
         for param, settings in self.config.annealing.items():
             strat = settings.get("strategy")
@@ -1214,7 +1225,9 @@ class Annealer:
                     else:
                         new_value = getattr(self.config, param)
                     # Synchronize across all ranks
-                    new_value = self.sync_param(param, new_value, is_ddp_active, local_rank, device)
+                    new_value = self.sync_param(
+                        param, new_value, is_ddp_active, local_rank, device
+                    )
                     setattr(self.config, param, new_value)
                     if local_rank == 0:
                         param_state["current_idx"] += 1
@@ -1237,7 +1250,9 @@ class Annealer:
                         else:
                             new_value = getattr(self.config, param)
                         # Synchronize across all ranks
-                        new_value = self.sync_param(param, new_value, is_ddp_active, local_rank, device)
+                        new_value = self.sync_param(
+                            param, new_value, is_ddp_active, local_rank, device
+                        )
                         setattr(self.config, param, new_value)
                         if local_rank == 0:
                             param_state["current_idx"] += 1
@@ -1246,18 +1261,20 @@ class Annealer:
                                 param_state["active"] = False
         # Verbose logging of annealing actions
         for param, settings in self.annealing_config.items():
-            strategy = settings.get('strategy', 'constant')
+            strategy = settings.get("strategy", "constant")
             prev_value = self._get_param_value(param)
             new_value = prev_value
-            signal_type = settings.get('trigger_type', 'N/A')
+            signal_type = settings.get("trigger_type", "N/A")
             # Determine new value based on strategy
-            if strategy == 'constant':
-                new_value = prev_value * settings.get('pace', 1.0)
+            if strategy == "constant":
+                new_value = prev_value * settings.get("pace", 1.0)
                 if param not in self._constant_annealed and new_value != prev_value:
                     if self.verbose:
-                        print(f"[Anneal] Param '{param}' (constant): initial anneal from {prev_value} to {new_value}")
+                        print(
+                            f"[Anneal] Param '{param}' (constant): initial anneal from {prev_value} to {new_value}"
+                        )
                     self._constant_annealed.add(param)
-            elif strategy == 'trigger':
+            elif strategy == "trigger":
                 if loss is not None:
                     # For trigger-based, use the loss to potentially update the parameter
                     idx = settings["trigger"]["current_idx"]
@@ -1265,17 +1282,21 @@ class Annealer:
                     if idx < len(values):
                         new_value = values[idx]
                         if self.verbose:
-                            print(f"[Anneal] Param '{param}' (trigger, signal={signal_type}): {prev_value} -> {new_value}")
-            elif strategy == 'hardcoded':
+                            print(
+                                f"[Anneal] Param '{param}' (trigger, signal={signal_type}): {prev_value} -> {new_value}"
+                            )
+            elif strategy == "hardcoded":
                 # For hardcoded, directly use the scheduled value if it exists for this epoch
                 schedule = settings.get("schedule", {})
                 if epoch in schedule:
                     new_value = schedule[epoch]
                     if new_value != prev_value:
                         if self.verbose:
-                            print(f"[Anneal] Param '{param}' (hardcoded): {prev_value} -> {new_value}")
+                            print(
+                                f"[Anneal] Param '{param}' (hardcoded): {prev_value} -> {new_value}"
+                            )
             # Actually set the new value
-            if strategy == 'constant':
+            if strategy == "constant":
                 if param == "lr" and self.optimizer is not None:
                     for g in self.optimizer.param_groups:
                         g["lr"] = new_value
@@ -1292,17 +1313,10 @@ class Annealer:
         for param, settings in self.config.annealing.items():
             if settings.get("strategy") == "trigger":
                 if param in self.earlystop_triggered_params:
-                    self.sync_param(param, self.config[param], self.config.is_ddp_active, self.config.local_rank, self.config.device)
-
-    def sync_param(self, param_name):
-        """
-        Synchronize a single parameter's value across DDP processes.
-        Args:
-            param_name (str): Name of the parameter to sync
-        """
-        if not self.config.is_ddp_active:
-            return
-        value = getattr(self.config, param_name)
-        tensor = torch.tensor([value], device=self.config.device, dtype=torch.float32)
-        dist.broadcast(tensor, src=0)
-        setattr(self.config, param_name, tensor.item())
+                    self.sync_param(
+                        param,
+                        self.config[param],
+                        self.is_ddp_active,
+                        self.local_rank,
+                        self.device,
+                    )
