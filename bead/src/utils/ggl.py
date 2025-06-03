@@ -248,6 +248,37 @@ def set_config(c):
     c.contrastive_temperature      = 0.07
     c.contrastive_weight           = 0.005
 
+
+# === Annealing hyperparameters ===
+    c.annealing = {
+        "lr": {
+            "strategy": "trigger",  # options: "constant", "trigger", "hardcoded"
+            "pace": 0.95,           # for "constant": multiply by this every epoch
+            "trigger_type": "lr_scheduler",  # or "early_stopper"
+            "trigger": {            # for "trigger": use loss plateau, etc.
+                "type": "plateau",
+                "patience": 10,
+                "factor": 0.5,
+                "min_lr": 1e-6,
+            },
+            "schedule": {           # for "hardcoded": epoch: value
+                2: 0.0005,
+                3: 0.0001,
+            }
+        },
+        "reg_param": {
+            "strategy": "hardcoded",
+            "schedule": {
+                2: 0.0005,
+                3: 0.0001,
+            }
+        },
+        "contrastive_weight": {
+            "strategy": "trigger",
+            "trigger_type": "lr_scheduler",  # or "early_stopper"
+            "trigger_values": [0.01, 0.001, 0.0001],  # values to cycle through on each trigger
+        }
+    }
 """
 
 

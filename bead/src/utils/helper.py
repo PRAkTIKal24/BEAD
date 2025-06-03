@@ -1097,3 +1097,111 @@ def save_loss_components(loss_data, component_names, suffix, save_dir="loss_outp
         # Create filename with component name and appended suffix
         filename = os.path.join(save_dir, f"{name}_{suffix}.npy")
         np.save(filename, arr)
+
+
+class Annealer:
+    """
+    Utility for flexible hyperparameter annealing during training.
+    Supports: constant, trigger, and hardcoded schedule strategies.
+    Now also supports trigger-based annealing for any parameter using early stopping counter or lr scheduler.
+    """
+    def __init__(self, config, optimizer=None, early_stopper=None):
+        self.config = config
+        self.optimizer = optimizer
+        self.early_stopper = early_stopper
+        self.state = {}
+        self.lr_scheduler = None
+        self.lr_triggered_params = {}
+        self.earlystop_triggered_params = {}
+        if hasattr(config, "annealing"):
+            for param, settings in config.annealing.items():
+                if settings.get("strategy") == "trigger":
+                    trigger_type = settings.get("trigger_type", "early_stopper")
+                    if param == "lr":
+                        if trigger_type == "lr_scheduler" and optimizer is not None:
+                            trig = settings["trigger"]
+                            self.lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                                optimizer,
+                                mode="min",
+                                patience=trig.get("patience", 10),
+                                factor=trig.get("factor", 0.5),
+                                min_lr=trig.get("min_lr", 1e-6),
+                            )
+                        elif trigger_type == "early_stopper":
+                            # fallback to early stopper logic for lr if requested
+                            self.earlystop_triggered_params[param] = {
+                                "values": settings.get("trigger_values", []),
+                                "current_idx": 0,
+                                "last_trigger": -1,
+                            }
+                    else:
+                        if trigger_type == "lr_scheduler":
+                            self.lr_triggered_params[param] = {
+                                "values": settings.get("trigger_values", []),
+                                "current_idx": 0,
+                                "last_trigger": -1,
+                                "active": True,
+                            }
+                        else:
+                            self.earlystop_triggered_params[param] = {
+                                "values": settings.get("trigger_values", []),
+                                "current_idx": 0,
+                                "last_trigger": -1,
+                            }
+
+    def step(self, epoch, loss=None):
+        if not hasattr(self.config, "annealing"):
+            return
+        # Handle constant and hardcoded strategies
+        for param, settings in self.config.annealing.items():
+            strat = settings.get("strategy")
+            if strat == "constant":
+                pace = settings.get("pace", 1.0)
+                if param == "lr" and self.optimizer is not None:
+                    for g in self.optimizer.param_groups:
+                        g["lr"] *= pace
+                else:
+                    setattr(self.config, param, getattr(self.config, param) * pace)
+            elif strat == "hardcoded":
+                schedule = settings.get("schedule", {})
+                if epoch in schedule:
+                    value = schedule[epoch]
+                    if param == "lr" and self.optimizer is not None:
+                        for g in self.optimizer.param_groups:
+                            g["lr"] = value
+                    else:
+                        setattr(self.config, param, value)
+        # Handle trigger strategies
+        # 1. Early stopper trigger
+        for param, param_state in self.earlystop_triggered_params.items():
+            settings = self.config.annealing[param]
+            patience = getattr(self.early_stopper, "patience", 1)
+            counter = getattr(self.early_stopper, "counter", 0)
+            trigger_point = max(1, int(0.67 * patience))
+            if patience > 0 and trigger_point > 0 and counter >= trigger_point:
+                idx = param_state["current_idx"]
+                values = param_state["values"]
+                if values:
+                    new_value = values[idx % len(values)]
+                    setattr(self.config, param, new_value)
+                    param_state["current_idx"] += 1
+                    param_state["last_trigger"] = counter
+        # 2. LR scheduler trigger
+        if self.lr_scheduler is not None and loss is not None:
+            prev_lr = [g["lr"] for g in self.optimizer.param_groups]
+            self.lr_scheduler.step(loss)
+            new_lr = [g["lr"] for g in self.optimizer.param_groups]
+            # If lr was reduced, trigger for all params using lr_scheduler
+            if any(n < p for n, p in zip(new_lr, prev_lr)):
+                for param, param_state in self.lr_triggered_params.items():
+                    if not param_state["active"]:
+                        continue
+                    idx = param_state["current_idx"]
+                    values = param_state["values"]
+                    if idx < len(values):
+                        new_value = values[idx]
+                        setattr(self.config, param, new_value)
+                        param_state["current_idx"] += 1
+                        param_state["last_trigger"] = epoch
+                        if param_state["current_idx"] >= len(values):
+                            param_state["active"] = False

@@ -26,6 +26,7 @@ from tqdm import TqdmExperimentalWarning
 from tqdm.rich import tqdm
 
 from ..utils import helper
+from ..utils.helper import Annealer
 
 warnings.filterwarnings("ignore", category=TqdmExperimentalWarning)
 
@@ -428,6 +429,9 @@ def train(
         enabled=(config.use_amp and device.type == "cuda")
     )
 
+    # Initialize annealer for flexible hyperparameter scheduling
+    annealer = helper.Annealer(config, optimizer, early_stopper)
+
     # Initialize early stopping and learning rate scheduler if specified
     early_stopper = (
         helper.EarlyStopping(
@@ -471,6 +475,9 @@ def train(
             epoch,
             verbose,
         )
+
+        # Anneal hyperparameters as configured
+        annealer.step(epoch, loss=current_train_epoch_loss_avg.item())
 
         current_validation_epoch_loss_for_schedulers = current_train_epoch_loss_avg
         batch_validation_losses_components_for_log = batch_train_losses_components
