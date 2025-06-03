@@ -476,14 +476,6 @@ def train(
             verbose,
         )
 
-        # Anneal hyperparameters as configured (only on rank 0 or if not DDP)
-        if not is_ddp_active or local_rank == 0:
-            annealer.step(epoch, loss=current_train_epoch_loss_avg.item())
-
-        # Synchronize annealed parameters across all ranks
-        if is_ddp_active:
-            annealer.sync_all()
-
         current_validation_epoch_loss_for_schedulers = current_train_epoch_loss_avg
         batch_validation_losses_components_for_log = batch_train_losses_components
 
@@ -536,6 +528,13 @@ def train(
                     print(
                         f"Rank {local_rank}: Early stopping condition met at epoch {epoch + 1}. Will signal other ranks."
                     )
+
+            # Anneal hyperparameters as configured (only on rank 0 or if not DDP)
+            annealer.step(epoch, loss=current_validation_epoch_loss_for_schedulers.item())
+
+        # Synchronize annealed parameters across all ranks
+        if is_ddp_active:
+            annealer.sync_all()
 
         # Synchronize early stopping signal and stop across all ranks based on decision from rank 0
         if is_ddp_active:
