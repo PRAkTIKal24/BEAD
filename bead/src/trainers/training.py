@@ -529,16 +529,17 @@ def train(
                         f"Rank {local_rank}: Early stopping condition met at epoch {epoch + 1}. Will signal other ranks."
                     )
 
-            # Anneal hyperparameters as configured (only on rank 0 or if not DDP)
+            # Only rank 0 (or non-DDP) performs annealing step, using validation loss for consistency with early stopping
             annealer.step(epoch, loss=current_validation_epoch_loss_for_schedulers.item())
 
-        # Synchronize annealed parameters across all ranks
+        # All ranks synchronize annealed parameters from rank 0 to ensure DDP consistency
         if is_ddp_active:
             annealer.sync_all()
 
         # Synchronize early stopping signal and stop across all ranks based on decision from rank 0
         if is_ddp_active:
             if local_rank == 0:
+                # Only rank 0 sets the stop flag, others receive it
                 should_stop_epoch_flag = (
                     1.0 if early_stopper and early_stopper.early_stop else 0.0
                 )
@@ -557,7 +558,7 @@ def train(
                     )
                 break
         else:
-            if early_stopper and early_stopper.early_stop:
+            if early_stopper and early_stopping.early_stop:
                 if verbose:
                     print(f"Early stopping at epoch {epoch + 1}.")
                 break

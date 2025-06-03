@@ -1101,11 +1101,16 @@ def save_loss_components(loss_data, component_names, suffix, save_dir="loss_outp
 
 class Annealer:
     """
-    Utility for flexible hyperparameter annealing during training.
-    Supports: constant, trigger, and hardcoded schedule strategies.
-    Now also supports trigger-based annealing for any parameter using early stopping counter or lr scheduler.
+    Flexible hyperparameter annealing system supporting constant, trigger, and hardcoded strategies.
+    Handles DDP-safe synchronization of annealed parameters across all processes.
+
+    Args:
+        config (dataClass): User configuration including annealing settings
+        optimizer (torch.optim.Optimizer): Optimizer to update if learning rate is annealed
+        early_stopper (EarlyStopping): Early stopping object, used for trigger-based annealing
     """
-    def __init__(self, config, optimizer=None, early_stopper=None):
+
+    def __init__(self, config, optimizer, early_stopper=None):
         self.config = config
         self.optimizer = optimizer
         self.early_stopper = early_stopper
@@ -1159,7 +1164,15 @@ class Annealer:
         dist.broadcast(tensor, src=0)
         return tensor.item()
 
-    def step(self, epoch, loss=None, is_ddp_active=False, local_rank=0, device=None):
+    def step(self, epoch, loss=None):
+        """
+        Perform an annealing step for all configured parameters.
+        Only rank 0 (or non-DDP) should call this; other ranks will sync values.
+
+        Args:
+            epoch (int): Current epoch number
+            loss (float, optional): Loss value to use for trigger-based annealing
+        """
         if not hasattr(self.config, "annealing"):
             return
         # Handle constant and hardcoded strategies
@@ -1228,3 +1241,28 @@ class Annealer:
                             param_state["last_trigger"] = epoch
                             if param_state["current_idx"] >= len(values):
                                 param_state["active"] = False
+
+    def sync_all(self):
+        """
+        Synchronize all annealed parameter values across DDP processes.
+        Should be called by all ranks after rank 0 calls step().
+        """
+        if not hasattr(self.config, "annealing"):
+            return
+        for param, settings in self.config.annealing.items():
+            if settings.get("strategy") == "trigger":
+                if param in self.earlystop_triggered_params:
+                    self.sync_param(param, self.config[param], self.config.is_ddp_active, self.config.local_rank, self.config.device)
+
+    def sync_param(self, param_name):
+        """
+        Synchronize a single parameter's value across DDP processes.
+        Args:
+            param_name (str): Name of the parameter to sync
+        """
+        if not self.config.is_ddp_active:
+            return
+        value = getattr(self.config, param_name)
+        tensor = torch.tensor([value], device=self.config.device, dtype=torch.float32)
+        dist.broadcast(tensor, src=0)
+        setattr(self.config, param_name, tensor.item())

@@ -1,5 +1,12 @@
 # Hyperparameter Annealing in BEAD
 
+# Annealing System Instructions
+
+"""
+This document provides instructions and examples for configuring and extending the flexible hyperparameter annealing system in BEAD.
+It covers DDP-safe usage, available strategies, config options, and extension notes for advanced users.
+"""
+
 This document explains the new flexible hyperparameter annealing options available in BEAD, with usage instructions, configuration examples, and guidance for adding new strategies.
 
 ---
