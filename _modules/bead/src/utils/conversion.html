@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils.conversion &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.utils.conversion</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.utils.conversion</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loky</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_reusable_executor</span>
+
+
+<div class="viewcode-block" id="calculate_jet_properties">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.conversion.calculate_jet_properties">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_jet_properties</span><span class="p">(</span><span class="n">constituents</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate jet pT, eta, and phi from constituent properties.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        constituents (list of dicts): Each dict contains constituent properties:</span>
+<span class="sd">                                      {&#39;pt&#39;: ..., &#39;eta&#39;: ..., &#39;phi&#39;: ...}</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Jet properties {&#39;jet_pt&#39;: ..., &#39;jet_eta&#39;: ..., &#39;jet_phi&#39;: ...}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">pz</span><span class="p">,</span> <span class="n">energy</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constituents</span><span class="p">:</span>
+        <span class="n">pt</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;pt&quot;</span><span class="p">]</span>
+        <span class="n">eta</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">]</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span>
+
+        <span class="n">px</span> <span class="o">+=</span> <span class="n">pt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">py</span> <span class="o">+=</span> <span class="n">pt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">pz</span> <span class="o">+=</span> <span class="n">pt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
+        <span class="n">energy</span> <span class="o">+=</span> <span class="n">pt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
+
+    <span class="n">jet_pt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">px</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">py</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">jet_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">py</span><span class="p">,</span> <span class="n">px</span><span class="p">)</span>
+    <span class="n">jet_eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsinh</span><span class="p">(</span><span class="n">pz</span> <span class="o">/</span> <span class="n">jet_pt</span><span class="p">)</span> <span class="k">if</span> <span class="n">jet_pt</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;jet_pt&quot;</span><span class="p">:</span> <span class="n">jet_pt</span><span class="p">,</span>
+        <span class="s2">&quot;jet_eta&quot;</span><span class="p">:</span> <span class="n">jet_eta</span><span class="p">,</span>
+        <span class="s2">&quot;jet_phi&quot;</span><span class="p">:</span> <span class="n">jet_phi</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="process_event">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.conversion.process_event">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_event</span><span class="p">(</span><span class="n">evt_id</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process a single event, calculating jet and constituent data.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        evt_id (int): Event ID.</span>
+<span class="sd">        row (pandas.Series): Row from the DataFrame corresponding to the event.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (event_data, jets, constituents) for the event.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Extract event-level variables</span>
+    <span class="n">evt_weight</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">met</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">met_phi</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">num_jets</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">event_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">evt_id</span><span class="p">,</span> <span class="n">evt_weight</span><span class="p">,</span> <span class="n">met</span><span class="p">,</span> <span class="n">met_phi</span><span class="p">,</span> <span class="n">num_jets</span><span class="p">]</span>
+
+    <span class="c1"># #print row[4] to debug</span>
+    <span class="c1"># print(row[4])</span>
+
+    <span class="n">jet_offset</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># First 4 columns are event-level variables</span>
+    <span class="n">jets</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Temporary list to hold jet-level data for this event</span>
+    <span class="n">constituents</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_jets</span><span class="p">):</span>
+        <span class="c1"># Extract jet-level variables</span>
+        <span class="n">num_constits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">jet_offset</span><span class="p">])</span>
+        <span class="n">b_tagged</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">jet_offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Collect constituent data for this jet</span>
+        <span class="n">jet_constituents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_constits</span><span class="p">):</span>
+            <span class="n">pid</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">jet_offset</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span>
+            <span class="n">pt</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">jet_offset</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span>
+            <span class="n">eta</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">jet_offset</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span>
+            <span class="n">phi</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">jet_offset</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span>
+            <span class="n">jet_constituents</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;pt&quot;</span><span class="p">:</span> <span class="n">pt</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">eta</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="n">phi</span><span class="p">})</span>
+            <span class="n">constituents</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">evt_id</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">phi</span><span class="p">])</span>
+
+        <span class="c1"># Calculate jet properties</span>
+        <span class="n">jet_properties</span> <span class="o">=</span> <span class="n">calculate_jet_properties</span><span class="p">(</span><span class="n">jet_constituents</span><span class="p">)</span>
+        <span class="n">jets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">evt_id</span><span class="p">,</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="n">num_constits</span><span class="p">,</span>
+                <span class="n">b_tagged</span><span class="p">,</span>
+                <span class="n">jet_properties</span><span class="p">[</span><span class="s2">&quot;jet_pt&quot;</span><span class="p">],</span>
+                <span class="n">jet_properties</span><span class="p">[</span><span class="s2">&quot;jet_eta&quot;</span><span class="p">],</span>
+                <span class="n">jet_properties</span><span class="p">[</span><span class="s2">&quot;jet_phi&quot;</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Update offset to next jet</span>
+        <span class="n">jet_offset</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">num_constits</span> <span class="o">*</span> <span class="mi">4</span>
+
+    <span class="c1"># Reorder jets, constituents in decreasing order of pT</span>
+    <span class="c1"># jets.sort(key=lambda x: -x[4])  # Sort by jet_pt (index 4)</span>
+    <span class="c1"># constituents.sort(key=lambda x: -x[4])  # Sort by constit_pt (index 4)</span>
+    <span class="k">return</span> <span class="n">event_data</span><span class="p">,</span> <span class="n">jets</span><span class="p">,</span> <span class="n">constituents</span></div>
+
+
+
+<div class="viewcode-block" id="convert_csv_to_hdf5_npy_parallel">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.conversion.convert_csv_to_hdf5_npy_parallel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_csv_to_hdf5_npy_parallel</span><span class="p">(</span>
+    <span class="n">csv_file</span><span class="p">,</span>
+    <span class="n">output_prefix</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">,</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;h5&quot;</span><span class="p">,</span>
+    <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a CSV file to HDF5 and .npy files in parallel,</span>
+<span class="sd">    adding event ID (evt_id) and jet-level properties calculated from constituents.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        csv_file (str): Path to the input CSV file.</span>
+<span class="sd">        output_prefix (str): Prefix for the output files.</span>
+<span class="sd">        file_type (str): Output file type (&#39;h5&#39; or &#39;npy&#39;).</span>
+<span class="sd">        out_path (str): Path to save output files.</span>
+<span class="sd">        n_workers (int): Number of parallel workers.</span>
+<span class="sd">        verbose (bool): Print progress if True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read the CSV file</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)</span>  <span class="c1"># , on_bad_lines=&#39;skip&#39;)</span>
+    <span class="c1"># Remove rows with all NaN values</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Parallel processing of events</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="c1"># print the file path being parsed</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">csv_file</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> events in parallel using </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers...&quot;</span><span class="p">)</span>
+    <span class="n">event_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">get_reusable_executor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">process_event</span><span class="p">,</span> <span class="n">evt_id</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">evt_id</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">itertuples</span><span class="p">(),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">:</span>
+            <span class="n">event_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+
+    <span class="c1"># Combine results</span>
+    <span class="n">event_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">jet_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">constituent_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">event</span><span class="p">,</span> <span class="n">jets</span><span class="p">,</span> <span class="n">constituents</span> <span class="ow">in</span> <span class="n">event_results</span><span class="p">:</span>
+        <span class="n">event_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">jet_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">jets</span><span class="p">)</span>
+        <span class="n">constituent_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">constituents</span><span class="p">)</span>
+
+    <span class="c1"># Convert to NumPy arrays</span>
+    <span class="n">event_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">event_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">jet_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">jet_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">constituent_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">constituent_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;npy&quot;</span><span class="p">:</span>
+        <span class="c1"># Save to .npy files</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_events.npy&quot;</span><span class="p">,</span> <span class="n">event_data</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_jets.npy&quot;</span><span class="p">,</span> <span class="n">jet_data</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_constituents.npy&quot;</span><span class="p">,</span> <span class="n">constituent_data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;h5&quot;</span><span class="p">:</span>
+        <span class="c1"># Save to HDF5 file</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">out_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">output_prefix</span> <span class="o">+</span> <span class="s2">&quot;.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5file</span><span class="p">:</span>
+            <span class="n">h5file</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;events&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">event_data</span><span class="p">)</span>
+            <span class="n">h5file</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;jets&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">jet_data</span><span class="p">)</span>
+            <span class="n">h5file</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;constituents&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">constituent_data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data saved to files with prefix </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
