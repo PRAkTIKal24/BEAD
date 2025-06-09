@@ -10,6 +10,7 @@ Classes:
     AE_Dropout_BN: Autoencoder with dropout and batch normalization.
     ConvAE: Convolutional autoencoder.
     ConvVAE: Convolutional variational autoencoder.
+    Dirichlet_ConvVAE: Convolutional Dirichlet variational autoencoder.
     Planar_ConvVAE: ConvVAE with planar normalizing flows.
     OrthogonalSylvester_ConvVAE: ConvVAE with orthogonal Sylvester flows.
     HouseholderSylvester_ConvVAE: ConvVAE with Householder Sylvester flows.
@@ -325,7 +326,57 @@ class ConvVAE(ConvAE):
         z = self.reparameterize(mean, logvar)
         out = self.decode(z)
         return out, mean, logvar, z, z, z
+class Dirichlet_ConvVAE(ConvAE):
+    def __init__(self, in_shape, z_dim, *args, **kwargs):
+        super().__init__(in_shape, z_dim, *args, **kwargs)
 
+        # Latent distribution parameters
+        self.q_z_mean = nn.Linear(self.q_z_mid_dim, self.z_dim)
+        self.q_z_logvar = nn.Linear(self.q_z_mid_dim, self.z_dim)
+
+        # log-det-jacobian = 0 without flows
+        self.ldj = 0
+        self.z_size = z_dim
+
+    def encode(self, x):
+        # Conv
+        out = self.q_z_conv(x)
+        self.conv_op_shape = out.shape
+        # Flatten
+        out = self.flatten(out)
+        # Dense
+        out = self.q_z_lin(out)
+        # Latent
+        mean = self.q_z_mean(out)
+        logvar = self.q_z_logvar(out)
+        return out, mean, logvar
+
+    def decode(self, z):
+        # Dense
+        out = self.p_x_lin(z)
+        # Unflatten
+        out = out.view(
+            self.conv_op_shape[0],
+            self.conv_op_shape[1],
+            self.conv_op_shape[2],
+            self.conv_op_shape[3],
+        )
+        # Conv transpose
+        out = self.p_x_conv(out)
+        return out
+
+    def reparameterize(self, mean, logvar):
+        z = mean + torch.randn_like(mean) * torch.exp(0.5 * logvar)
+        # Apply softmax to map z to simplex (Dirichlet approximation)
+        r = torch.nn.functional.softmax(z,dim=-1)
+    
+        return r
+
+    def forward(self, x):
+        out, mean, logvar = self.encode(x)
+        r = self.reparameterize(mean, logvar)
+        out = self.decode(r)
+        return out, mean, logvar, r, r, r
 
 class Planar_ConvVAE(ConvVAE):
     """
