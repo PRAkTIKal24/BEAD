@@ -22,6 +22,7 @@ Classes:
     VAEFlowLossEMD: VAE flow loss with EMD term.
     VAEFlowLossL1: VAE flow loss with L1 regularization.
     VAEFlowLossL2: VAE flow loss with L2 regularization.
+    DirichletVAELoss: Combined loss for DirichletConvVAE (reconstruction + KL(dirichlet)).
 """
 
 import torch
@@ -80,18 +81,51 @@ class KLDivergenceLoss(BaseLoss):
     """
     KL Divergence loss for VAE latent space regularization.
 
-    Uses the formula:
-        KL = -0.5 * sum(1 + logvar - mu^2 - exp(logvar))
+    Supports:
+    - Gaussian prior
+    - Dirichlet prior via Laplace approximation
     """
 
-    def __init__(self, config):
+    def __init__(self, config, prior: str = "gaussian"):
         super(KLDivergenceLoss, self).__init__(config)
         self.component_names = ["kl"]
+        self.prior = prior.lower()
 
-    def calculate(self, recon, target, mu, logvar, parameters, log_det_jacobian=0):
-        kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+        if self.prior == "dirichlet":
+            self.alpha_prior_value = 5.0
+
+    def compute_alpha_laplace(self, mu, logvar):
+        """
+        Compute Dirichlet concentration parameters α from
+        Gaussian parameters (μ, logvar) via Laplace bridge approximation.
+        """
+        K = mu.size(1)
+        var = torch.exp(logvar)
+        exp_mu = torch.exp(mu)
+        exp_minus_mu= torch.exp(-mu)
+        sum_exp_minus = exp_minus_mu.sum(dim=1, keepdim=True)
+
+        # Laplace Bridge approximation
+        term = 1.0 - 2.0 / K + (exp_mu * sum_exp_minus) / (K ** 2)
+        alpha = term / var
+        return alpha
+
+    def calculate(self, recon, target, mu, logvar, parameters=None, log_det_jacobian=0):
         batch_size = mu.size(0)
-        return (kl_loss / batch_size,)
+
+        if self.prior == "dirichlet":
+            D_z = self.compute_alpha_laplace(mu, logvar)
+
+            q_z = torch.distributions.Dirichlet(D_z)
+            prior = torch.distributions.Dirichlet(torch.full_like(D_z, self.alpha_prior_value))
+
+            kl_loss = torch.distributions.kl_divergence(q_z, prior)
+
+            return (kl_loss.mean(),)
+
+        else:
+            kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1)
+            return (kl_loss/batch_size,)
 
 
 # ---------------------------
@@ -770,3 +804,13 @@ class VAEFlowLossL2(VAEFlowLoss):
         l2_loss = self.l2_reg_fn.calculate(parameters)
         loss = vae_loss + self.l2_weight * l2_loss
         return loss, vae_loss, recon_loss, kl_loss, l2_loss
+
+class DirichletVAELoss(VAELoss):
+    """
+    DirichletVAELoss: Combines reconstruction loss and Dirichlet KL divergence loss.
+    Inherits from VAELoss and overrides the KL loss function to use Dirichlet prior.
+    """
+
+    def __init__(self, config):
+        super(DirichletVAELoss, self).__init__(config)
+        self.kl_loss_fn = KLDivergenceLoss(config, prior="dirichlet")
