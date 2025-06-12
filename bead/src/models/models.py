@@ -367,16 +367,15 @@ class Dirichlet_ConvVAE(ConvAE):
 
     def reparameterize(self, mean, logvar):
         z = mean + torch.randn_like(mean) * torch.exp(0.5 * logvar)
-        # Apply softmax to map z to simplex (Dirichlet approximation)
-        r = torch.nn.functional.softmax(z,dim=-1)
-    
-        return r
+        return z
 
     def forward(self, x):
         out, mean, logvar = self.encode(x)
-        r = self.reparameterize(mean, logvar)
-        out = self.decode(r)
-        return out, mean, logvar, r, r, r
+        G_z = self.reparameterize(mean, logvar)
+        # Apply softmax to map z to simplex (Dirichlet approximation)
+        D_z = torch.nn.functional.softmax(G_z,dim=-1)
+        out = self.decode(D_z)
+        return out, mean, logvar, D_z,D_z,D_z
 
 class Planar_ConvVAE(ConvVAE):
     """
