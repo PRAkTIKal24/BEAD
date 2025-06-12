@@ -188,6 +188,11 @@ class Config:
     contrastive_temperature: float
     contrastive_weight: float
 
+    # NT-Xent specific parameters
+    model_generate_two_views: bool = False
+    ntxent_temperature: float = 0.07
+    ntxent_weight: float = 0.005
+
 
 def create_default_config(workspace_name: str, project_name: str) -> str:
     """
@@ -247,6 +252,11 @@ def set_config(c):
     c.subsample_size               = 300000
     c.contrastive_temperature      = 0.07
     c.contrastive_weight           = 0.005
+
+    # NT-Xent specific parameters
+    c.model_generate_two_views     = False
+    c.ntxent_temperature           = 0.07
+    c.ntxent_weight                = 0.005
 
     # Parameter annealing configuration
     c.annealing_params = {{

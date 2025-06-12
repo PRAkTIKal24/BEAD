@@ -802,14 +802,34 @@ def model_init(in_shape, config):
     model_object = getattr(models, config.model_name)
 
     if config.model_name == "pj_custom":
-        model = model_object(*in_shape, z_dim=config.latent_space_size)
+        model = model_object(*in_shape, z_dim=config.latent_space_size, config=config)
 
     else:
-        model = model_object(in_shape, z_dim=config.latent_space_size)
+        model = model_object(in_shape, z_dim=config.latent_space_size, config=config)
 
     if config.model_init == "xavier":
         model.apply(xavier_init_weights)
 
+    return model
+
+
+def load_model(model_path: str, in_shape, config):
+    """
+
+    Loads the state dictionary of the trained model into a model variable. This variable is then used for passing
+    data through the encoding and decoding functions.
+    """
+
+    model_object = getattr(models, config.model_name)
+
+    if config.model_name == "pj_custom":
+        model = model_object(*in_shape, z_dim=config.latent_space_size, config=config)
+
+    else:
+        model = model_object(in_shape, z_dim=config.latent_space_size, config=config)
+
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cuda')))
+    model.eval()
     return model
 
 
@@ -1019,10 +1039,10 @@ def load_model(model_path: str, in_shape, config):
     model_object = getattr(models, config.model_name)
 
     if config.model_name == "pj_custom":
-        model = model_object(*in_shape, z_dim=config.latent_space_size)
+        model = model_object(*in_shape, z_dim=config.latent_space_size, config=config)
 
     else:
-        model = model_object(in_shape, z_dim=config.latent_space_size)
+        model = model_object(in_shape, z_dim=config.latent_space_size, config=config)
 
     # Load state_dict to CPU first to avoid device mismatches,
     # especially if saved from a specific GPU or DDP setup.

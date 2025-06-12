@@ -275,11 +275,10 @@ class ConvAE(nn.Module):
         z = self.encode(x)
         out = self.decode(z)
         return out, z, z, z, z, z
-
-
 class ConvVAE(ConvAE):
-    def __init__(self, in_shape, z_dim, *args, **kwargs):
-        super().__init__(in_shape, z_dim, *args, **kwargs)
+    def __init__(self, in_shape, z_dim, config, *args, **kwargs):
+        super().__init__(in_shape, z_dim, *args, **kwargs) # Assuming base class doesn't need config yet
+        self.config = config # Store config
 
         # Latent distribution parameters
         self.q_z_mean = nn.Linear(self.q_z_mid_dim, self.z_dim)
@@ -332,8 +331,8 @@ class Planar_ConvVAE(ConvVAE):
     Variational auto-encoder with planar flows in the decoder.
     """
 
-    def __init__(self, in_shape, z_dim, *args, **kwargs):
-        super().__init__(in_shape, z_dim, *args, **kwargs)
+    def __init__(self, in_shape, z_dim, config, *args, **kwargs):
+        super().__init__(in_shape, z_dim, config, *args, **kwargs) # Pass config to ConvVAE's __init__
 
         # Initialize log-det-jacobian to zero
         self.log_det_j = 0
@@ -353,31 +352,80 @@ class Planar_ConvVAE(ConvVAE):
             self.add_module("flow_" + str(k), flow_k)
 
     def forward(self, x):
-        self.log_det_j = 0
+        if self.config.model_generate_two_views:
+            # --- Create two views of the input x ---
+            # View 1: original input
+            x_i = x
+            # View 2: original input + small Gaussian noise
+            # Ensure noise is on the same device as x and has the same dtype
+            noise = torch.randn_like(x) * 0.01 # Small noise factor
+            x_j = x + noise
 
-        out, z_mu, z_var = self.encode(x)
+            # --- Process View 1 (x_i) ---
+            log_det_j_i = 0 # Initialize for view i
+            out_i, z_mu_i, z_var_i = self.encode(x_i)
+            batch_size_i = x_i.size(0)
+            u_i = self.amor_u(out_i).view(batch_size_i, self.num_flows, self.z_size, 1)
+            w_i = self.amor_w(out_i).view(batch_size_i, self.num_flows, 1, self.z_size)
+            b_i = self.amor_b(out_i).view(batch_size_i, self.num_flows, 1, 1)
+            
+            z_list_i = [self.reparameterize(z_mu_i, z_var_i)]
+            for k_flow in range(self.num_flows):
+                flow_k_module = getattr(self, "flow_" + str(k_flow))
+                z_k_val_i, log_det_jacobian_i_k = flow_k_module(
+                    z_list_i[k_flow], u_i[:, k_flow, :, :], w_i[:, k_flow, :, :], b_i[:, k_flow, :, :]
+                )
+                z_list_i.append(z_k_val_i)
+                log_det_j_i += log_det_jacobian_i_k
+            
+            z0_i = z_list_i[0]  # Pre-flow latent for view i
+            zk_i = z_list_i[-1] # Post-flow latent for view i
 
-        batch_size = x.size(0)
-        # return amortized u an w for all flows
-        u = self.amor_u(out).view(batch_size, self.num_flows, self.z_size, 1)
-        w = self.amor_w(out).view(batch_size, self.num_flows, 1, self.z_size)
-        b = self.amor_b(out).view(batch_size, self.num_flows, 1, 1)
+            # --- Process View 2 (x_j) ---
+            log_det_j_j = 0 # Initialize for view j
+            out_j, z_mu_j, z_var_j = self.encode(x_j)
+            batch_size_j = x_j.size(0)
+            u_j = self.amor_u(out_j).view(batch_size_j, self.num_flows, self.z_size, 1)
+            w_j = self.amor_w(out_j).view(batch_size_j, self.num_flows, 1, self.z_size)
+            b_j = self.amor_b(out_j).view(batch_size_j, self.num_flows, 1, 1)
 
-        # Sample z_0
-        z = [self.reparameterize(z_mu, z_var)]
+            z_list_j = [self.reparameterize(z_mu_j, z_var_j)]
+            for k_flow in range(self.num_flows):
+                flow_k_module = getattr(self, "flow_" + str(k_flow))
+                z_k_val_j, log_det_jacobian_j_k = flow_k_module(
+                    z_list_j[k_flow], u_j[:, k_flow, :, :], w_j[:, k_flow, :, :], b_j[:, k_flow, :, :]
+                )
+                z_list_j.append(z_k_val_j)
+                log_det_j_j += log_det_jacobian_j_k
+            
+            # z0_j = z_list_j[0] # Pre-flow latent for view j (potentially not needed for loss)
+            zk_j = z_list_j[-1] # Post-flow latent for view j
 
-        # Normalizing flows
-        for k in range(self.num_flows):
-            flow_k = getattr(self, "flow_" + str(k))  # planar.'flow_'+k
-            z_k, log_det_jacobian = flow_k(
-                z[k], u[:, k, :, :], w[:, k, :, :], b[:, k, :, :]
-            )
-            z.append(z_k)
-            self.log_det_j += log_det_jacobian
-
-        x_decoded = self.decode(z[-1])
-
-        return x_decoded, z_mu, z_var, self.log_det_j, z[0], z[-1]
+            # --- Decode one view for reconstruction (e.g., view i) ---
+            x_decoded = self.decode(zk_i)
+            
+            # Return values for dual-view NT-Xent loss
+            # Note: The VAE part of the loss will use z_mu_i, z_var_i, log_det_j_i.
+            return x_decoded, z_mu_i, z_var_i, log_det_j_i, z0_i, zk_i, zk_j
+        else:
+            # Original single-view forward pass
+            self.log_det_j = 0 # Reset class-level log_det_j for single view
+            out, z_mu, z_var = self.encode(x)
+            batch_size = x.size(0)
+            u = self.amor_u(out).view(batch_size, self.num_flows, self.z_size, 1)
+            w = self.amor_w(out).view(batch_size, self.num_flows, 1, self.z_size)
+            b = self.amor_b(out).view(batch_size, self.num_flows, 1, 1)
+            
+            z_list = [self.reparameterize(z_mu, z_var)] # Note: variable name 'z' in original, using 'z_list' for clarity
+            for k_flow in range(self.num_flows):
+                flow_k_module = getattr(self, "flow_" + str(k_flow))
+                z_k_val, log_det_jacobian_k = flow_k_module(z_list[k_flow], u[:, k_flow, :, :], w[:, k_flow, :, :], b[:, k_flow, :, :])
+                z_list.append(z_k_val)
+                self.log_det_j += log_det_jacobian_k
+            
+            x_decoded = self.decode(z_list[-1])
+            # Return values for standard VAE loss
+            return x_decoded, z_mu, z_var, self.log_det_j, z_list[0], z_list[-1]
 
 
 class OrthogonalSylvester_ConvVAE(ConvVAE):
@@ -385,8 +433,8 @@ class OrthogonalSylvester_ConvVAE(ConvVAE):
     Variational auto-encoder with orthogonal flows in the decoder.
     """
 
-    def __init__(self, in_shape, z_dim, *args, **kwargs):
-        super().__init__(in_shape, z_dim, *args, **kwargs)
+    def __init__(self, in_shape, z_dim, config, *args, **kwargs):
+        super().__init__(in_shape, z_dim, config, *args, **kwargs)
 
         # Initialize log-det-jacobian to zero
         self.log_det_j = 0
@@ -528,11 +576,10 @@ class OrthogonalSylvester_ConvVAE(ConvVAE):
         # Normalizing flows
         for k in range(self.num_flows):
             flow_k = getattr(self, "flow_" + str(k))
-            z_k, log_det_jacobian = flow_k(
+            z_k_val, log_det_jacobian = flow_k(
                 z[k], r1[:, :, :, k], r2[:, :, :, k], q_ortho[k, :, :, :], b[:, :, :, k]
             )
-
-            z.append(z_k)
+            z.append(z_k_val)
             self.log_det_j += log_det_jacobian
 
         x_decoded = self.decode(z[-1])

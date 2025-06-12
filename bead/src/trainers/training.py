@@ -98,20 +98,44 @@ def fit(
             enabled=(config.use_amp and device.type == "cuda"),
         ):
             out = helper.call_forward(ddp_model, inputs)
-            recon, mu, logvar, ldj, z0, zk = out
 
-            losses = loss_fn.calculate(
-                recon=recon,
-                target=inputs,
-                mu=mu,
-                logvar=logvar,
-                zk=zk,
-                parameters=model_for_loss_params.parameters(),
-                log_det_jacobian=ldj
-                if hasattr(ldj, "item")
-                else torch.tensor(0.0, device=device),  # ldj gets extra love
-                generator_labels=gen_labels,
-            )
+            if config.model_generate_two_views:
+                # Unpack 7 model outputs for dual-view: x_decoded, z_mu_i, z_var_i, log_det_j_i, z0_i, zk_i, zk_j
+                x_decoded, z_mu_i, z_var_i, log_det_j_i, z0_i, zk_i, zk_j = out
+
+                losses = loss_fn.calculate(
+                    recon=x_decoded,         # Reconstructed from zk_i
+                    target=inputs,
+                    mu=z_mu_i,               # mu for zk_i (used in VAE loss)
+                    logvar=z_var_i,          # logvar for zk_i (used in VAE loss)
+                    z0_i=z0_i,               # Pre-flow latent for view i
+                    zk_i=zk_i,               # Latent view 1 for NT-Xent
+                    zk_j=zk_j,               # Latent view 2 for NT-Xent
+                    parameters=model_for_loss_params.parameters(),
+                    log_det_jacobian=log_det_j_i
+                    if hasattr(log_det_j_i, "item")
+                    else torch.tensor(0.0, device=device), # log_det_j for zk_i (used in VAE loss for flows)
+                    generator_labels=gen_labels,
+                    config=config # Pass config for NT-Xent params
+                )
+            else:
+                # Unpack 6 model outputs for single-view: x_decoded, z_mu, z_var, log_det_j, z0, zk
+                x_decoded, z_mu, z_var, log_det_j, z0, zk = out
+                
+                losses = loss_fn.calculate(
+                    recon=x_decoded,
+                    target=inputs,
+                    mu=z_mu,
+                    logvar=z_var,
+                    z0=z0,                   # Pre-flow latent
+                    zk=zk,                   # Post-flow latent
+                    parameters=model_for_loss_params.parameters(),
+                    log_det_jacobian=log_det_j
+                    if hasattr(log_det_j, "item")
+                    else torch.tensor(0.0, device=device),
+                    generator_labels=gen_labels,
+                    config=config # Pass config (may or may not be used by standard VAE losses)
+                )
         loss, *_ = losses
 
         scaler.scale(loss).backward()
@@ -206,19 +230,44 @@ def validate(
                 enabled=(config.use_amp and device.type == "cuda"),
             ):
                 out = helper.call_forward(ddp_model, inputs)
-                recon, mu, logvar, ldj, z0, zk = out
-                losses = loss_fn.calculate(
-                    recon=recon,
-                    target=inputs,
-                    mu=mu,
-                    logvar=logvar,
-                    zk=zk,
-                    parameters=model_for_loss_params.parameters(),
-                    log_det_jacobian=ldj
-                    if hasattr(ldj, "item")
-                    else torch.tensor(0.0, device=device),
-                    generator_labels=gen_labels,
-                )
+
+                if config.model_generate_two_views:
+                    # Unpack 7 model outputs for dual-view: x_decoded, z_mu_i, z_var_i, log_det_j_i, z0_i, zk_i, zk_j
+                    x_decoded, z_mu_i, z_var_i, log_det_j_i, z0_i, zk_i, zk_j = out
+
+                    losses = loss_fn.calculate(
+                        recon=x_decoded,         # Reconstructed from zk_i
+                        target=inputs,
+                        mu=z_mu_i,               # mu for zk_i (used in VAE loss)
+                        logvar=z_var_i,          # logvar for zk_i (used in VAE loss)
+                        z0_i=z0_i,               # Pre-flow latent for view i
+                        zk_i=zk_i,               # Latent view 1 for NT-Xent
+                        zk_j=zk_j,               # Latent view 2 for NT-Xent
+                        parameters=model_for_loss_params.parameters(),
+                        log_det_jacobian=log_det_j_i
+                        if hasattr(log_det_j_i, "item")
+                        else torch.tensor(0.0, device=device), # log_det_j for zk_i (used in VAE loss for flows)
+                        generator_labels=gen_labels,
+                        config=config # Pass config for NT-Xent params
+                    )
+                else:
+                    # Unpack 6 model outputs for single-view: x_decoded, z_mu, z_var, log_det_j, z0, zk
+                    x_decoded, z_mu, z_var, log_det_j, z0, zk = out
+                    
+                    losses = loss_fn.calculate(
+                        recon=x_decoded,
+                        target=inputs,
+                        mu=z_mu,
+                        logvar=z_var,
+                        z0=z0,                   # Pre-flow latent
+                        zk=zk,                   # Post-flow latent
+                        parameters=model_for_loss_params.parameters(),
+                        log_det_jacobian=log_det_j
+                        if hasattr(log_det_j, "item")
+                        else torch.tensor(0.0, device=device),
+                        generator_labels=gen_labels,
+                        config=config # Pass config (may or may not be used by standard VAE losses)
+                    )
             loss, *_ = losses
             running_loss += loss.item()
             num_batches_processed_this_rank += 1

@@ -179,6 +179,88 @@ class SupervisedContrastiveLoss(BaseLoss):
         return (loss,)
 
 
+class NTXentLoss(BaseLoss):
+    """
+    NT-Xent (Normalized Temperature-scaled Cross-Entropy) loss for self-supervised learning.
+    Based on the SimCLR framework: https://arxiv.org/abs/2002.05709
+    """
+
+    def __init__(self, config):
+        super(NTXentLoss, self).__init__(config)
+        self.temperature = (
+            config.ntxent_temperature
+            if hasattr(config, "ntxent_temperature")
+            else 0.07
+        )
+        self.component_names = ["ntxent"]
+        # DDP related attributes
+        self.is_ddp_active = (
+            config.is_ddp_active if hasattr(config, "is_ddp_active") else False
+        )
+        self.world_size = config.world_size if hasattr(config, "world_size") else 1
+
+    def calculate(self, features_i, features_j):
+        """
+        Args:
+            features_i (torch.Tensor): Latent vectors for view 1, shape [batch_size, feature_dim]. Assumed to be L2-normalized.
+            features_j (torch.Tensor): Latent vectors for view 2, shape [batch_size, feature_dim]. Assumed to be L2-normalized.
+        Returns:
+            torch.Tensor: NT-Xent loss.
+        """
+        device = features_i.device
+
+        # --- DDP Gathering (if active) ---
+        if self.is_ddp_active and self.world_size > 1:
+            # Gather features from all GPUs
+            gathered_i = [
+                torch.zeros_like(features_i) for _ in range(self.world_size)
+            ]
+            gathered_j = [
+                torch.zeros_like(features_j) for _ in range(self.world_size)
+            ]
+            dist.all_gather(gathered_i, features_i)
+            dist.all_gather(gathered_j, features_j)
+            features_i = torch.cat(gathered_i, dim=0)
+            features_j = torch.cat(gathered_j, dim=0)
+
+        # --- Loss Calculation ---
+        batch_size = features_i.shape[0]
+        
+        # Concatenate features to create a single tensor of shape [2*batch_size, feature_dim]
+        features = torch.cat([features_i, features_j], dim=0)
+
+        # Create labels to identify positive pairs
+        labels = torch.cat([torch.arange(batch_size) for _ in range(2)], dim=0)
+        labels = (labels.unsqueeze(0) == labels.unsqueeze(1)).float()
+        labels = labels.to(device)
+
+        # Cosine similarity matrix
+        similarity_matrix = torch.matmul(features, features.T)
+
+        # Discard self-similarity from positive pairs
+        mask = torch.eye(labels.shape[0], dtype=torch.bool).to(device)
+        labels = labels[~mask].view(labels.shape[0], -1)
+        similarity_matrix = similarity_matrix[~mask].view(similarity_matrix.shape[0], -1)
+
+        # Select positive similarities
+        positives = similarity_matrix[labels.bool()].view(labels.shape[0], -1)
+
+        # Select negative similarities
+        negatives = similarity_matrix[~labels.bool()].view(similarity_matrix.shape[0], -1)
+
+        # Combine positives and negatives for logit calculation
+        logits = torch.cat([positives, negatives], dim=1)
+        logits /= self.temperature
+
+        # Create labels for cross-entropy loss (positives are always at index 0)
+        ce_labels = torch.zeros(logits.shape[0], dtype=torch.long).to(device)
+
+        loss = F.cross_entropy(logits, ce_labels, reduction="mean")
+
+        return (loss,)
+
+
+
 # ---------------------------
 # Earth Mover's Distance / Wasserstein Loss
 # ---------------------------
@@ -467,6 +549,89 @@ class VAESupConLoss(BaseLoss):
             loss = vae_loss + contrastive_weight_device * supcon_loss
 
             return loss, vae_loss, reco_loss, kl_loss, supcon_loss
+
+
+class VAENTXentLoss(BaseLoss):
+    """
+    Combined loss for VAE with NT-Xent Contrastive Learning.
+
+    Config parameters:
+        - ntxent_weight: weight for the nt-xent loss term.
+        - ntxent_temperature: temperature for the nt-xent loss scaling.
+    """
+
+    def __init__(self, config):
+        super(VAENTXentLoss, self).__init__(config)
+        self.vae_loss_fn = VAELoss(config)
+        self.ntxent_loss_fn = NTXentLoss(config)
+        self.ntxent_weight = torch.tensor(
+            config.ntxent_weight if hasattr(config, "ntxent_weight") else 0.005
+        )
+        self.component_names = [
+            "loss",
+            "vae_loss",
+            "reco",
+            "kl",
+            "ntxent",
+        ]
+
+    def calculate(
+        self,
+        recon,
+        target,
+        mu,
+        logvar,
+        zk_i,
+        zk_j,
+        parameters,
+        log_det_jacobian=0,
+        generator_labels=None, # Included for API consistency, but not used by NT-Xent
+        # The following are for VAE part, but if model_generate_two_views is true, 
+        # the VAE loss uses mu_i, logvar_i, zk_i, log_det_j_i. 
+        # The NT-Xent part uses zk_i, zk_j.
+        # To make the signature compatible with both VAELoss and the new combined structure,
+        # we might need to adjust how arguments are named or passed if we were to call VAELoss directly
+        # with outputs from a dual-view model. Here, we assume the `training.py` correctly passes
+        # mu (as z_mu_i), logvar (as z_var_i), and zk (as zk_i) for the VAE part when in dual-view mode.
+        # The `z0` argument from VAELoss is not explicitly used here, assuming zk_i is the post-flow latent for VAE.
+        config=None # Added to match training.py call, though not directly used in this specific VAENTXentLoss.calculate
+                  # but good for consistency if BaseLoss or other loss fns expect it.
+    ):
+        # Calculate VAE loss components
+        # Note: We use zk_i for reconstruction, assuming it's the primary view.
+        # The VAELoss expects `zk` as the post-flow latent. In dual-view mode, `zk_i` is this.
+        # It also expects `mu` and `logvar` which correspond to `z_mu_i` and `z_var_i`.
+        # `log_det_jacobian` corresponds to `log_det_j_i`.
+        vae_loss_outputs = self.vae_loss_fn.calculate(
+            recon=recon, 
+            target=target, 
+            mu=mu,       # This will be z_mu_i from training loop
+            logvar=logvar, # This will be z_var_i from training loop
+            zk=zk_i,     # This will be zk_i from training loop (post-flow latent for VAE part)
+            parameters=parameters, 
+            log_det_jacobian=log_det_jacobian # This will be log_det_j_i from training loop
+        )
+        # VAELoss returns: total_vae_loss, reco_loss, kl_div
+        vae_loss, reco_loss, kl_loss = vae_loss_outputs
+
+        # L2 normalize latent vectors for NT-Xent loss
+        zk_i_normalized = F.normalize(zk_i, p=2, dim=1)
+        zk_j_normalized = F.normalize(zk_j, p=2, dim=1)
+
+        # Calculate NT-Xent loss
+        # NTXentLoss.calculate returns a tuple (loss,)
+        ntxent_val = self.ntxent_loss_fn.calculate(
+            zk_i_normalized, zk_j_normalized
+        )[0]
+
+        # Ensure weight is on the same device
+        ntxent_weight_device = self.ntxent_weight.to(vae_loss.device)
+
+        # Combine losses
+        total_loss = vae_loss + ntxent_weight_device * ntxent_val
+
+        return total_loss, vae_loss, reco_loss, kl_loss, ntxent_val
+
 
 
 # ---------------------------
