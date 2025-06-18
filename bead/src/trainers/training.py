@@ -98,7 +98,7 @@ def fit(
             enabled=(config.use_amp and device.type == "cuda"),
         ):
             out = helper.call_forward(ddp_model, inputs)
-            recon, mu, logvar, ldj, z0, zk = out
+            recon, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
 
             losses = loss_fn.calculate(
                 recon=recon,
@@ -206,7 +206,7 @@ def validate(
                 enabled=(config.use_amp and device.type == "cuda"),
             ):
                 out = helper.call_forward(ddp_model, inputs)
-                recon, mu, logvar, ldj, z0, zk = out
+                recon, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
                 losses = loss_fn.calculate(
                     recon=recon,
                     target=inputs,
@@ -642,7 +642,7 @@ def train(
                         enabled=(config.use_amp and device.type == "cuda"),
                     ):
                         out = helper.call_forward(actual_model_for_evaluation, inputs)
-                        _, mu, logvar, ldj, z0, zk = out
+                        _, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
                     mu_data_list.append(mu.detach().cpu().numpy())
                     logvar_data_list.append(logvar.detach().cpu().numpy())
                     if hasattr(ldj, "detach"):

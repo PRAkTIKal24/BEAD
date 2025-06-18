@@ -88,7 +88,7 @@ class AE(nn.Module):
         z = self.encode(x)
         out = self.decode(z)
         out = out.view(self.in_shape)
-        return out, z, z, z, z, z
+        return out, z
 
     # Implementation of activation extraction using the forward_hook method
 
@@ -169,7 +169,7 @@ class AE_Dropout_BN(AE):
         z = self.enc_bn(x)
         out = self.dec_bn(z)
         out = out.view(self.in_shape)
-        return out, z, z, z, z, z
+        return out, z
 
 
 class ConvAE(nn.Module):
@@ -275,7 +275,7 @@ class ConvAE(nn.Module):
     def forward(self, x):
         z = self.encode(x)
         out = self.decode(z)
-        return out, z, z, z, z, z
+        return out, z
 
 
 class ConvVAE(ConvAE):
@@ -325,7 +325,7 @@ class ConvVAE(ConvAE):
         out, mean, logvar = self.encode(x)
         z = self.reparameterize(mean, logvar)
         out = self.decode(z)
-        return out, mean, logvar, z, z, z
+        return out, mean, logvar, z
 
 
 class Dirichlet_ConvVAE(ConvAE):
@@ -377,7 +377,7 @@ class Dirichlet_ConvVAE(ConvAE):
         # Apply softmax to map z to simplex (Dirichlet approximation)
         D_z = torch.nn.functional.softmax(G_z,dim=-1)
         out = self.decode(D_z)
-        return out, mean, logvar, D_z,D_z,D_z
+        return out, mean, logvar, D_z
 
 
 class Planar_ConvVAE(ConvVAE):

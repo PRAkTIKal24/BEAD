@@ -914,13 +914,107 @@ def call_forward(model, inputs):
     Returns:
         A tuple containing the result(s) of the `forward` method.
     """
-    # Call the forward method
-    result = model(inputs)
-
-    # Ensure the result is a tuple
-    if isinstance(result, tuple):
-        return result
+    # Check if the model has a 'forward' method
+    if hasattr(model, 'forward') and callable(getattr(model, 'forward')):
+        return model.forward(inputs)
     else:
+        # If not, maybe it's a DDP-wrapped model
+        if hasattr(model, 'module') and hasattr(model.module, 'forward') and callable(getattr(model.module, 'forward')):
+            return model.module.forward(inputs)
+        else:
+            raise AttributeError("Model does not have a callable 'forward' method")
+
+
+def unpack_model_outputs(outputs):
+    """
+    Unpacks the variable-length output from a model's forward pass into a
+    standardized 6-item tuple (recon, mu, logvar, ldj, z0, zk).
+
+    This handles:
+    - AE models (2 items: recon, z)
+    - VAE models (4 items: recon, mu, logvar, z)
+    - Flow-based VAEs (6 items: recon, mu, logvar, ldj, z0, zk)
+
+    Args:
+        outputs (tuple): The raw output from the model.
+
+    Returns:
+        tuple: A standardized 6-item tuple.
+    """
+    recon = outputs[0]
+    device = recon.device
+
+    if len(outputs) == 2:  # AE case
+        recon, zk = outputs
+        mu = torch.tensor(0.0, device=device)
+        logvar = torch.tensor(0.0, device=device)
+        ldj = torch.tensor(0.0, device=device)
+        z0 = zk
+    elif len(outputs) == 4:  # VAE case
+        recon, mu, logvar, zk = outputs
+        ldj = torch.tensor(0.0, device=device)
+        z0 = zk
+    elif len(outputs) == 6:  # Flow-based VAE case
+        recon, mu, logvar, ldj, z0, zk = outputs
+    else:
+        raise ValueError(f"Unexpected number of model outputs: {len(outputs)}")
+
+    return recon, mu, logvar, ldj, z0, zk
+
+
+def get_loss_components(loss_data, component_names, suffix, save_dir="loss_outputs"):
+    """
+    This function unpacks loss_data into separate components, converts each into a NumPy array,
+    and saves each array as a .npy file with a filename of the form:
+    <component_name>_<suffix>.npy
+
+    Args:
+      - loss_data (list): a list of tuples, where each tuple contains loss components
+      - component_names (list): a list of strings naming each component in the tuple
+      - suffix (str): a string keyword to be appended (separated by '_') to each filename
+      - save_dir (path): directory to save .npy files (default "loss_outputs")
+
+    """
+    # Ensure the save directory exists
+    os.makedirs(save_dir, exist_ok=True)
+
+    if not loss_data:
+        raise ValueError("loss_data is empty.")
+
+    # Check that the number of components in each tuple matches the number of names provided.
+    n_components = len(loss_data[0])
+    if n_components != len(component_names):
+        raise ValueError(
+            "The length of each loss tuple must match the number of component names provided."
+        )
+
+    # Unpack the list of tuples into a list of components using zip.
+    # Each element in 'components' is a tuple containing that component from every iteration.
+    components = list(zip(*loss_data, strict=False))
+
+    # def reshape_tensor_lists(original_list):
+    #     transformed_list = []
+    #     for inner_list in original_list:
+    #         # Concatenate all tensors in the inner list along the 0th dimension
+    #         concatenated_tensor = torch.cat(inner_list, dim=0)
+    #         transformed_list.append([concatenated_tensor])
+    #     return transformed_list
+    # components = reshape_tensor_lists(components)
+
+    # Process and save each component.
+    for name, comp in zip(component_names, components, strict=False):
+        # Convert each element to a NumPy array if it's a PyTorch tensor.
+        converted = []
+        for val in comp:
+            if hasattr(val, "detach"):  # likely a PyTorch tensor
+                converted.append(val.detach().cpu().numpy())
+            else:
+                converted.append(val)
+        arr = np.array(converted)
+
+        # Create filename with component name and appended suffix
+        filename = os.path.join(save_dir, f"{name}_{suffix}.npy")
+        np.save(filename, arr)
         return (result,)
 
 
