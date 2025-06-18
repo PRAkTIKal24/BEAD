@@ -826,3 +826,86 @@ class DVAEFlowLoss(VAEFlowLoss):
     def __init__(self, config):
         super(DVAEFlowLoss, self).__init__(config)
         self.kl_loss_fn = KLDivergenceLoss(config, prior="dirichlet")
+
+
+class NTXentLoss(BaseLoss):
+    """
+    Normalized Temperature-scaled Cross-Entropy Loss for contrastive learning.
+    """
+
+    def __init__(self, config):
+        super().__init__(config)
+        self.temperature = config.ntxent_temperature
+        self.device = config.device
+        self.criterion = torch.nn.CrossEntropyLoss(reduction="sum")
+        self.similarity_f = torch.nn.CosineSimilarity(dim=2)
+
+    def calculate(self, z_i, z_j):
+        """
+        Calculates the NT-Xent loss for a batch of positive pairs (z_i, z_j).
+        """
+        batch_size = z_i.shape[0]
+        z_i = F.normalize(z_i, p=2, dim=1)
+        z_j = F.normalize(z_j, p=2, dim=1)
+
+        representations = torch.cat([z_j, z_i], dim=0)
+        similarity_matrix = self.similarity_f(
+            representations.unsqueeze(1), representations.unsqueeze(0)
+        )
+
+        # Positive pairs: (z_i, z_j)
+        l_pos = self.similarity_f(z_i.unsqueeze(1), z_j.unsqueeze(0))
+        l_pos = torch.diag(l_pos, 0)
+        l_pos = l_pos / self.temperature
+
+        # Negative pairs: all other pairs
+        mask = torch.ones_like(similarity_matrix, device=self.device).bool()
+        mask.fill_diagonal_(False)
+        negative_samples = similarity_matrix[mask].view(2 * batch_size, -1)
+
+        logits = torch.cat((l_pos.unsqueeze(1), negative_samples), dim=1)
+        labels = torch.zeros(2 * batch_size).to(self.device).long()
+
+        loss = self.criterion(logits, labels)
+        loss /= 2 * batch_size
+        return loss
+
+
+class VAENTXentLoss(VAEFlowLoss):
+    """
+    Combines VAE+Flow Loss with NT-Xent Contrastive Loss.
+    """
+
+    def __init__(self, config):
+        super().__init__(config)
+        self.ntxent_loss_fn = NTXentLoss(config)
+        self.ntxent_weight = config.ntxent_weight
+        self.component_names.extend(["ntxent_loss"])
+
+    def calculate(
+        self,
+        recon,
+        target,
+        mu,
+        logvar,
+        zk, # This is zk_i
+        parameters,
+        log_det_jacobian=0,
+        zk_j=None,
+        generator_labels=None,
+    ):
+        # Get standard VAE+Flow loss
+        vaeflow_loss, reco_loss, kl_loss = super().calculate(
+            recon, target, mu, logvar, zk, parameters, log_det_jacobian, generator_labels
+        )
+
+        # Get NT-Xent loss
+        if zk_j is not None:
+            ntxent_loss = self.ntxent_loss_fn.calculate(zk, zk_j)
+        else:
+            ntxent_loss = torch.tensor(0.0, device=vaeflow_loss.device)
+
+        # Combine losses
+        total_loss = vaeflow_loss + self.ntxent_weight * ntxent_loss
+
+        return total_loss, reco_loss, kl_loss, ntxent_loss

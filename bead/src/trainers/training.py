@@ -98,7 +98,13 @@ def fit(
             enabled=(config.use_amp and device.type == "cuda"),
         ):
             out = helper.call_forward(ddp_model, inputs)
-            recon, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
+
+            # Conditionally unpack outputs for NT-Xent
+            if len(out) == 7:
+                recon, mu, logvar, ldj, z0, zk, zk_j = out
+            else:
+                recon, mu, logvar, ldj, z0, zk = out
+                zk_j = None
 
             losses = loss_fn.calculate(
                 recon=recon,
@@ -111,6 +117,7 @@ def fit(
                 if hasattr(ldj, "item")
                 else torch.tensor(0.0, device=device),  # ldj gets extra love
                 generator_labels=gen_labels,
+                zk_j=zk_j,
             )
         loss, *_ = losses
 
@@ -206,7 +213,14 @@ def validate(
                 enabled=(config.use_amp and device.type == "cuda"),
             ):
                 out = helper.call_forward(ddp_model, inputs)
-                recon, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
+
+                # Conditionally unpack outputs for NT-Xent
+                if len(out) == 7:
+                    recon, mu, logvar, ldj, z0, zk, zk_j = out
+                else:
+                    recon, mu, logvar, ldj, z0, zk = out
+                    zk_j = None
+                
                 losses = loss_fn.calculate(
                     recon=recon,
                     target=inputs,
@@ -218,6 +232,7 @@ def validate(
                     if hasattr(ldj, "item")
                     else torch.tensor(0.0, device=device),
                     generator_labels=gen_labels,
+                    zk_j=zk_j,
                 )
             loss, *_ = losses
             running_loss += loss.item()

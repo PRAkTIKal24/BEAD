@@ -28,6 +28,8 @@ from torch.autograd import Variable
 from torch.nn import functional as F
 
 from . import flows
+from bead.src.utils import loss
+from bead.src.utils import ntxent_utils
 
 
 class AE(nn.Module):
@@ -385,15 +387,16 @@ class Planar_ConvVAE(ConvVAE):
     Variational auto-encoder with planar flows in the decoder.
     """
 
-    def __init__(self, in_shape, z_dim, *args, **kwargs):
-        super().__init__(in_shape, z_dim, *args, **kwargs)
+    def __init__(self, in_shape, z_dim, config=None, *args, **kwargs):
+        super().__init__(in_shape, z_dim, config, *args, **kwargs)
+        self.config = config
 
         # Initialize log-det-jacobian to zero
         self.log_det_j = 0
 
         # Flow parameters
-        flow = flows.Planar
-        self.num_flows = 6  # args.num_flows
+        self.num_flows = 4
+        self.z_size = z_dim
 
         # Amortized flow parameters
         self.amor_u = nn.Linear(self.q_z_mid_dim, self.num_flows * self.z_size)
@@ -402,35 +405,51 @@ class Planar_ConvVAE(ConvVAE):
 
         # Normalizing flow layers
         for k in range(self.num_flows):
-            flow_k = flow()
+            flow_k = flows.Planar(self.z_size)
             self.add_module("flow_" + str(k), flow_k)
+
+    def _flow_forward(self, x):
+        """Helper to run the flow part of the forward pass."""
+        out, z_mu, z_var = self.encode(x)
+        z = [self.reparameterize(z_mu, z_var)]
+        log_det_j = 0
+
+        for k in range(self.num_flows):
+            flow_k = getattr(self, "flow_" + str(k))
+            z_k, log_det_jacobian = flow_k(
+                z[-1],
+                self.amor_u(out).view(-1, self.num_flows, self.z_size)[:, k, :],
+                self.amor_w(out).view(-1, self.num_flows, self.z_size)[:, k, :],
+                self.amor_b(out).view(-1, self.num_flows)[:, k],
+            )
+            z.append(z_k)
+            log_det_j += log_det_jacobian
+        
+        return out, z_mu, z_var, log_det_j, z
 
     def forward(self, x):
         self.log_det_j = 0
 
-        out, z_mu, z_var = self.encode(x)
+        # If config is not provided or two-views is false, run standard pass
+        if self.config is None or not self.config.model_generate_two_views:
+            out, z_mu, z_var, self.log_det_j, z = self._flow_forward(x)
+            x_decoded = self.decode(z[-1])
+            return x_decoded, z_mu, z_var, self.log_det_j, z[0], z[-1]
 
-        batch_size = x.size(0)
-        # return amortized u an w for all flows
-        u = self.amor_u(out).view(batch_size, self.num_flows, self.z_size, 1)
-        w = self.amor_w(out).view(batch_size, self.num_flows, 1, self.z_size)
-        b = self.amor_b(out).view(batch_size, self.num_flows, 1, 1)
+        # NT-Xent dual-view forward pass
+        view_i, view_j = ntxent_utils.generate_augmented_views(x)
 
-        # Sample z_0
-        z = [self.reparameterize(z_mu, z_var)]
+        # Process the first view through the full model
+        _, mu_i, logvar_i, ldj_i, z_i = self._flow_forward(view_i)
+        recon_i = self.decode(z_i[-1])
+        zk_i = z_i[-1]
 
-        # Normalizing flows
-        for k in range(self.num_flows):
-            flow_k = getattr(self, "flow_" + str(k))  # planar.'flow_'+k
-            z_k, log_det_jacobian = flow_k(
-                z[k], u[:, k, :, :], w[:, k, :, :], b[:, k, :, :]
-            )
-            z.append(z_k)
-            self.log_det_j += log_det_jacobian
+        # Process the second view through the encoder and flow only
+        _, _, _, _, z_j = self._flow_forward(view_j)
+        zk_j = z_j[-1]
 
-        x_decoded = self.decode(z[-1])
-
-        return x_decoded, z_mu, z_var, self.log_det_j, z[0], z[-1]
+        # (recon_i, mu_i, logvar_i, ldj_i, z0_i, zk_i, zk_j)
+        return recon_i, mu_i, logvar_i, ldj_i, z_i[0], zk_i, zk_j
 
 
 class OrthogonalSylvester_ConvVAE(ConvVAE):

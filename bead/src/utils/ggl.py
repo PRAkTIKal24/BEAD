@@ -192,6 +192,11 @@ class Config:
     overlay_roc_save_location: str
     overlay_roc_filename: str
 
+    # NT-Xent Contrastive Loss parameters
+    model_generate_two_views: bool = False
+    ntxent_temperature: float = 0.1
+    ntxent_weight: float = 1.0
+
 
 def create_default_config(workspace_name: str, project_name: str) -> str:
     """
@@ -231,6 +236,11 @@ def set_config(c):
     c.lr_scheduler                 = True
     c.latent_space_plot_style      = "umap"
     c.subsample_plot               = False
+
+    # Set NT-Xent defaults
+    c.model_generate_two_views = False
+    c.ntxent_temperature = 0.1
+    c.ntxent_weight = 1.0
 
 
 

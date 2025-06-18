@@ -18,6 +18,7 @@ from torch.utils.data import Dataset
 
 from ..models import models
 from . import loss
+from .loss import VAENTXentLoss
 
 
 def get_device(config=None):
@@ -801,11 +802,12 @@ def model_init(in_shape, config):
 
     model_object = getattr(models, config.model_name)
 
+    # Pass config to the model constructor
     if config.model_name == "pj_custom":
-        model = model_object(*in_shape, z_dim=config.latent_space_size)
+        model = model_object(*in_shape, z_dim=config.latent_space_size, config=config)
 
     else:
-        model = model_object(in_shape, z_dim=config.latent_space_size)
+        model = model_object(in_shape, z_dim=config.latent_space_size, config=config)
 
     if config.model_init == "xavier":
         model.apply(xavier_init_weights)
@@ -813,26 +815,22 @@ def model_init(in_shape, config):
     return model
 
 
-def get_loss(loss_function: str):
+def get_loss(config):
     """
-    Returns the loss_object based on the string provided.
-
-    Args:
-        loss_function (str): The loss function you wish to use. Options include:
-            - 'mse': Mean Squared Error
-            - 'bce': Binary Cross Entropy
-            - 'mae': Mean Absolute Error
-            - 'huber': Huber Loss
-            - 'l1': L1 Loss
-            - 'l2': L2 Loss
-            - 'smoothl1': Smooth L1 Loss
-
-    Returns:
-        class: The loss function object
+    Returns the loss function based on the config file.
+    If NT-Xent is enabled, it returns the VAENTXentLoss.
     """
-    loss_object = getattr(loss, loss_function)
+    if config.model_generate_two_views:
+        return VAENTXentLoss(config)
 
-    return loss_object
+    # check if the loss function is implemented
+    if config.loss_function not in loss.__all__:
+        raise NotImplementedError(
+            f"Loss function {config.loss_function} not implemented"
+        )
+    # get the loss function
+    loss_fn = getattr(loss, config.loss_function)
+    return loss_fn(config)
 
 
 def get_optimizer(optimizer_name, parameters, lr):
