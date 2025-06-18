@@ -474,136 +474,144 @@ def train(
         print(f"Beginning training for {config.epochs} epochs")
 
     for epoch in range(config.epochs):
-        if is_ddp_active and train_sampler is not None:
-            train_sampler.set_epoch(epoch)
-        if is_ddp_active and validation_sampler is not None:
-            validation_sampler.set_epoch(epoch)
+        try:
+            if is_ddp_active and train_sampler is not None:
+                train_sampler.set_epoch(epoch)
+            if is_ddp_active and validation_sampler is not None:
+                validation_sampler.set_epoch(epoch)
 
-        batch_train_losses_components, current_train_epoch_loss_avg = fit(
-            config,
-            model,
-            train_dataloader,
-            loss_fn,
-            optimizer,
-            device,
-            amp_scaler,
-            is_ddp_active,
-            local_rank,
-            epoch,
-            verbose,
-        )
-
-        current_validation_epoch_loss_for_schedulers = current_train_epoch_loss_avg
-        batch_validation_losses_components_for_log = batch_train_losses_components
-
-        if (
-            config.train_size < 1.0
-            and validation_dataloader is not None
-            and len(validation_dataloader) > 0
-        ):
-            (
-                batch_validation_losses_components_for_log,
-                current_validation_epoch_loss_for_schedulers,
-            ) = validate(
+            batch_train_losses_components, current_train_epoch_loss_avg = fit(
                 config,
                 model,
-                validation_dataloader,
+                train_dataloader,
                 loss_fn,
+                optimizer,
                 device,
+                amp_scaler,
                 is_ddp_active,
                 local_rank,
                 epoch,
                 verbose,
             )
 
-        if lr_scheduler:
-            lr_scheduler(current_validation_epoch_loss_for_schedulers.item())
+            current_validation_epoch_loss_for_schedulers = current_train_epoch_loss_avg
+            batch_validation_losses_components_for_log = batch_train_losses_components
 
-        # Using only rank 0 to log and broadcast decisions when using DDP
-        if not is_ddp_active or local_rank == 0:
-            train_avg_epoch_losses.append(current_train_epoch_loss_avg.item())
-            train_loss_components_per_epoch.append(batch_train_losses_components)
-
-            validation_avg_epoch_losses.append(
-                current_validation_epoch_loss_for_schedulers.item()
-            )
-            validation_loss_components_per_epoch.append(
-                batch_validation_losses_components_for_log
-            )
-
-            if config.intermittent_model_saving and (
-                epoch > 0 and (epoch + 1) % config.intermittent_saving_patience == 0
+            if (
+                config.train_size < 1.0
+                and validation_dataloader is not None
+                and len(validation_dataloader) > 0
             ):
-                path = os.path.join(
-                    output_path, "models", f"model_epoch_{epoch + 1}.pt"
+                (
+                    batch_validation_losses_components_for_log,
+                    current_validation_epoch_loss_for_schedulers,
+                ) = validate(
+                    config,
+                    model,
+                    validation_dataloader,
+                    loss_fn,
+                    device,
+                    is_ddp_active,
+                    local_rank,
+                    epoch,
+                    verbose,
                 )
-                helper.save_model(model, path, config)
 
-            if early_stopper:
-                early_stopper(current_validation_epoch_loss_for_schedulers.item())
-                if early_stopper.early_stop and verbose:
-                    print(
-                        f"Rank {local_rank}: Early stopping condition met at epoch {epoch + 1}. Will signal other ranks."
+            if lr_scheduler:
+                lr_scheduler(current_validation_epoch_loss_for_schedulers.item())
+
+            # Using only rank 0 to log and broadcast decisions when using DDP
+            if not is_ddp_active or local_rank == 0:
+                train_avg_epoch_losses.append(current_train_epoch_loss_avg.item())
+                train_loss_components_per_epoch.append(batch_train_losses_components)
+
+                validation_avg_epoch_losses.append(
+                    current_validation_epoch_loss_for_schedulers.item()
+                )
+                validation_loss_components_per_epoch.append(
+                    batch_validation_losses_components_for_log
+                )
+
+                if config.intermittent_model_saving and (
+                    epoch > 0 and (epoch + 1) % config.intermittent_saving_patience == 0
+                ):
+                    path = os.path.join(
+                        output_path, "models", f"model_epoch_{epoch + 1}.pt"
                     )
+                    helper.save_model(model, path, config)
 
-        # Apply hyperparameter annealing if configured
-        # Note: This is placed after early_stopper updates so the most recent counter is used
-        annealing_metrics = {}
-        if lr_scheduler and hasattr(lr_scheduler, "triggered"):
-            annealing_metrics["lr_scheduler_triggered"] = lr_scheduler.triggered
-        if early_stopper and hasattr(early_stopper, "counter"):
-            annealing_metrics["early_stopper_counter"] = early_stopper.counter
-            # Check if early stopper counter has reached half of patience
-            # and add as a trigger signal
-            if early_stopper.counter >= early_stopper.patience / 2:
-                annealing_metrics["early_stopper_half_patience"] = True
-            else:
-                annealing_metrics["early_stopper_half_patience"] = False
+                if early_stopper:
+                    early_stopper(current_validation_epoch_loss_for_schedulers.item())
+                    if early_stopper.early_stop and verbose:
+                        print(
+                            f"Rank {local_rank}: Early stopping condition met at epoch {epoch + 1}. Will signal other ranks."
+                        )
 
-            # Check if early stopper counter has reached one-third of patience
-            # and add as a trigger signal
-            if early_stopper.counter >= early_stopper.patience / 3:
-                annealing_metrics["early_stopper_third_patience"] = True
-            else:
-                annealing_metrics["early_stopper_third_patience"] = False
+            # Apply hyperparameter annealing if configured
+            # Note: This is placed after early_stopper updates so the most recent counter is used
+            annealing_metrics = {}
+            if lr_scheduler and hasattr(lr_scheduler, "triggered"):
+                annealing_metrics["lr_scheduler_triggered"] = lr_scheduler.triggered
+            if early_stopper and hasattr(early_stopper, "counter"):
+                annealing_metrics["early_stopper_counter"] = early_stopper.counter
+                # Check if early stopper counter has reached half of patience
+                # and add as a trigger signal
+                if early_stopper.counter >= early_stopper.patience / 2:
+                    annealing_metrics["early_stopper_half_patience"] = True
+                else:
+                    annealing_metrics["early_stopper_half_patience"] = False
 
-        if annealing_manager:
-            annealed_params = annealing_manager.step(
-                epoch=epoch, metrics=annealing_metrics
-            )
-            if annealed_params and (not is_ddp_active or local_rank == 0) and verbose:
-                print(f"Annealed parameters for epoch {epoch + 1}: {annealed_params}")
+                # Check if early stopper counter has reached one-third of patience
+                # and add as a trigger signal
+                if early_stopper.counter >= early_stopper.patience / 3:
+                    annealing_metrics["early_stopper_third_patience"] = True
+                else:
+                    annealing_metrics["early_stopper_third_patience"] = False
 
-        # Synchronize early stopping signal and stop across all ranks based on decision from rank 0
-        if is_ddp_active:
-            if local_rank == 0:
-                should_stop_epoch_flag = (
-                    1.0 if early_stopper and early_stopper.early_stop else 0.0
+            if annealing_manager:
+                annealed_params = annealing_manager.step(
+                    epoch=epoch, metrics=annealing_metrics
                 )
-                stop_signal_tensor = torch.tensor(
-                    [should_stop_epoch_flag], dtype=torch.float32, device=device
-                )
-            else:
-                stop_signal_tensor = torch.empty(1, dtype=torch.float32, device=device)
+                if annealed_params and (not is_ddp_active or local_rank == 0) and verbose:
+                    print(f"Annealed parameters for epoch {epoch + 1}: {annealed_params}")
 
-            dist.broadcast(stop_signal_tensor, src=0)
-
-            if stop_signal_tensor.item() == 1.0:
-                if verbose:
-                    print(
-                        f"Rank {local_rank}: Early stopping signal received at epoch {epoch + 1}. Breaking training loop."
+            # Synchronize early stopping signal and stop across all ranks based on decision from rank 0
+            if is_ddp_active:
+                if local_rank == 0:
+                    should_stop_epoch_flag = (
+                        1.0 if early_stopper and early_stopper.early_stop else 0.0
                     )
-                break
-        else:
-            if early_stopper and early_stopper.early_stop:
-                if verbose:
-                    print(f"Early stopping at epoch {epoch + 1}.")
-                break
+                    stop_signal_tensor = torch.tensor(
+                        [should_stop_epoch_flag], dtype=torch.float32, device=device
+                    )
+                else:
+                    stop_signal_tensor = torch.empty(1, dtype=torch.float32, device=device)
 
-        if is_ddp_active and verbose:
-            print(
-                f"[Rank {local_rank}, Epoch {epoch + 1}] TRAIN MAIN: Reached end of epoch logic."
-            )
+                dist.broadcast(stop_signal_tensor, src=0)
+
+                if stop_signal_tensor.item() == 1.0:
+                    if verbose:
+                        print(
+                            f"Rank {local_rank}: Early stopping signal received at epoch {epoch + 1}. Breaking training loop."
+                        )
+                    break
+            else:
+                if early_stopper and early_stopper.early_stop:
+                    if verbose:
+                        print(f"Early stopping at epoch {epoch + 1}.")
+                    break
+
+            if is_ddp_active and verbose:
+                print(
+                    f"[Rank {local_rank}, Epoch {epoch + 1}] TRAIN MAIN: Reached end of epoch logic."
+                )
+        except Exception as e:
+            print(f"DEBUG: An exception occurred in the training loop at epoch {epoch + 1}: {e}")
+            import traceback
+            traceback.print_exc()
+            # Potentially re-raise the exception if you want training to stop
+            # or handle it in a way that allows continuation if appropriate
+            raise # Re-raising to ensure the training stops and the error is visible
 
     end_time = time.time()
     if verbose and (not is_ddp_active or local_rank == 0):
