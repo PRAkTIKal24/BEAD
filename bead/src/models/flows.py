@@ -45,26 +45,45 @@ class Planar(nn.Module):
 
         return 1 - self.h(x) ** 2
 
-    def forward(self, zk, u, w, b):
-        zk = zk.unsqueeze(2)
+    def forward(self, zk, u, w, b): # zk: (B, D), u: (B, D), w: (B, D), b: (B, 1)
+        # Calculate w^T u (dot product for each batch item) for invertibility constraint
+        # w: (B, D), u: (B, D) => uw: (B, 1)
+        uw = torch.sum(w * u, dim=1, keepdim=True)
 
-        # reparameterize u such that the flow becomes invertible
-        uw = torch.bmm(w, u)
+        # Reparameterize u: u_hat = u + (m(w^T u) - w^T u) * w / ||w||^2
+        # m_uw: (B, 1)
         m_uw = -1.0 + self.softplus(uw)
-        w_norm_sq = torch.sum(w**2, dim=2, keepdim=True)
-        u_hat = u + ((m_uw - uw) * w.transpose(2, 1) / w_norm_sq)
+        # w_norm_sq: (B, 1)
+        w_norm_sq = torch.sum(w**2, dim=1, keepdim=True)
+        # u_hat: (B, D)
+        # (m_uw - uw): (B,1) broadcasts with w:(B,D) to (B,D)
+        # w_norm_sq: (B,1) broadcasts for division
+        u_hat = u + (m_uw - uw) * w / (w_norm_sq + 1e-6) # Added epsilon for stability
 
-        # compute flow with u_hat
-        wzb = torch.bmm(w, zk) + b
-        z = zk + u_hat * self.h(wzb)
-        z = z.squeeze(2)
+        # Compute flow: z' = z + u_hat * h(w^T z + b)
+        # linear_term (w^T z + b):
+        # zk: (B, D), w: (B, D) => torch.sum(zk * w, dim=1, keepdim=True) is (B, 1)
+        # b: (B, 1)
+        linear_term = torch.sum(zk * w, dim=1, keepdim=True) + b
 
-        # compute logdetJ
-        psi = w * self.der_h(wzb)
-        log_det_jacobian = torch.log(torch.abs(1 + torch.bmm(psi, u_hat)))
-        log_det_jacobian = log_det_jacobian.squeeze(2).squeeze(1)
+        # z_new: (B, D)
+        # u_hat: (B, D)
+        # self.h(linear_term): self.h((B,1)) is (B,1), broadcasts with u_hat to (B,D)
+        z_new = zk + u_hat * self.h(linear_term)
 
-        return z, log_det_jacobian
+        # Compute log determinant of Jacobian: log |1 + u_hat^T * psi_vec|
+        # where psi_vec = h'(w^T z + b) * w
+        # self.der_h(linear_term): (B, 1)
+        # w: (B, D)
+        # psi_term: (B, D) via broadcasting
+        psi_term = self.der_h(linear_term) * w
+
+        # log_det_jacobian:
+        # psi_term: (B, D), u_hat: (B, D) => torch.sum(psi_term * u_hat, dim=1, keepdim=True) is (B, 1)
+        log_det_jacobian = torch.log(torch.abs(1 + torch.sum(psi_term * u_hat, dim=1, keepdim=True)) + 1e-6) # Added epsilon for log stability
+        log_det_jacobian = log_det_jacobian.squeeze(-1) # Result shape (B)
+
+        return z_new, log_det_jacobian
 
 
 class Sylvester(nn.Module):

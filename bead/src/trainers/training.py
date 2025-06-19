@@ -106,26 +106,35 @@ def fit(
                 recon, mu, logvar, ldj, z0, zk = out
                 zk_j = None
 
-            losses = loss_fn.calculate(
-                recon=recon,
-                target=inputs,
-                mu=mu,
-                logvar=logvar,
-                zk=zk,
-                parameters=model_for_loss_params.parameters(),
-                log_det_jacobian=ldj
+            # Conditionally pass arguments to loss function
+            loss_args = {
+                "recon": recon,
+                "target": inputs,
+                "mu": mu,
+                "logvar": logvar,
+                "zk": zk,
+                "parameters": model_for_loss_params.parameters(),
+                "log_det_jacobian": ldj
                 if hasattr(ldj, "item")
-                else torch.tensor(0.0, device=device),  # ldj gets extra love
-                generator_labels=gen_labels,
-                zk_j=zk_j,
-            )
-        loss, *_ = losses
+                else torch.tensor(0.0, device=device),
+                "generator_labels": gen_labels,
+            }
+            if zk_j is not None:
+                loss_args["zk_j"] = zk_j
+            losses = loss_fn.calculate(**loss_args)
+        loss_val, *_ = losses
 
-        scaler.scale(loss).backward()
+        # Ensure loss is scalar for backward pass and accumulation
+        if isinstance(loss_val, torch.Tensor) and loss_val.ndim > 0:
+            scalar_loss = loss_val.mean()
+        else:
+            scalar_loss = loss_val
+
+        scaler.scale(scalar_loss).backward()
         scaler.step(optimizer)
         scaler.update()
 
-        running_loss += loss.item()
+        running_loss += scalar_loss.item()
         num_batches_processed_this_rank += 1
 
     # DDP sanity check
@@ -221,21 +230,31 @@ def validate(
                     recon, mu, logvar, ldj, z0, zk = out
                     zk_j = None
                 
-                losses = loss_fn.calculate(
-                    recon=recon,
-                    target=inputs,
-                    mu=mu,
-                    logvar=logvar,
-                    zk=zk,
-                    parameters=model_for_loss_params.parameters(),
-                    log_det_jacobian=ldj
+                # Conditionally pass arguments to loss function
+                loss_args = {
+                    "recon": recon,
+                    "target": inputs,
+                    "mu": mu,
+                    "logvar": logvar,
+                    "zk": zk,
+                    "parameters": model_for_loss_params.parameters(),
+                    "log_det_jacobian": ldj
                     if hasattr(ldj, "item")
                     else torch.tensor(0.0, device=device),
-                    generator_labels=gen_labels,
-                    zk_j=zk_j,
-                )
-            loss, *_ = losses
-            running_loss += loss.item()
+                    "generator_labels": gen_labels,
+                }
+                if zk_j is not None:
+                    loss_args["zk_j"] = zk_j
+                losses = loss_fn.calculate(**loss_args)
+            loss_val, *_ = losses
+
+            # Ensure loss is scalar for accumulation
+            if isinstance(loss_val, torch.Tensor) and loss_val.ndim > 0:
+                scalar_loss = loss_val.mean()
+            else:
+                scalar_loss = loss_val
+            
+            running_loss += scalar_loss.item()
             num_batches_processed_this_rank += 1
 
     # DDP sanity check
@@ -435,9 +454,12 @@ def train(
             **common_loader_args,
         )
 
+    # Assign device to config for use in loss functions
+    config.device = device
+
     # Initialize loss function, optimizer
-    loss_object = helper.get_loss(config.loss_function)
-    loss_fn = loss_object(config=config)
+    loss_object = helper.get_loss(config)
+    loss_fn = loss_object
 
     optimizer = helper.get_optimizer(config.optimizer, model.parameters(), lr=config.lr)
     amp_scaler = torch.amp.GradScaler(
@@ -665,7 +687,12 @@ def train(
                         enabled=(config.use_amp and device.type == "cuda"),
                     ):
                         out = helper.call_forward(actual_model_for_evaluation, inputs)
-                        _, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
+                        if config.model_generate_two_views:
+                            # Unpack 7, ignore recon and the second view's latent zk_j
+                            _, mu, logvar, ldj, z0, zk, _ = out
+                        else:
+                            # Unpack 6, ignore recon
+                            _, mu, logvar, ldj, z0, zk = out
                     mu_data_list.append(mu.detach().cpu().numpy())
                     logvar_data_list.append(logvar.detach().cpu().numpy())
                     if hasattr(ldj, "detach"):

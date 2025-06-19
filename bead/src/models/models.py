@@ -388,24 +388,25 @@ class Planar_ConvVAE(ConvVAE):
     """
 
     def __init__(self, in_shape, z_dim, config=None, *args, **kwargs):
-        super().__init__(in_shape, z_dim, config, *args, **kwargs)
+        super().__init__(in_shape, z_dim, *args, **kwargs)
         self.config = config
 
         # Initialize log-det-jacobian to zero
         self.log_det_j = 0
 
         # Flow parameters
-        self.num_flows = 4
+        self.num_flows = config.num_flow_transformations if config and hasattr(config, 'num_flow_transformations') else 4
         self.z_size = z_dim
 
         # Amortized flow parameters
+        # The dimensions of amor_u, amor_w, and amor_b now correctly use the potentially updated self.num_flows
         self.amor_u = nn.Linear(self.q_z_mid_dim, self.num_flows * self.z_size)
         self.amor_w = nn.Linear(self.q_z_mid_dim, self.num_flows * self.z_size)
         self.amor_b = nn.Linear(self.q_z_mid_dim, self.num_flows)
 
         # Normalizing flow layers
         for k in range(self.num_flows):
-            flow_k = flows.Planar(self.z_size)
+            flow_k = flows.Planar()
             self.add_module("flow_" + str(k), flow_k)
 
     def _flow_forward(self, x):
@@ -420,7 +421,7 @@ class Planar_ConvVAE(ConvVAE):
                 z[-1],
                 self.amor_u(out).view(-1, self.num_flows, self.z_size)[:, k, :],
                 self.amor_w(out).view(-1, self.num_flows, self.z_size)[:, k, :],
-                self.amor_b(out).view(-1, self.num_flows)[:, k],
+                self.amor_b(out).view(-1, self.num_flows)[:, k].unsqueeze(1),
             )
             z.append(z_k)
             log_det_j += log_det_jacobian
