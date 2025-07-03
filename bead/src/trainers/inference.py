@@ -282,7 +282,7 @@ def infer(
             inputs = inputs.to(device)
 
             out = helper.call_forward(model, inputs)
-            recon, mu, logvar, ldj, z0, zk = out
+            recon, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
 
             # Compute the loss
             losses = loss_fn.calculate(

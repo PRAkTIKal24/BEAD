@@ -924,6 +924,77 @@ def call_forward(model, inputs):
         return (result,)
 
 
+def unpack_model_outputs(outputs):
+    """
+    Standardizes model outputs to a consistent 6-tuple format regardless of model type.
+    
+    This function takes the raw outputs from different model types and ensures they all
+    conform to the standard 6-tuple format: (recon, mu, logvar, ldj, z0, zk).
+    
+    For models that don't naturally produce all these values:
+    - AE models (len(outputs) == 2): Returns (recon, zeros, zeros, zeros, z, z)
+    - VAE models (len(outputs) == 4): Returns (recon, mu, logvar, zeros, z, z)
+    - Flow models (len(outputs) == 6): Returns (recon, mu, logvar, ldj, z0, zk)
+    - Dirichlet VAE (len(outputs) == 6): Returns (recon, mu, logvar, zeros, G_z, D_z)
+    
+    Args:
+        outputs (tuple): The raw outputs tuple from a model's forward method.
+            Could be one of:
+            - (recon, z) for basic autoencoders (AE, AE_Dropout_BN, ConvAE)
+            - (recon, mu, logvar, z) for VAEs (ConvVAE)
+            - (recon, mu, logvar, ldj, z0, zk) for flow-based models (Planar_ConvVAE, etc.)
+            - (recon, mu, logvar, G_z, G_z, D_z) for Dirichlet_ConvVAE
+    
+    Returns:
+        tuple: A standardized 6-tuple (recon, mu, logvar, ldj, z0, zk) where:
+            - recon: Reconstructed input
+            - mu: Mean of the latent distribution (or zeros for AEs)
+            - logvar: Log variance of the latent distribution (or zeros for AEs)
+            - ldj: Log determinant of the Jacobian (or zeros for non-flow models)
+            - z0: Initial sample from the latent distribution (G_z for Dirichlet VAE)
+            - zk: Final transformed latent variable (D_z for Dirichlet VAE)
+    
+    Raises:
+        ValueError: If the length of outputs is not 2, 4, or 6.
+    """
+    if len(outputs) == 2:  # Basic AE model: (recon, z)     
+        recon, zk = outputs
+        # Create zero tensors with proper shape and device for mu, logvar, ldj
+        shape = zk.shape
+        device = zk.device
+        mu = torch.zeros(shape, device=device)
+        logvar = torch.zeros(shape, device=device)
+        ldj = torch.zeros(1, device=device)
+        z0 = zk  # For AE, initial and final latent are the same
+        return recon, mu, logvar, ldj, z0, zk
+        
+    elif len(outputs) == 4:  # VAE model: (recon, mu, logvar, z)
+        recon, mu, logvar, zk = outputs
+        # Create zero tensor for ldj
+        ldj = torch.zeros(1, device=recon.device)
+        z0 = zk  # For VAEs without flows, initial and final latent are the same
+        return recon, mu, logvar, ldj, z0, zk
+        
+    elif len(outputs) == 6:  # Could be Flow model or Dirichlet VAE
+        recon, mu, logvar = outputs[0], outputs[1], outputs[2]
+        
+        # Check if this is likely a Dirichlet VAE output (recon, mu, logvar, G_z, G_z, D_z)
+        # We can identify this by checking if the 4th and 5th elements are identical (both G_z)
+        # This is a heuristic that should work reliably for the known models
+        if torch.equal(outputs[3], outputs[4]):
+            # This is likely a Dirichlet VAE output
+            G_z, _, D_z = outputs[3], outputs[4], outputs[5]
+            ldj = torch.zeros(1, device=recon.device)  # DVAE has no ldj
+            z0, zk = G_z, D_z  # Use G_z as z0 and D_z as zk
+            return recon, mu, logvar, ldj, z0, zk
+        else:
+            # This is likely a Flow model output (already in correct format)
+            return outputs
+        
+    else:
+        raise ValueError(f"Unexpected number of outputs from model: {len(outputs)}. Expected 2, 4, or 6.")
+
+
 class EarlyStopping:
     """
     Class to perform early stopping during model training.
@@ -1042,6 +1113,49 @@ def load_model(model_path: str, in_shape, config):
         model.load_state_dict(state_dict, strict=True)
 
     return model
+
+
+def get_ntxent_outputs(model, inputs, config):
+    """
+    Performs a dual forward pass through the model with augmented input views for NT-Xent contrastive learning.
+    
+    This function:
+    1. Generates two augmented views of the input data using naive gaussian smearing strategy
+    2. Passes each view through the model
+    3. Unpacks the model outputs from each view
+    4. Returns all necessary outputs for NT-Xent loss calculation
+    
+    Args:
+        model (nn.Module): The model to perform forward passes with
+        inputs (torch.Tensor): Input data batch
+        config (dataClass): Configuration object containing NT-Xent parameters
+        
+    Returns:
+        tuple: A tuple containing:
+            - recon_i: Reconstruction from the first view
+            - mu_i: Mean latent vector from the first view
+            - logvar_i: Log variance from the first view
+            - ldj_i: Log-determinant of Jacobian from the first view
+            - z0_i: Initial latent vector from the first view
+            - zk_i: Final latent vector from the first view
+            - zk_j: Final latent vector from the second view
+    """
+    from ..utils.ntxent_utils import generate_augmented_views
+    
+    # Generate two augmented views using naive gaussian smearing strategy
+    # The sigma (noise level) is controlled by the config
+    x_i, x_j = generate_augmented_views(inputs, sigma=config.ntxent_sigma)
+    
+    # Perform forward pass with the first view
+    out_i = call_forward(model, x_i)
+    recon_i, mu_i, logvar_i, ldj_i, z0_i, zk_i = unpack_model_outputs(out_i)
+    
+    # Perform forward pass with the second view (we only need zk_j for NT-Xent)
+    out_j = call_forward(model, x_j)
+    _, _, _, _, _, zk_j = unpack_model_outputs(out_j)
+    
+    # Return all outputs needed for loss calculation
+    return recon_i, mu_i, logvar_i, ldj_i, z0_i, zk_i, zk_j
 
 
 def save_loss_components(loss_data, component_names, suffix, save_dir="loss_outputs"):
