@@ -1066,9 +1066,13 @@ class NTXentCombinedLoss(BaseLoss):
         # Combine losses
         total_loss = base_losses[0] + weighted_ntxent_loss.mean()
 
+        # Ensure total_loss is a scalar
+        if total_loss.dim() > 0:  # Check if loss is not a scalar
+            total_loss = total_loss.mean()  # Reduce to scalar with mean
+
         # Return combined loss and all components
         # Structure must match component_names = ["loss"] + [f"base_{name}" for name in self.base_loss_fn.component_names] + ["ntxent_loss"]
-        return total_loss, base_losses, ntxent_loss
+        return (total_loss, *base_losses, ntxent_loss)
 
 
 class NTXentVAELoss(NTXentCombinedLoss):
@@ -1096,7 +1100,7 @@ class NTXentVAEFlowLoss(NTXentCombinedLoss):
     """
 
     def __init__(self, config):
-        super(NTXentVAELoss, self).__init__(config)
+        super(NTXentVAEFlowLoss, self).__init__(config)
         self.base_loss_fn = VAEFlowLoss(config)
 
         # Prepare component names
