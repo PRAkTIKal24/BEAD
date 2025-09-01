@@ -21,23 +21,30 @@ def normalize_jet_pj_custom(data):
     """
     Normalizes jet data for HEP analysis using a chained normalization approach.
 
-    Input data is expected as a NumPy array of shape (N, 7) with columns in the order:
+    Input data is expected as a NumPy array of shape (N, 7) or (N, 8), depending on dataset version.
+
+    Column order:
     0: event_id         (unchanged)
     1: jet_id           (unchanged)
-    2: num_constituents (to be normalized via "robust")
+    2: num_constituents (normalized via "robust")
     3: b_tagged         (already integer; left unchanged)
-    4: jet_pt           (to be normalized via "log+standard")
-    5: jet_eta          (to be normalized via "standard")
-    6: jet_phi          (to be normalized via "sin_cos" transformation)
+    4: pid              (optional; interpreted as mass if `use_pid_as_mass=True`)
+    5: jet_pt           (normalized via "log+standard")
+    6: jet_eta          (normalized via "standard")
+    7: jet_phi          (transformed via "sin_cos")
 
-    The output array will have 8 columns:
-    [event_id, jet_id, num_constituents_norm, b_tagged, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]
+    The output array will have:
+    - 8 columns if `use_pid_as_mass=False`:
+      [event_id, jet_id, num_constituents_norm, b_tagged, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]
+    - 9 columns if `use_pid_as_mass=True`:
+      [event_id, jet_id, num_constituents_norm, b_tagged, mass_norm, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]
 
     Args:
-        data (np.ndarray): Input array of shape (N, 7).
+        data (np.ndarray): Input array of shape (N, 7) or (N, 8).
+        use_pid_as_mass (bool): Flag to determine whether to treat `pid` as mass.
 
     Returns:
-        normalized_data (np.ndarray): Output array of shape (N, 8).
+        normalized_data (np.ndarray): Output array of shape (N, 8) or (N, 9).
         scalers (dict): Dictionary containing the fitted scalers for each feature.
     """
 
@@ -88,26 +95,35 @@ def normalize_constit_pj_custom(data):
     """
     Normalizes jet data for HEP analysis using a chained normalization approach.
 
-    Input data is expected as a NumPy array of shape (N, 7) with columns in the order:
-        0: event_id         (unchanged)
-        1: jet_id           (unchanged)
-        2: constit_id       (unchanged)
-        3: b_tagged         (unchanged)
-        4: constit_pt           (to be normalized via "log+standard")
-        5: constit_eta          (to be normalized via "standard")
-        6: constit_phi          (to be normalized via "sin_cos" transformation)
+    Input data is expected as a NumPy array of shape (N, 7) or (N, 8), depending on dataset version.
 
-    The output array will have 8 columns:
-        [event_id, jet_id, constit_id, b_tagged, constit_pt_norm, constit_eta_norm, constit_phi_sin, constit_phi_cos]
+    Column order:
+    0: event_id         (unchanged)
+    1: jet_id           (unchanged)
+    2: num_constituents (normalized via "robust")
+    3: b_tagged         (already integer; left unchanged)
+    4: pid              (optional; interpreted as mass if `use_pid_as_mass=True`)
+    5: jet_pt           (normalized via "log+standard")
+    6: jet_eta          (normalized via "standard")
+    7: jet_phi          (transformed via "sin_cos")
+
+    If `use_pid_as_mass=True`, the `pid` column is retained and treated as particle mass.
+    Otherwise, it is discarded (as in the legacy dataset).
+
+    The output array will have:
+    - 8 columns if `use_pid_as_mass=False`:
+      [event_id, jet_id, num_constituents_norm, b_tagged, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]
+    - 9 columns if `use_pid_as_mass=True`:
+      [event_id, jet_id, num_constituents_norm, b_tagged, mass_norm, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]
 
     Args:
-        data (np.ndarray): Input array of shape (N, 7).
+        data (np.ndarray): Input array of shape (N, 7) or (N, 8).
+        use_pid_as_mass (bool): Flag to determine whether to treat `pid` as mass.
 
     Returns:
-        normalized_data (np.ndarray): Output array of shape (N, 8).
+        normalized_data (np.ndarray): Output array of shape (N, 8) or (N, 9).
         scalers (dict): Dictionary containing the fitted scalers for each feature.
     """
-
     # Initialize the dictionary to store the fitted scalers.
     scalers = {}
 
@@ -154,25 +170,30 @@ def normalize_constit_pj_custom(data):
 
 def invert_normalize_jet_pj_custom(normalized_data, scalers):
     """
-    Inverts the normalization applied by normalize_jet_data_np_chained.
+    Inverts the normalization applied by `normalize_jet_data_np_chained`.
 
-    The input normalized_data is assumed to be a NumPy array of shape (N, 8) with columns:
+    The input `normalized_data` is assumed to be a NumPy array of shape (N, 8) or (N, 9), depending on dataset version.
+
+    Column order:
         0: event_id              (unchanged)
         1: jet_id                (unchanged)
         2: num_constituents_norm (normalized via "robust")
         3: b_tagged              (unchanged)
-        4: jet_pt_norm           (normalized via "log+standard")
-        5: jet_eta_norm          (normalized via "standard")
-        6-7: jet_phi_sin, jet_phi_cos (normalized via "sin_cos")
+        4: mass_norm             (optional; present only if `use_pid_as_mass=True`)
+        5: jet_pt_norm           (normalized via "log+standard")
+        6: jet_eta_norm          (normalized via "standard")
+        7-8: jet_phi_sin, jet_phi_cos (transformed via "sin_cos")
 
     Returns:
-        original_data: NumPy array of shape (N, 7) with columns:
-          [event_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi]
+        original_data (np.ndarray): Output array of shape (N, 7) or (N, 8), with columns:
+            [event_id, jet_id, num_constituents, b_tagged,mass (optional), jet_pt, jet_eta, jet_phi]
 
-    Note:
-      - The scaler for jet_pt (chain "log+standard") is expected to invert first the StandardScaler then the Log1pScaler,
-        so that the original jet_pt is recovered.
-      - The scaler for jet_phi (chain "sin_cos") converts the 2 columns back to the original angle using arctan2.
+    Notes:
+      - The scaler for `jet_pt` (chain "log+standard") is expected to invert first the StandardScaler, then the Log1pScaler,
+        to recover the original `jet_pt`.
+      - The scaler for `jet_phi` (chain "sin_cos") reconstructs the original angle using `arctan2(jet_phi_sin, jet_phi_cos)`.
+      - If `use_pid_as_mass=True`, the 5th column is treated as normalized mass and inverted accordingly.
+        Otherwise, it is ignored (as in the legacy dataset).
     """
     # 1. The unchanged columns: event_id, jet_id, b_tagged.
     event_id = normalized_data[:, 0].reshape(-1, 1)
@@ -215,26 +236,30 @@ def invert_normalize_jet_pj_custom(normalized_data, scalers):
 
 
 def invert_normalize_constit_pj_custom(normalized_data, scalers):
-    """
-    Inverts the normalization applied by normalize_jet_data_np_chained.
+    """ Inverts the normalization applied by `normalize_jet_data_np_chained`.
 
-    The input normalized_data is assumed to be a NumPy array of shape (N, 8) with columns:
+    The input `normalized_data` is assumed to be a NumPy array of shape (N, 8) or (N, 9), depending on dataset version.
+
+    Column order:
         0: event_id              (unchanged)
         1: jet_id                (unchanged)
         2: num_constituents_norm (normalized via "robust")
         3: b_tagged              (unchanged)
-        4: jet_pt_norm           (normalized via "log+standard")
-        5: jet_eta_norm          (normalized via "standard")
-        6-7: jet_phi_sin, jet_phi_cos (normalized via "sin_cos")
+        4: mass_norm             (optional; present only if `use_pid_as_mass=True`)
+        5: jet_pt_norm           (normalized via "log+standard")
+        6: jet_eta_norm          (normalized via "standard")
+        7-8: jet_phi_sin, jet_phi_cos (transformed via "sin_cos")
 
     Returns:
-        original_data: NumPy array of shape (N, 7) with columns:
-          [event_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi]
+        original_data (np.ndarray): Output array of shape (N, 7) or (N, 8), with columns:
+            [event_id, jet_id, num_constituents, b_tagged,mass (optional), jet_pt, jet_eta, jet_phi]
 
-    Note:
-      - The scaler for jet_pt (chain "log+standard") is expected to invert first the StandardScaler then the Log1pScaler,
-        so that the original jet_pt is recovered.
-      - The scaler for jet_phi (chain "sin_cos") converts the 2 columns back to the original angle using arctan2.
+    Notes:
+      - The scaler for `jet_pt` (chain "log+standard") is expected to invert first the StandardScaler, then the Log1pScaler,
+        to recover the original `jet_pt`.
+      - The scaler for `jet_phi` (chain "sin_cos") reconstructs the original angle using `arctan2(jet_phi_sin, jet_phi_cos)`.
+      - If `use_pid_as_mass=True`, the fifth column is treated as normalized mass and inverted accordingly.
+        Otherwise, it is ignored (as in the legacy dataset).
     """
     # 1. The unchanged columns: event_id, jet_id, constit_id, b_tagged.
     event_id = normalized_data[:, 0].reshape(-1, 1)

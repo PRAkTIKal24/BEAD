@@ -126,9 +126,6 @@ def main():
             "bead/workspaces", workspace_name, project_name, "output"
         ),
     }
-
-    config.skip_to_roc = False  # Default value for skip_to_roc
-
     # Check what the options flag is set to and override the default if necessary
     if options == "h5" or options == "npy":
         config.file_type = options

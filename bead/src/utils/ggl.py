@@ -234,6 +234,7 @@ def set_config(c):
     c.lr_scheduler                 = True
     c.latent_space_plot_style      = "umap"
     c.subsample_plot               = False
+    c.skip_to_roc                  = False
 
 
 # === NT-Xent loss configuration ===
