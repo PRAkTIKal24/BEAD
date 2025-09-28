@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils.data_processing &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.utils.data_processing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.utils.data_processing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loky</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_reusable_executor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">helper</span><span class="p">,</span> <span class="n">normalization</span>
+
+
+<div class="viewcode-block" id="load_data">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.data_processing.load_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_data</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load data from either an HDF5 file or .npy files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading data from </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;h5&quot;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5file</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h5file</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">])</span>
+            <span class="n">jets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h5file</span><span class="p">[</span><span class="s2">&quot;jets&quot;</span><span class="p">])</span>
+            <span class="n">constituents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h5file</span><span class="p">[</span><span class="s2">&quot;constituents&quot;</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;npy&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Loading .npy files is not yet supported. Please retry with --mode = convert_csv and --options = h5 first.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Unsupported file type. First convert to &#39;h5&#39; or &#39;npy&#39; using --mode = convert_csv and --options = [chosen file_type].&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">events</span><span class="p">,</span> <span class="n">jets</span><span class="p">,</span> <span class="n">constituents</span></div>
+
+
+
+<div class="viewcode-block" id="encode_pid_parallel">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.data_processing.encode_pid_parallel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_pid_parallel</span><span class="p">(</span><span class="n">constits_tensor_path</span><span class="p">,</span> <span class="n">encoded_tensor_path</span><span class="p">,</span> <span class="n">pid_map_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parallelized: Reads the constituent-level tensor and encodes the pid column using categorical encoding.</span>
+<span class="sd">    Saves the new tensor and the pid map for later retrieval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load constituent-level tensor</span>
+    <span class="n">constits_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">constits_tensor_path</span><span class="p">)</span>
+    <span class="n">constits_array</span> <span class="o">=</span> <span class="n">constits_tensor</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="c1"># Extract pid column</span>
+    <span class="n">pid_column</span> <span class="o">=</span> <span class="n">constits_array</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span>
+
+    <span class="c1"># Perform categorical encoding</span>
+    <span class="n">label_encoder</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+    <span class="n">encoded_pids</span> <span class="o">=</span> <span class="n">label_encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">pid_column</span><span class="p">)</span>
+
+    <span class="c1"># Replace pid column in the array</span>
+    <span class="n">constits_array</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoded_pids</span>
+
+    <span class="c1"># Save the encoded tensor</span>
+    <span class="n">encoded_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">constits_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">encoded_tensor</span><span class="p">,</span> <span class="n">encoded_tensor_path</span><span class="p">)</span>
+
+    <span class="c1"># Save the pid map (original to encoded)</span>
+    <span class="n">pid_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;original_pid&quot;</span><span class="p">:</span> <span class="n">label_encoder</span><span class="o">.</span><span class="n">classes_</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="s2">&quot;encoded_pid&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">classes_</span><span class="p">))),</span>
+    <span class="p">}</span>
+    <span class="n">pid_map_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pid_map</span><span class="p">)</span>
+
+    <span class="c1"># Parallel write using loky</span>
+    <span class="k">with</span> <span class="n">get_reusable_executor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">pid_map_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">,</span> <span class="n">pid_map_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Encoded tensor saved to </span><span class="si">{</span><span class="n">encoded_tensor_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PID map saved to </span><span class="si">{</span><span class="n">pid_map_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="decode_pid">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.data_processing.decode_pid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_pid</span><span class="p">(</span><span class="n">encoded_tensor_path</span><span class="p">,</span> <span class="n">pid_map_path</span><span class="p">,</span> <span class="n">decoded_tensor_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the encoded tensor and pid map, decodes the pids back to their original values,</span>
+<span class="sd">    and saves the decoded tensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load the encoded tensor</span>
+    <span class="n">encoded_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">encoded_tensor_path</span><span class="p">)</span>
+    <span class="n">encoded_array</span> <span class="o">=</span> <span class="n">encoded_tensor</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="c1"># Load the PID map</span>
+    <span class="n">pid_map_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">pid_map_path</span><span class="p">)</span>
+    <span class="n">encoded_to_original</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">pid_map_df</span><span class="p">[</span><span class="s2">&quot;encoded_pid&quot;</span><span class="p">],</span> <span class="n">pid_map_df</span><span class="p">[</span><span class="s2">&quot;original_pid&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Decode the pid column</span>
+    <span class="n">pid_column</span> <span class="o">=</span> <span class="n">encoded_array</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">decoded_pids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">encoded_to_original</span><span class="o">.</span><span class="n">get</span><span class="p">)(</span><span class="n">pid_column</span><span class="p">)</span>
+
+    <span class="c1"># Replace the pid column with the decoded values</span>
+    <span class="n">encoded_array</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">decoded_pids</span>
+
+    <span class="c1"># Save the decoded tensor</span>
+    <span class="n">decoded_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">encoded_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">decoded_tensor</span><span class="p">,</span> <span class="n">decoded_tensor_path</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Decoded tensor saved to </span><span class="si">{</span><span class="n">decoded_tensor_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="process_event">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.data_processing.process_event">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_event</span><span class="p">(</span>
+    <span class="n">evt_id</span><span class="p">,</span> <span class="n">evt_jets</span><span class="p">,</span> <span class="n">evt_constits</span><span class="p">,</span> <span class="n">n_jets</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_constits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process a single event to select top jets and their top constituents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Processing event </span><span class="si">{</span><span class="n">evt_id</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">evt_jets</span><span class="p">)</span><span class="si">}</span><span class="s2"> jets and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">evt_constits</span><span class="p">)</span><span class="si">}</span><span class="s2"> constituents...&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Sort jets by pT (column 4)</span>
+    <span class="n">evt_jets</span> <span class="o">=</span> <span class="n">evt_jets</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">evt_jets</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">])]</span>
+
+    <span class="c1"># Select the top n_jets, zero-pad if necessary</span>
+    <span class="n">selected_jets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_jets</span><span class="p">,</span> <span class="n">evt_jets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">evt_jets</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">selected_jets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">evt_id</span>  <span class="c1"># Retain event ID for all jets</span>
+    <span class="n">selected_jets</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">evt_jets</span><span class="p">),</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">evt_jets</span><span class="p">[:</span><span class="n">n_jets</span><span class="p">]</span>
+
+    <span class="c1"># For each selected jet, select its top n_constits, zero-padding as needed</span>
+    <span class="n">selected_constits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">n_jets</span> <span class="o">*</span> <span class="n">n_constits</span><span class="p">,</span> <span class="n">evt_constits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">evt_constits</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="p">)</span>
+    <span class="n">selected_constits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">evt_id</span>  <span class="c1"># Retain event ID for all constituents</span>
+
+    <span class="k">for</span> <span class="n">jet_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evt_jets</span><span class="p">),</span> <span class="n">n_jets</span><span class="p">)):</span>
+        <span class="n">jet_id</span> <span class="o">=</span> <span class="n">evt_jets</span><span class="p">[</span><span class="n">jet_idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># Jet ID within the event</span>
+        <span class="n">jet_constits</span> <span class="o">=</span> <span class="n">evt_constits</span><span class="p">[</span><span class="n">evt_constits</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">jet_id</span><span class="p">]</span>
+        <span class="n">jet_btag</span> <span class="o">=</span> <span class="n">evt_jets</span><span class="p">[</span><span class="n">jet_idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+        <span class="c1"># Sort constituents by pT (column 4), remove PiD and select the top n_constits</span>
+        <span class="n">jet_constits</span> <span class="o">=</span> <span class="n">jet_constits</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">jet_constits</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">])]</span>
+        <span class="n">jet_constits</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">jet_btag</span>  <span class="c1"># Replace constituent pid with btag info of corresponding jet</span>
+        <span class="p">)</span>
+        <span class="n">num_constits</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">jet_constits</span><span class="p">),</span> <span class="n">n_constits</span><span class="p">)</span>
+        <span class="n">start_idx</span> <span class="o">=</span> <span class="n">jet_idx</span> <span class="o">*</span> <span class="n">n_constits</span>
+        <span class="n">end_idx</span> <span class="o">=</span> <span class="n">start_idx</span> <span class="o">+</span> <span class="n">num_constits</span>
+
+        <span class="n">selected_constits</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">jet_constits</span><span class="p">[:</span><span class="n">num_constits</span><span class="p">]</span>
+        <span class="n">selected_constits</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">jet_id</span>  <span class="c1"># Retain jet ID</span>
+
+    <span class="k">return</span> <span class="n">selected_jets</span><span class="p">,</span> <span class="n">selected_constits</span></div>
+
+
+
+<div class="viewcode-block" id="parallel_select_top_jets_and_constituents">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.data_processing.parallel_select_top_jets_and_constituents">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parallel_select_top_jets_and_constituents</span><span class="p">(</span>
+    <span class="n">jets</span><span class="p">,</span> <span class="n">constituents</span><span class="p">,</span> <span class="n">n_jets</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_constits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parallelized selection of top jets and constituents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Selecting top </span><span class="si">{</span><span class="n">n_jets</span><span class="si">}</span><span class="s2"> jets and their top </span><span class="si">{</span><span class="n">n_constits</span><span class="si">}</span><span class="s2"> constituents in parallel...&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Group jets and constituents by event ID</span>
+    <span class="n">event_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">jets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">event_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">evt_id</span> <span class="ow">in</span> <span class="n">event_ids</span><span class="p">:</span>
+        <span class="n">evt_jets</span> <span class="o">=</span> <span class="n">jets</span><span class="p">[</span><span class="n">jets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">evt_id</span><span class="p">]</span>
+        <span class="n">evt_constits</span> <span class="o">=</span> <span class="n">constituents</span><span class="p">[</span><span class="n">constituents</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">evt_id</span><span class="p">]</span>
+        <span class="n">event_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">evt_id</span><span class="p">,</span> <span class="n">evt_jets</span><span class="p">,</span> <span class="n">evt_constits</span><span class="p">))</span>
+
+    <span class="c1"># Parallel processing of events</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">event_data</span><span class="p">)</span><span class="si">}</span><span class="s2"> events in parallel using </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers...&quot;</span>
+        <span class="p">)</span>
+    <span class="n">jet_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">constits_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">process_event</span><span class="p">,</span> <span class="o">*</span><span class="n">event</span><span class="p">,</span> <span class="n">n_jets</span><span class="p">,</span> <span class="n">n_constits</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">event_data</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">:</span>
+            <span class="n">jets</span><span class="p">,</span> <span class="n">constits</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="n">jet_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jets</span><span class="p">)</span>
+            <span class="n">constits_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constits</span><span class="p">)</span>
+
+    <span class="c1"># Combine results into single arrays</span>
+    <span class="n">jet_selection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">jet_results</span><span class="p">)</span>
+    <span class="n">constits_selection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">constits_results</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;shape of jet_selection: </span><span class="si">{</span><span class="n">jet_selection</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">shape of constits_selection: </span><span class="si">{</span><span class="n">constits_selection</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jet_selection</span><span class="p">,</span> <span class="n">constits_selection</span></div>
+
+
+
+<div class="viewcode-block" id="process_and_save_tensors">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.data_processing.process_and_save_tensors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_and_save_tensors</span><span class="p">(</span>
+    <span class="n">in_path</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the input file, parallelize selections, and save the results as PyTorch tensors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span>
+    <span class="n">n_jets</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">num_jets</span>
+    <span class="n">n_constits</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">num_constits</span>
+    <span class="n">n_workers</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">parallel_workers</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">normalizations</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">n_jets</span><span class="si">}</span><span class="s2"> jets and </span><span class="si">{</span><span class="n">n_constits</span><span class="si">}</span><span class="s2"> constituents from </span><span class="si">{</span><span class="n">in_path</span><span class="si">}</span><span class="s2">...&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Load the data</span>
+    <span class="n">events</span><span class="p">,</span> <span class="n">jets</span><span class="p">,</span> <span class="n">constituents</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">in_path</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span><span class="si">}</span><span class="s2"> events, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">jets</span><span class="p">)</span><span class="si">}</span><span class="s2"> jets, and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">constituents</span><span class="p">)</span><span class="si">}</span><span class="s2"> constituents from </span><span class="si">{</span><span class="n">in_path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Events shape: </span><span class="si">{</span><span class="n">events</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">Jets shape: </span><span class="si">{</span><span class="n">jets</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">Constituents shape: </span><span class="si">{</span><span class="n">constituents</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Apply normalizations</span>
+    <span class="k">if</span> <span class="n">norm</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Normalizing data using </span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="s2">&quot;pj_custom&quot;</span><span class="p">:</span>
+            <span class="n">jets_norm</span><span class="p">,</span> <span class="n">jet_comp_scaler</span> <span class="o">=</span> <span class="n">normalization</span><span class="o">.</span><span class="n">normalize_jet_pj_custom</span><span class="p">(</span><span class="n">jets</span><span class="p">)</span>
+            <span class="n">constituents_norm</span><span class="p">,</span> <span class="n">constit_comp_scaler</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">normalization</span><span class="o">.</span><span class="n">normalize_constit_pj_custom</span><span class="p">(</span><span class="n">constituents</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">jets_norm</span><span class="p">,</span> <span class="n">jet_comp_scaler</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span><span class="n">jets</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+            <span class="n">constituents_norm</span><span class="p">,</span> <span class="n">constit_comp_scaler</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span>
+                <span class="n">constituents</span><span class="p">,</span> <span class="n">norm</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Normalization complete.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Jets shape after normalization: </span><span class="si">{</span><span class="n">jets_norm</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">Constituents shape after normalization: </span><span class="si">{</span><span class="n">constituents_norm</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Parallel processing for top jets and constituents</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Selecting top </span><span class="si">{</span><span class="n">n_jets</span><span class="si">}</span><span class="s2"> jets and their top </span><span class="si">{</span><span class="n">n_constits</span><span class="si">}</span><span class="s2"> constituents in parallel...&quot;</span>
+        <span class="p">)</span>
+    <span class="n">jet_selection</span><span class="p">,</span> <span class="n">constits_selection</span> <span class="o">=</span> <span class="n">parallel_select_top_jets_and_constituents</span><span class="p">(</span>
+        <span class="n">jets_norm</span><span class="p">,</span> <span class="n">constituents_norm</span><span class="p">,</span> <span class="n">n_jets</span><span class="p">,</span> <span class="n">n_constits</span><span class="p">,</span> <span class="n">n_workers</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Jets shape after selection: </span><span class="si">{</span><span class="n">jet_selection</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">Constituents shape after selection: </span><span class="si">{</span><span class="n">constits_selection</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Convert to PyTorch tensors</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting to PyTorch tensors...&quot;</span><span class="p">)</span>
+    <span class="n">evt_tensor</span><span class="p">,</span> <span class="n">jet_tensor</span><span class="p">,</span> <span class="n">constits_tensor</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">helper</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="p">[</span><span class="n">events</span><span class="p">,</span> <span class="n">jet_selection</span><span class="p">,</span> <span class="n">constits_selection</span><span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Save tensors</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Saving tensors to </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_events.pt, </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_jets.pt and </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_constituents.pt...&quot;</span>
+        <span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">evt_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_events.pt&quot;</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">jet_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_jets.pt&quot;</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">constits_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_constituents.pt&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Save normalization scalers as pickle files</span>
+    <span class="k">if</span> <span class="n">norm</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Saving normalization scalers to </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_jet_scaler.pkl and </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_constituent_scaler.pkl...&quot;</span>
+            <span class="p">)</span>
+        <span class="n">jet_scaler_path</span> <span class="o">=</span> <span class="n">out_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_jet_scaler.pkl&quot;</span>
+        <span class="n">constit_scaler_path</span> <span class="o">=</span> <span class="n">out_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_constituent_scaler.pkl&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jet_scaler_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">jet_comp_scaler</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">constit_scaler_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">constit_comp_scaler</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Tensors saved to </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_events.pt, </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_jets.pt and </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_constituents.pt&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">norm</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Normalization scalers saved to </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_jet_scaler.pkl and </span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_constituent_scaler.pkl&quot;</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="preproc_inputs">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.data_processing.preproc_inputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preproc_inputs</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Load data from files whose names start with &#39;bkg&#39;</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s2">&quot;data_path&quot;</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">,</span> <span class="s2">&quot;tensors&quot;</span><span class="p">,</span> <span class="s2">&quot;processed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">events_tensor</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">load_tensors</span><span class="p">(</span>
+                <span class="n">input_path</span><span class="p">,</span> <span class="n">keyword</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Reshape the data as per configs.input_features</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">select_features</span><span class="p">(</span>
+            <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">input_features</span>
+        <span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">events_tensor</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data reshaped successfully&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events tensor shape:&quot;</span><span class="p">,</span> <span class="n">events_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets tensor shape:&quot;</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents tensor shape:&quot;</span><span class="p">,</span> <span class="n">constituents_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">keyword</span> <span class="o">==</span> <span class="s2">&quot;bkg_train&quot;</span><span class="p">:</span>
+        <span class="c1"># Split the data into training and validation sets</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Splitting data into training and validation sets...&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Train:Val split ratio: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">train_size</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">train_size</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Apply the function to each tensor, producing a list of three tuples.</span>
+            <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">helper</span><span class="o">.</span><span class="n">train_val_split</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">train_size</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">events_tensor</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="c1"># Unpack the list of tuples into two transposed tuples.</span>
+        <span class="n">trains</span><span class="p">,</span> <span class="n">vals</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">splits</span><span class="p">)</span>
+        <span class="c1"># Repack into a single tuple</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">trains</span> <span class="o">+</span> <span class="n">vals</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
