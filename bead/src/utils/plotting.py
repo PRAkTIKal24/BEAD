@@ -1077,11 +1077,11 @@ def plot_roc_curve(config, paths, verbose: bool = False):
 def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=False):
     """
     Generate histogram plots for test loss components with generator and signal labels.
-    
+
     This function creates histogram visualizations of test loss values, color-coded by
     generator type (Herwig, Pythia, Sherpa) and signal vs background classification,
     using the same color scheme as the latent space plots.
-    
+
     Parameters
     ----------
     config : object
@@ -1092,127 +1092,175 @@ def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=
         Name of the loss component file to plot (without .npy extension), default is "loss_test"
     verbose : bool, optional
         Whether to print progress and debugging information, default is False
-        
+
     Notes
     -----
     The function uses the same color scheme as latent space plots:
     - Green: Herwig background
-    - Blue: Pythia background  
+    - Blue: Pythia background
     - Yellow: Sherpa background
     - Red: Signal samples
     """
     if verbose:
         print(f"Creating test loss histogram for {loss_component}...")
-    
+
     try:
         # Load test loss data
-        loss_file_path = os.path.join(paths["output_path"], "results", f"{loss_component}.npy")
+        loss_file_path = os.path.join(
+            paths["output_path"], "results", f"{loss_component}.npy"
+        )
         if not os.path.exists(loss_file_path):
             if verbose:
                 print(f"Loss file {loss_file_path} not found, skipping histogram plot")
             return
-            
+
         loss_data = np.load(loss_file_path)
-        
+
         # Load test labels (signal vs background)
-        label_path = os.path.join(paths["output_path"], "results", f"test_{config.input_level}_label.npy")
+        label_path = os.path.join(
+            paths["output_path"], "results", f"test_{config.input_level}_label.npy"
+        )
         if not os.path.exists(label_path):
             if verbose:
                 print(f"Label file {label_path} not found, skipping histogram plot")
             return
-            
+
         labels = np.load(label_path)
-        
+
         # Load generator labels for background samples
         gen_label_path = os.path.join(
-            paths["data_path"], config.file_type, "tensors", "processed", 
-            f"test_gen_label_{config.input_level}.npy"
+            paths["data_path"],
+            config.file_type,
+            "tensors",
+            "processed",
+            f"test_gen_label_{config.input_level}.npy",
         )
         if not os.path.exists(gen_label_path):
             if verbose:
-                print(f"Generator label file {gen_label_path} not found, skipping histogram plot")
+                print(
+                    f"Generator label file {gen_label_path} not found, skipping histogram plot"
+                )
             return
-            
+
         gen_labels = np.load(gen_label_path)
-        
+
         # Ensure data consistency
         n_background = np.sum(labels == 0)
-        n_signal = np.sum(labels == 1)
-        
+        _n_signal = np.sum(labels == 1)
+
         if len(gen_labels) != n_background:
             if verbose:
-                print(f"Generator labels length ({len(gen_labels)}) doesn't match background samples ({n_background})")
+                print(
+                    f"Generator labels length ({len(gen_labels)}) doesn't match background samples ({n_background})"
+                )
             return
-            
+
         if len(loss_data) != len(labels):
             if verbose:
-                print(f"Loss data length ({len(loss_data)}) doesn't match label length ({len(labels)})")
+                print(
+                    f"Loss data length ({len(loss_data)}) doesn't match label length ({len(labels)})"
+                )
             return
-            
+
         # Flatten loss data if necessary
         if loss_data.ndim > 1:
             loss_data = loss_data.flatten()
-            
+
         # Separate background and signal loss values
         background_mask = labels == 0
         signal_mask = labels == 1
-        
+
         background_loss = loss_data[background_mask]
         signal_loss = loss_data[signal_mask]
-        
+
         # Separate background by generator type
         herwig_mask = gen_labels == 0
         pythia_mask = gen_labels == 1
         sherpa_mask = gen_labels == 2
-        
+
         herwig_loss = background_loss[herwig_mask]
         pythia_loss = background_loss[pythia_mask]
         sherpa_loss = background_loss[sherpa_mask]
-        
+
         # Create histogram plot
         plt.figure(figsize=(10, 6))
-        
+
         # Determine histogram range and bins
-        all_loss_values = np.concatenate([herwig_loss, pythia_loss, sherpa_loss, signal_loss])
-        hist_range = (np.percentile(all_loss_values, 1), np.percentile(all_loss_values, 99))
+        all_loss_values = np.concatenate(
+            [herwig_loss, pythia_loss, sherpa_loss, signal_loss]
+        )
+        hist_range = (
+            np.percentile(all_loss_values, 1),
+            np.percentile(all_loss_values, 99),
+        )
         bins = 50
-        
+
         # Plot histograms with same colors as latent space plots
         alpha = 0.7
-        
+
         if len(herwig_loss) > 0:
-            plt.hist(herwig_loss, bins=bins, range=hist_range, alpha=alpha, color='green', 
-                    label=f'Herwig (n={len(herwig_loss)})', density=True)
-                    
+            plt.hist(
+                herwig_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="green",
+                label=f"Herwig (n={len(herwig_loss)})",
+                density=True,
+            )
+
         if len(pythia_loss) > 0:
-            plt.hist(pythia_loss, bins=bins, range=hist_range, alpha=alpha, color='blue', 
-                    label=f'Pythia (n={len(pythia_loss)})', density=True)
-                    
+            plt.hist(
+                pythia_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="blue",
+                label=f"Pythia (n={len(pythia_loss)})",
+                density=True,
+            )
+
         if len(sherpa_loss) > 0:
-            plt.hist(sherpa_loss, bins=bins, range=hist_range, alpha=alpha, color='yellow', 
-                    label=f'Sherpa (n={len(sherpa_loss)})', density=True)
-                    
+            plt.hist(
+                sherpa_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="yellow",
+                label=f"Sherpa (n={len(sherpa_loss)})",
+                density=True,
+            )
+
         if len(signal_loss) > 0:
-            plt.hist(signal_loss, bins=bins, range=hist_range, alpha=alpha, color='red', 
-                    label=f'Signal (n={len(signal_loss)})', density=True)
-        
-        plt.xlabel(f'{loss_component.replace("_test", "").title()} Loss')
-        plt.ylabel('Density')
-        plt.title(f'{config.project_name} - {loss_component.replace("_test", "").title()} Loss Distribution')
+            plt.hist(
+                signal_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="red",
+                label=f"Signal (n={len(signal_loss)})",
+                density=True,
+            )
+
+        plt.xlabel(f"{loss_component.replace('_test', '').title()} Loss")
+        plt.ylabel("Density")
+        plt.title(
+            f"{config.project_name} - {loss_component.replace('_test', '').title()} Loss Distribution"
+        )
         plt.legend()
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
-        
+
         # Save the plot
         save_path = os.path.join(
             paths["output_path"], "plots", "loss", f"{loss_component}_histogram.pdf"
         )
         plt.savefig(save_path, format="pdf")
         plt.close()
-        
+
         if verbose:
             print(f"Test loss histogram saved to: {save_path}")
-            
+
     except Exception as e:
         if verbose:
             print(f"Error creating test loss histogram: {e}")
