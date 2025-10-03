@@ -1078,9 +1078,12 @@ def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=
     """
     Generate histogram plots for test loss components with generator and signal labels.
 
-    This function creates histogram visualizations of test loss values, color-coded by
-    generator type (Herwig, Pythia, Sherpa) and signal vs background classification,
-    using the same color scheme as the latent space plots.
+    This function creates TWO histogram visualizations of test loss values:
+    1. Standard histogram plot with signal histogram pushed to the background
+    2. Line plot version with background histograms and signal as a red line on top
+    
+    Both plots are color-coded by generator type (Herwig, Pythia, Sherpa) and 
+    signal vs background classification, using the same color scheme as the latent space plots.
 
     Parameters
     ----------
@@ -1100,6 +1103,10 @@ def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=
     - Blue: Pythia background
     - Yellow: Sherpa background
     - Red: Signal samples
+    
+    Generates two output files:
+    - {loss_component}_histogram.pdf: Standard overlapping histograms (signal in back)
+    - {loss_component}_histogram_line.pdf: Background histograms + signal as line plot
     """
     if verbose:
         print(f"Creating test loss histogram for {loss_component}...")
@@ -1195,9 +1202,25 @@ def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=
         )
         bins = 50
 
+        # === PLOT 1: Standard histogram with signal pushed to back ===
+        plt.figure(figsize=(10, 6))
+        
         # Plot histograms with same colors as latent space plots
         alpha = 0.7
 
+        # Plot signal FIRST so it appears in the back
+        if len(signal_loss) > 0:
+            plt.hist(
+                signal_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="red",
+                label=f"Signal (n={len(signal_loss)})",
+                density=True,
+            )
+
+        # Then plot background histograms on top
         if len(herwig_loss) > 0:
             plt.hist(
                 herwig_loss,
@@ -1231,17 +1254,6 @@ def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=
                 density=True,
             )
 
-        if len(signal_loss) > 0:
-            plt.hist(
-                signal_loss,
-                bins=bins,
-                range=hist_range,
-                alpha=alpha,
-                color="red",
-                label=f"Signal (n={len(signal_loss)})",
-                density=True,
-            )
-
         plt.xlabel(f"{loss_component.replace('_test', '').title()} Loss")
         plt.ylabel("Density")
         plt.title(
@@ -1251,7 +1263,7 @@ def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
 
-        # Save the plot
+        # Save the standard plot
         save_path = os.path.join(
             paths["output_path"], "plots", "loss", f"{loss_component}_histogram.pdf"
         )
@@ -1260,6 +1272,80 @@ def plot_test_loss_histogram(config, paths, loss_component="loss_test", verbose=
 
         if verbose:
             print(f"Test loss histogram saved to: {save_path}")
+
+        # === PLOT 2: Background histograms + signal as line plot ===
+        plt.figure(figsize=(10, 6))
+
+        # Plot background histograms
+        if len(herwig_loss) > 0:
+            plt.hist(
+                herwig_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="green",
+                label=f"Herwig (n={len(herwig_loss)})",
+                density=True,
+            )
+
+        if len(pythia_loss) > 0:
+            plt.hist(
+                pythia_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="blue",
+                label=f"Pythia (n={len(pythia_loss)})",
+                density=True,
+            )
+
+        if len(sherpa_loss) > 0:
+            plt.hist(
+                sherpa_loss,
+                bins=bins,
+                range=hist_range,
+                alpha=alpha,
+                color="yellow",
+                label=f"Sherpa (n={len(sherpa_loss)})",
+                density=True,
+            )
+
+        # Plot signal as a line on top
+        if len(signal_loss) > 0:
+            # Calculate histogram for signal to get bin centers and heights
+            signal_counts, bin_edges = np.histogram(signal_loss, bins=bins, range=hist_range, density=True)
+            bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+            
+            # Plot as a line
+            plt.plot(
+                bin_centers,
+                signal_counts,
+                color="red",
+                linewidth=2.5,
+                label=f"Signal (n={len(signal_loss)})",
+                marker='o',
+                markersize=3,
+                alpha=0.9
+            )
+
+        plt.xlabel(f"{loss_component.replace('_test', '').title()} Loss")
+        plt.ylabel("Density")
+        plt.title(
+            f"{config.project_name} - {loss_component.replace('_test', '').title()} Loss Distribution (Line)"
+        )
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+
+        # Save the line plot version
+        save_path_line = os.path.join(
+            paths["output_path"], "plots", "loss", f"{loss_component}_histogram_line.pdf"
+        )
+        plt.savefig(save_path_line, format="pdf")
+        plt.close()
+
+        if verbose:
+            print(f"Test loss histogram (line version) saved to: {save_path_line}")
 
     except Exception as e:
         if verbose:
