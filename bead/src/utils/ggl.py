@@ -746,29 +746,48 @@ def run_plots(paths, config, verbose: bool = False):
     input_path = os.path.join(paths["output_path"], "results")
     output_path = os.path.join(paths["output_path"], "plots", "loss")
 
-    if not config.skip_to_roc:
+    # Check if only test loss histograms should be plotted
+    if hasattr(config, 'plot_only_test_loss_histogram') and config.plot_only_test_loss_histogram:
         try:
-            plotting.plot_losses(input_path, output_path, config, verbose)
-        except FileNotFoundError as e:
-            print(e)
+            # Get the loss component to plot (default to 'loss_test')
+            loss_component = getattr(config, 'test_loss_histogram_component', 'loss_test')
+            plotting.plot_test_loss_histogram(config, paths, loss_component, verbose)
+        except Exception as e:
+            print(f"Error plotting test loss histogram: {e}")
+    else:
+        # Run all standard plots
+        if not config.skip_to_roc:
+            try:
+                plotting.plot_losses(input_path, output_path, config, verbose)
+            except FileNotFoundError as e:
+                print(e)
+            try:
+                plotting.plot_latent_variables(config, paths, verbose)
+            except ValueError as e:
+                print(e)
+            except Exception as e:
+                print(f"Error plotting latent variables: {e}")
+            try:
+                plotting.plot_mu_logvar(config, paths, verbose)
+            except ValueError as e:
+                print(e)
+            except Exception as e:
+                print(f"Error plotting mu/logvar: {e}")
+                
         try:
-            plotting.plot_latent_variables(config, paths, verbose)
+            plotting.plot_roc_curve(config, paths, verbose)
         except ValueError as e:
             print(e)
         except Exception as e:
-            print(f"Error plotting latent variables: {e}")
-        try:
-            plotting.plot_mu_logvar(config, paths, verbose)
-        except ValueError as e:
-            print(e)
-        except Exception as e:
-            print(f"Error plotting mu/logvar: {e}")
-    try:
-        plotting.plot_roc_curve(config, paths, verbose)
-    except ValueError as e:
-        print(e)
-    except Exception as e:
-        print(f"Error plotting ROC curve: {e}")
+            print(f"Error plotting ROC curve: {e}")
+            
+        # Also plot test loss histogram if not skipping other plots
+        if hasattr(config, 'plot_test_loss_histogram') and config.plot_test_loss_histogram:
+            try:
+                loss_component = getattr(config, 'test_loss_histogram_component', 'loss_test')
+                plotting.plot_test_loss_histogram(config, paths, loss_component, verbose)
+            except Exception as e:
+                print(f"Error plotting test loss histogram: {e}")
 
     print("Plotting complete")
 
