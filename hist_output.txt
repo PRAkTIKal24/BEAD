@@ -2,79 +2,95 @@
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/csf_results/convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/csf_results/convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/csf_results/convvae_planar/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/csf_results/convvae_planar/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/csf_results/convvae_house/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/csf_results/convvae_house/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/csf_results/dvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/csf_results/dvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/csf_results/convvae_sc/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/csf_results/convvae_sc/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/2class/hp_convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/2class/hp_convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/2class/hs_convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/2class/hs_convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/2class/ps_convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/2class/ps_convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/1class/convvae_h/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/1class/convvae_h/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/1class/convvae_p/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/1class/convvae_p/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Creating test loss histogram for loss_test...
 Test loss histogram saved to: bead/workspaces/1class/convvae_s/output/plots/loss/loss_test_histogram.pdf
+Test loss histogram (line version) saved to: bead/workspaces/1class/convvae_s/output/plots/loss/loss_test_histogram_line.pdf
 Plotting complete
