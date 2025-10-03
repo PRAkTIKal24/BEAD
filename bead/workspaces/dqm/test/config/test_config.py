@@ -52,6 +52,12 @@ def set_config(c):
     c.overlay_roc_save_location    = "overlay_roc"
     c.overlay_roc_filename         = "combined_roc.pdf"
 
+
+# === Test loss histogram configuration ===
+    c.plot_test_loss_histogram     = False  # Set to True to include test loss histogram in standard plotting
+    c.plot_only_test_loss_histogram = True  # Set to True to skip all other plots and only generate test loss histogram
+    c.test_loss_histogram_component = "loss_test"  # Which loss component to plot (e.g., "loss_test", "kl_test", "reco_test")
+
 # === Parameter annealing configuration ===
     c.annealing_params = {
         "reg_param": {
