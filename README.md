@@ -9,6 +9,8 @@
 [![Tests](https://github.com/PRAkTIKal24/BEAD/actions/workflows/tests.yml/badge.svg?event=push)](https://github.com/PRAkTIKal24/BEAD/actions)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/PRAkTIKal24/BEAD)
 ![Codecov](https://img.shields.io/codecov/c/github/PRAkTIKal24/BEAD)
+[![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
 <p align="center">
  <img width="285" alt="logo" src="https://github.com/user-attachments/assets/a47c53f8-deff-4cde-9e2c-b21d910578f4" />
