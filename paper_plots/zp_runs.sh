@@ -1,0 +1,14 @@
+#!/bin/bash
+sbatcha100 eucaif convvae convertcsv_prepareinputs_detect_plot
+sbatcha100 eucaif convvae_planar detect_plot
+sbatcha100 eucaif convvae_house detect_plot
+sbatcha100 eucaif ntx_convvae detect_plot
+sbatcha100 eucaif dvae detect_plot
+sbatcha100 eucaif convvae_sc detect_plot
+sbatcha100 eucaif convvae_house_sc_anneal detect_plot
+sbatcha100 2class hp_convvae convertcsv_prepareinputs_detect_plot
+sbatcha100 2classhs convvae detect_plot
+sbatcha100 2classps convvae detect_plot
+sbatcha100 2class sc_convvae detect_plot
+sbatcha100 2classhs sc_convvae detect_plot
+sbatcha100 2classps sc_convvae detect_plot
