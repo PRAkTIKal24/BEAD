@@ -191,7 +191,7 @@ def process_and_save_tensors(
 
     # Compute EFP features if enabled
     efp_tensor = None
-    if config.should_compute_efp():
+    if hasattr(config, "should_compute_efp") and config.should_compute_efp():
         if verbose:
             print("Computing EFP features...")
         efp_tensor = compute_efp_features(
