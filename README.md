@@ -26,30 +26,24 @@ BEAD is a Python package that uses deep learning based methods for anomaly detec
 
 ## Citing us
 
-Visit our [zenodo link](https://zenodo.org/records/17117302) to find different ways of citing us in your format of choice!
+Visit our [zenodo link](https://zenodo.org/records/17492266) to find different ways of citing us in your format of choice!
 
 For BibTex:
 
 ```
-@software{pratik_jawahar_2025_17117302,
+@software{pratik_jawahar_2025_17492266,
   author       = {Pratik Jawahar and
                   Ioannis (Yannis) Kalaitzidis and
                   Abhishek Kotwani},
   title        = {PRAkTIKal24/BEAD: Background Enrichment for
                    Anomaly Detection [Framework]
                   },
-  month        = sep,
+  month        = oct,
   year         = 2025,
   publisher    = {Zenodo},
-  version      = {v0.17.4},
-  doi          = {10.5281/zenodo.17117302},
-  url          = {https://doi.org/10.5281/zenodo.17117302},
-  swhid        = {swh:1:dir:6674448587eef8f53ccfcbf853a4dfcc10861f75
-                   ;origin=https://doi.org/10.5281/zenodo.14888113;vi
-                   sit=swh:1:snp:edd499bfe1ea8da99d182a98d92761faddd5
-                   6478;anchor=swh:1:rel:a5c90acb045bc70e0d2e265baef2
-                   b779054d1656;path=PRAkTIKal24-BEAD-c92e108
-                  },
+  version      = {v0.17.5},
+  doi          = {10.5281/zenodo.17492266},
+  url          = {https://doi.org/10.5281/zenodo.17492266},
 }
 ```
 
