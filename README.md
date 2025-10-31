@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17117302.svg)](https://zenodo.org/records/17117302)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17492266.svg)](https://doi.org/10.5281/zenodo.17492266)
 ![GitHub Release-date](https://img.shields.io/github/release-date-pre/PRAkTIKal24/BEAD?style=flat&color=blue)
 ![Release-version](https://img.shields.io/github/v/tag/PRAkTIKal24/BEAD?include_prereleases&label=latest%20release&color=blue)
 ![GitHub repo size](https://img.shields.io/github/repo-size/PRAkTIKal24/BEAD)
