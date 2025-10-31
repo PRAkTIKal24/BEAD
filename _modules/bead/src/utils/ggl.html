@@ -1,0 +1,847 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils.ggl &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.utils.ggl</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.utils.ggl</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Think of this file as your google assistant</span>
+<span class="c1"># This file is a collection of simple helper functions and is the control center that accesses all other src files</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">ceil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.rich</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">art</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">conversion</span><span class="p">,</span> <span class="n">data_processing</span><span class="p">,</span> <span class="n">helper</span><span class="p">,</span> <span class="n">plotting</span><span class="p">,</span> <span class="n">diagnostics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..trainers</span><span class="w"> </span><span class="kn">import</span> <span class="n">training</span><span class="p">,</span> <span class="n">inference</span>
+
+
+<div class="viewcode-block" id="get_arguments">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.get_arguments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_arguments</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determines commandline arguments specified by BEAD user. Use `--help` to see what</span>
+<span class="sd">    options are available.</span>
+
+<span class="sd">    Returns: .py, string, folder: `.py` file containing the config options, string determining what mode to run,</span>
+<span class="sd">    projects directory where outputs go.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;bead&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">text2art</span><span class="p">(</span><span class="s2">&quot; BEAD &quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;varsity&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;       /-----</span><span class="se">\\</span><span class="s2">   /-----</span><span class="se">\\</span><span class="s2">   /-----</span><span class="se">\\</span><span class="s2">   /-----</span><span class="se">\\\n</span><span class="s2">      /       </span><span class="se">\\</span><span class="s2"> /       </span><span class="se">\\</span><span class="s2"> /&quot;</span>
+            <span class="s2">&quot;       </span><span class="se">\\</span><span class="s2"> /       </span><span class="se">\\\n</span><span class="s2">-----|         /         /         /         |-----</span><span class="se">\n</span><span class="s2">      </span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;       / </span><span class="se">\\</span><span class="s2">       / </span><span class="se">\\</span><span class="s2">       / </span><span class="se">\\</span><span class="s2">       /</span><span class="se">\n</span><span class="s2">       </span><span class="se">\\</span><span class="s2">-----/   </span><span class="se">\\</span><span class="s2">-----/   </span><span class="se">\\</span><span class="s2">-----/   </span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;-----/</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="p">),</span>
+        <span class="c1">#     &quot;\n\n\nBEAD is a deep learning based anomaly detection algorithm for new Physics searches at the LHC.\n\n&quot;</span>
+        <span class="c1">#     &quot;BEAD has five main running modes:\n\n&quot;</span>
+        <span class="c1">#     &quot;\t1. Data handling: Deals with handling file types, conversions between them\n &quot;</span>
+        <span class="c1">#     &quot;and pre-processing the data to feed as inputs to the DL models.\n\n&quot;</span>
+        <span class="c1">#     &quot;\t2. Training: Train your model to learn implicit representations of your background\n &quot;</span>
+        <span class="c1">#     &quot;data that may come from multiple sources/generators to get a single, encriched latent representation of it.\n\n&quot;</span>
+        <span class="c1">#     &quot;\t3. Inference: Using a model trained on an enriched background, feed in samples you want\n &quot;</span>
+        <span class="c1">#     &quot;to detect anomalies in using the &#39;--detect or -d&#39; mode.\n\n&quot;</span>
+        <span class="c1">#     &quot;\t4. Plotting: After running Inference, or Training you can generate plots similar to\n &quot;</span>
+        <span class="c1">#     &quot;what is shown in the paper. These include performance plots as well as different visualizations of the learned data.\n\n&quot;</span>
+        <span class="c1">#     &quot;\t5. Diagnostics: Enabling this mode allows running profilers that measure a host of metrics connected\n &quot;</span>
+        <span class="c1">#     &quot;to the usage of the compute node you run on to help you optimize the code if needed(using CPU-GPU metrics).\n\n\n&quot;</span>
+        <span class="c1"># ),</span>
+        <span class="c1"># epilog=&quot;Enjoy!&quot;,</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--mode&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;new_project </span><span class="se">\t</span><span class="s2"> creates new workspace and project directories</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
+        <span class="s2">&quot; as explained by the &#39;--project&#39; flag and sets default configs</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;convert_csv </span><span class="se">\t</span><span class="s2"> converts input csv into numpy or hdf5 format as chosen in the configs</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;prepare_inputs </span><span class="se">\t</span><span class="s2"> runs &#39;convert_csv&#39; mode if numpy/hdf5 files dont already exist.</span><span class="se">\n\t\t</span><span class="s2"> Then reads the produced files,&quot;</span>
+        <span class="s2">&quot;converts to tensors</span><span class="se">\n\t\t</span><span class="s2"> and applies required data processing methods as required</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;train </span><span class="se">\t\t</span><span class="s2"> runs the training mode using hyperparameters specified in the configs.</span><span class="se">\n\t\t</span><span class="s2"> &quot;</span>
+        <span class="s2">&quot;Trains the model on the processed data and saves the model</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;detect </span><span class="se">\t\t</span><span class="s2"> runs the inference mode using the trained model. Detects anomalies in the data and saves the results</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;plot </span><span class="se">\t\t</span><span class="s2"> runs the plotting mode using the results from the detect or train mode.</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
+        <span class="s2">&quot; Generates plots as per the paper and saves them</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;chain </span><span class="se">\t\t</span><span class="s2"> runs all modes (except new_project) in the sequence prescribed by the &lt;-o&gt; or &lt;--options&gt; flag.</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
+        <span class="s2">&quot; For example, when using &lt;-m chain&gt;, when you set &lt;-o convertcsv_prepareinputs_train_detect&gt;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
+        <span class="s2">&quot; it will run the convert_csv, prepare_inputs, train and detect modes in sequence.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;diagnostics </span><span class="se">\t</span><span class="s2"> runs the diagnostics mode. Generates runtime metrics using profilers</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--project&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;WORKSPACE&quot;</span><span class="p">,</span> <span class="s2">&quot;PROJECT&quot;</span><span class="p">),</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specifies workspace and project.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;e.g. &lt; --project SVJ firstTry &gt;&quot;</span>
+        <span class="s2">&quot;, specifies workspace &#39;SVJ&#39; and project &#39;firstTry&#39;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;When combined with new_project mode:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;  1. If workspace and project exist, take no action.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;  2. If workspace exists but project does not, create project in workspace.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;  3. If workspace does not exist, create workspace directory and project.</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--options&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Additional options for convert_csv mode [h5 (default), npy] or for chain mode (see help for chain mode)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Verbose mode&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">workspace_name</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">project</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">project</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;workspaces&quot;</span><span class="p">,</span> <span class="n">workspace_name</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
+    <span class="n">config_path</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;workspaces.</span><span class="si">{</span><span class="n">workspace_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">.config.</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_config&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;new_project&quot;</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Check if proejct path exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">project_path</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Project path </span><span class="si">{</span><span class="n">project_path</span><span class="si">}</span><span class="s2"> does not exist. Please run --mode=new_project first.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span>
+            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">config</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+        <span class="n">workspace_name</span><span class="p">,</span>
+        <span class="n">project_name</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Config">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.Config">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a configuration dataclass&quot;&quot;&quot;</span>
+
+    <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">parallel_workers</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">num_jets</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">num_constits</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">latent_space_size</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">normalizations</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">invert_normalizations</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">train_size</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">epochs</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">early_stopping</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">early_stoppin_patience</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">lr_scheduler</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">lr_scheduler_patience</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="n">min_delta</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">input_level</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">input_features</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">model_init</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">loss_function</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">reg_param</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">intermittent_model_saving</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">separate_model_saving</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">intermittent_saving_patience</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">activation_extraction</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">deterministic_algorithm</span><span class="p">:</span> <span class="nb">bool</span></div>
+
+
+
+<div class="viewcode-block" id="create_default_config">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.create_default_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_default_config</span><span class="p">(</span><span class="n">workspace_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a default config file for a project.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        workspace_name (str): Name of the workspace.</span>
+<span class="sd">        project_name (str): Name of the project.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Default config file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># === Configuration options ===</span>
+
+<span class="s2">def set_config(c):</span>
+<span class="s2">    c.file_type                    = &quot;h5&quot;</span>
+<span class="s2">    c.parallel_workers             = 4</span>
+<span class="s2">    c.num_jets                     = 3</span>
+<span class="s2">    c.num_constits                 = 15</span>
+<span class="s2">    c.latent_space_size            = 15</span>
+<span class="s2">    c.normalizations               = &quot;pj_custom&quot;</span>
+<span class="s2">    c.invert_normalizations        = False</span>
+<span class="s2">    c.train_size                   = 0.95</span>
+<span class="s2">    c.model_name                   = &quot;Planar_ConvVAE&quot;</span>
+<span class="s2">    c.input_level                  = &quot;constituent&quot;</span>
+<span class="s2">    c.input_features               = &quot;4momentum_btag&quot;</span>
+<span class="s2">    c.model_init                   = &quot;xavier&quot;</span>
+<span class="s2">    c.loss_function                = &quot;VAEFlowLoss&quot;</span>
+<span class="s2">    c.optimizer                    = &quot;adamw&quot;</span>
+<span class="s2">    c.epochs                       = 2</span>
+<span class="s2">    c.lr                           = 0.001</span>
+<span class="s2">    c.batch_size                   = 2</span>
+<span class="s2">    c.early_stopping               = True</span>
+<span class="s2">    c.lr_scheduler                 = True</span>
+
+
+
+
+<span class="s2"># === Additional configuration options ===</span>
+
+<span class="s2">    c.early_stopping_patience      = 100</span>
+<span class="s2">    c.min_delta                    = 0</span>
+<span class="s2">    c.lr_scheduler_patience        = 50</span>
+<span class="s2">    c.reg_param                    = 0.001</span>
+<span class="s2">    c.intermittent_model_saving    = False</span>
+<span class="s2">    c.intermittent_saving_patience = 100</span>
+<span class="s2">    c.activation_extraction        = False</span>
+<span class="s2">    c.deterministic_algorithm      = False</span>
+<span class="s2">    c.separate_model_saving        = False</span>
+
+<span class="s2">&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="create_new_project">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.create_new_project">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_new_project</span><span class="p">(</span>
+    <span class="n">workspace_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;workspaces&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a new project directory output subdirectories and config files within a workspace.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        workspace_name (str): Creates a workspace (dir) for storing data and projects with this name.</span>
+<span class="sd">        project_name (str): Creates a project (dir) for storing configs and outputs with this name.</span>
+<span class="sd">        verbose (bool, optional): Whether to print out the progress. Defaults to False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create full project path</span>
+    <span class="n">workspace_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="n">workspace_name</span><span class="p">)</span>
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="n">workspace_name</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">project_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The workspace and project (</span><span class="si">{</span><span class="n">project_path</span><span class="si">}</span><span class="s2">) already exists.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">project_path</span><span class="p">)</span>
+
+    <span class="c1"># Create required directories</span>
+    <span class="n">required_directories</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workspace_path</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workspace_path</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="s2">&quot;tensors&quot;</span><span class="p">,</span> <span class="s2">&quot;processed&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workspace_path</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;npy&quot;</span><span class="p">,</span> <span class="s2">&quot;tensors&quot;</span><span class="p">,</span> <span class="s2">&quot;processed&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;results&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;plots&quot;</span><span class="p">,</span> <span class="s2">&quot;training&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;plots&quot;</span><span class="p">,</span> <span class="s2">&quot;eval&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating project </span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2"> in workspace </span><span class="si">{</span><span class="n">workspace_name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">required_directories</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Creating directories: &quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating directory </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Populate default config</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">_config.py&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">create_default_config</span><span class="p">(</span><span class="n">workspace_name</span><span class="p">,</span> <span class="n">project_name</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="convert_csv">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.convert_csv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_csv</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the input &#39;&#39;.csv&#39; into the file_type selected in the config file (&#39;.h5&#39; by default)</span>
+
+<span class="sd">        Separate event-level, jet-level and constituent-level data into separate datasets/files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_path (path): Path to the input csv files</span>
+<span class="sd">        output_path (path): Selects base path for determining output path</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+<span class="sd">        verbose (bool): If True, prints out more information</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        A `ProjectName_OutputPrefix.h5` file which includes:</span>
+<span class="sd">        - Event-level dataset</span>
+<span class="sd">        - Jet-level dataset</span>
+<span class="sd">        - Constituent-level dataset</span>
+
+<span class="sd">        or</span>
+
+<span class="sd">        A `ProjectName_OutputPrefix_{data-level}.npy` files which contain the same information as above, split into 3 separate files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting csv to &quot;</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Required paths</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s2">&quot;data_path&quot;</span><span class="p">],</span> <span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s2">&quot;data_path&quot;</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2"> does not exist. Check if you have downloaded the input csv files correctly and moved them to this location&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">csv_files_not_found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># List all files in the folder</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">input_path</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Converting files: &quot;</span><span class="p">):</span>
+            <span class="c1"># Check if the file is a CSV file</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+                <span class="c1"># Construct the full file path</span>
+                <span class="n">csv_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+                <span class="c1"># Get the base name of the file (without path) and remove the .csv extension</span>
+                <span class="n">output_prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># Call the conversion function</span>
+                <span class="n">conversion</span><span class="o">.</span><span class="n">convert_csv_to_hdf5_npy_parallel</span><span class="p">(</span>
+                    <span class="n">csv_file</span><span class="o">=</span><span class="n">csv_file_path</span><span class="p">,</span>
+                    <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                    <span class="n">out_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+                    <span class="n">file_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">,</span>
+                    <span class="n">n_workers</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">parallel_workers</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># Set the flag to True since at least one CSV file was found</span>
+                <span class="n">csv_files_not_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Check if no CSV files were found</span>
+        <span class="k">if</span> <span class="n">csv_files_not_found</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: No CSV files found in the directory &#39;</span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished converting csv to &quot;</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Conversion took:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="si">:</span><span class="s2">.3</span><span class="si">}</span><span class="s2"> minutes&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="prepare_inputs">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.prepare_inputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_inputs</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the input data and generate torch tensors ready to train on.</span>
+
+<span class="sd">        Select number of leading jets per event and number of leading constituents per jet to be used for training.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        paths: Dictionary of common paths used in the pipeline</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+<span class="sd">        verbose (bool): If True, prints out more information</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        Tensor files which include:</span>
+<span class="sd">        - Event-level dataset - [evt_id, evt_weight, met, met_phi, num_jets]</span>
+<span class="sd">        - Jet-level dataset - [evt_id, jet_id, num_constituents, jet_btag, jet_pt, jet_eta, jet_phi]</span>
+<span class="sd">        - Constituent-level dataset - [evt_id, jet_id, constituent_id, jet_btag, constituent_pt, constituent_eta, constituent_phi]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Preparing input tensors...&quot;</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s2">&quot;data_path&quot;</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">)</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s2">&quot;data_path&quot;</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">,</span> <span class="s2">&quot;tensors&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_path</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2"> does not exist. Make sure to run --mode = create_new_project first.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">files_not_found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># List all files in the folder</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">input_path</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Preparing tensors: &quot;</span><span class="p">):</span>
+            <span class="c1"># Check if the file is a HDF5 file</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">):</span>
+                <span class="c1"># Get the base name of the file (without path) and remove the .h5 extension</span>
+                <span class="n">output_prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># Construct the full file path</span>
+                <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+                <span class="c1"># Call the selection function</span>
+                <span class="n">data_processing</span><span class="o">.</span><span class="n">process_and_save_tensors</span><span class="p">(</span>
+                    <span class="n">in_path</span><span class="o">=</span><span class="n">input_file_path</span><span class="p">,</span>
+                    <span class="n">out_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+                    <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># Set the flag to False since at least one HDF5 file was found</span>
+                <span class="n">files_not_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Check if no HDF5 files were found</span>
+        <span class="k">if</span> <span class="n">files_not_found</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Error: No </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="si">}</span><span class="s2"> files found in the directory &#39;</span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1"># Load data from files whose names contain the keyword</span>
+    <span class="n">in_path</span> <span class="o">=</span> <span class="n">output_path</span>
+    <span class="n">out_path</span> <span class="o">=</span> <span class="n">in_path</span> <span class="o">+</span> <span class="s2">&quot;/processed&quot;</span>
+    <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bkg_train&quot;</span><span class="p">,</span> <span class="s2">&quot;bkg_test&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">events_tensor</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">load_augment_tensors</span><span class="p">(</span>
+                <span class="n">in_path</span><span class="p">,</span> <span class="n">keyword</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data augmented successfully&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events tensor shape:&quot;</span><span class="p">,</span> <span class="n">events_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets tensor shape:&quot;</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents tensor shape:&quot;</span><span class="p">,</span> <span class="n">constituents_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">keyword</span> <span class="o">==</span> <span class="s2">&quot;bkg_train&quot;</span><span class="p">:</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">events_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/bkg_train_events.pt&quot;</span><span class="p">)</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">jets_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/bkg_train_jets.pt&quot;</span><span class="p">)</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">constituents_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/bkg_train_constituents.pt&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">keyword</span> <span class="o">==</span> <span class="s2">&quot;bkg_test&quot;</span><span class="p">:</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">events_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/bkg_test_genLabeled_events.pt&quot;</span><span class="p">)</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">jets_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/bkg_test_genLabeled_jets.pt&quot;</span><span class="p">)</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">constituents_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/bkg_test_genLabeled_constituents.pt&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">keyword</span> <span class="o">=</span> <span class="s2">&quot;sig_test&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">events_tensor</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">load_tensors</span><span class="p">(</span>
+            <span class="n">in_path</span><span class="p">,</span> <span class="n">keyword</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data augmented successfully&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Events tensor shape:&quot;</span><span class="p">,</span> <span class="n">events_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Jets tensor shape:&quot;</span><span class="p">,</span> <span class="n">jets_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constituents tensor shape:&quot;</span><span class="p">,</span> <span class="n">constituents_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">events_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/sig_test_events.pt&quot;</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">jets_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/sig_test_jets.pt&quot;</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">constituents_tensor</span><span class="p">,</span> <span class="n">out_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/sig_test_constituents.pt&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished preparing and saving input tensors&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data preparation took:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="si">:</span><span class="s2">.3</span><span class="si">}</span><span class="s2"> minutes&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_training">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.run_training">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_training</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main function calling the training functions, ran when --mode=train is selected.</span>
+<span class="sd">        The three functions called are: &#39;data_processing.preproc_inputs&#39; and `training.train`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        paths (dictionary): Dictionary of common paths used in the pipeline</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+<span class="sd">        verbose (bool): If True, prints out more information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training...&quot;</span><span class="p">)</span>
+
+    <span class="n">keyword</span> <span class="o">=</span> <span class="s2">&quot;bkg_train&quot;</span>
+
+    <span class="c1"># Preprocess the data for training</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data_processing</span><span class="o">.</span><span class="n">preproc_inputs</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+
+    <span class="c1"># Output path</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">],</span> <span class="s2">&quot;output&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output path: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">trained_model</span> <span class="o">=</span> <span class="n">training</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training complete&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">separate_model_saving</span><span class="p">:</span>
+        <span class="n">helper</span><span class="o">.</span><span class="n">encoder_saver</span><span class="p">(</span>
+            <span class="n">trained_model</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;encoder.pt&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">helper</span><span class="o">.</span><span class="n">decoder_saver</span><span class="p">(</span>
+            <span class="n">trained_model</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder.pt&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Encoder saved to </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;models&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;encoder.pt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Decoder saved to </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;models&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;decoder.pt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">helper</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span>
+            <span class="n">trained_model</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;model.pt&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="c1"># Print model save path</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model saved to </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;models&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;model.pt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The model has the following structure:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">trained_model</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="c1"># print time taken in hours</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The full training pipeline took: </span><span class="si">{</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">3600</span><span class="si">:</span><span class="s2">.3</span><span class="si">}</span><span class="s2"> hours&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_inference">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.run_inference">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_inference</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main function calling the training functions, ran when --mode=train is selected.</span>
+<span class="sd">        The three functions called are: `process`, `ggl.mode_init` and `training.train`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        paths (dictionary): Dictionary of common paths used in the pipeline</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+<span class="sd">        verbose (bool): If True, prints out more information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inference...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Preprocess the data for training</span>
+    <span class="n">data_bkg</span> <span class="o">=</span> <span class="n">data_processing</span><span class="o">.</span><span class="n">preproc_inputs</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;bkg_test&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="n">data_sig</span> <span class="o">=</span> <span class="n">data_processing</span><span class="o">.</span><span class="n">preproc_inputs</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;sig_test&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="c1"># Split Generator labels from bkg_test data</span>
+    <span class="n">data_bkg</span><span class="p">,</span> <span class="n">gen_labels</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">data_label_split</span><span class="p">(</span><span class="n">data_bkg</span><span class="o">+</span><span class="n">data_bkg</span><span class="p">)</span>
+    <span class="o">*</span><span class="n">data_bkg</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">data_bkg</span>
+    <span class="o">*</span><span class="n">gen_labels</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">gen_labels</span>
+
+    <span class="c1"># Create bkg-sig labels</span>
+    <span class="n">data_bkg</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">add_sig_bkg_label</span><span class="p">(</span><span class="n">data_bkg</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;bkg&quot;</span><span class="p">)</span>
+    <span class="n">data_sig</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">add_sig_bkg_label</span><span class="p">(</span><span class="n">data_sig</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;sig&quot;</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data_bkg</span> <span class="o">+</span> <span class="n">data_sig</span>
+    
+    <span class="c1"># Output path</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s2">&quot;project_path&quot;</span><span class="p">],</span> <span class="s2">&quot;output&quot;</span><span class="p">)</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;model.pt&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output path: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model path: </span><span class="si">{</span><span class="n">model_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">inference</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+    
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inference complete&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="c1"># Print output save path</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outputs saved to </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;results&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># print time taken in hours</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The full inference pipeline took: </span><span class="si">{</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">3600</span><span class="si">:</span><span class="s2">.3</span><span class="si">}</span><span class="s2"> hours&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inference failed&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_plots">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.run_plots">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_plots</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main function calling the two plotting functions, ran when --mode=plot is selected.</span>
+<span class="sd">       The two main functions this calls are: `ggl.plotter` and `ggl.loss_plotter`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        prepare_inputt_path (string): Selects base path for determining output path</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+<span class="sd">        verbose (bool): If True, prints out more information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plotting...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving plots to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ggl</span><span class="o">.</span><span class="n">loss_plotter</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;training&quot;</span><span class="p">,</span> <span class="s2">&quot;loss_data.npy&quot;</span><span class="p">),</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">config</span>
+    <span class="p">)</span>
+    <span class="n">ggl</span><span class="o">.</span><span class="n">plotter</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plotter">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.plotter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotter</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls `plotting.plot()`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_path (string): Path to the output directory</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Done ===&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Your plots are available in:&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;plotting&quot;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="loss_plotter">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.loss_plotter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loss_plotter</span><span class="p">(</span><span class="n">path_to_loss_data</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls `plotting.loss_plot()`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_to_loss_data (string): Path to the values for the loss plot</span>
+<span class="sd">        output_path (string): Path to output the data</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        .pdf file: Plot containing the loss curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">plotting</span><span class="o">.</span><span class="n">loss_plot</span><span class="p">(</span><span class="n">path_to_loss_data</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_diagnostics">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.run_diagnostics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_diagnostics</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls diagnostics.diagnose()</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_path (str): path to the np.array contataining the activations values</span>
+<span class="sd">        output_path (str): path to store the diagnostics pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;plotting&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing diagnostics&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving plots to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;training&quot;</span><span class="p">,</span> <span class="s2">&quot;activations.npy&quot;</span><span class="p">)</span>
+    <span class="n">diagnostics</span><span class="o">.</span><span class="n">nap_diagnose</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_full_chain">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.ggl.run_full_chain">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_full_chain</span><span class="p">(</span><span class="n">workspace_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+                 <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+                 <span class="n">paths</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> 
+                 <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> 
+                 <span class="n">options</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+                 <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute a sequence of operations based on the provided options string.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        workspace_name: Name of the workspace for new projects</span>
+<span class="sd">        project_name: Name of the project for new projects</span>
+<span class="sd">        paths: Dictionary of file paths and directories</span>
+<span class="sd">        config: Configuration dictionary for operations</span>
+<span class="sd">        options: Underscore-separated string specifying the workflow sequence</span>
+<span class="sd">        verbose: Whether to show verbose output</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        run_full_chain(&quot;my_workspace&quot;, &quot;my_project&quot;, paths, config,</span>
+<span class="sd">                      &quot;newproject_convertcsv_prepareinputs_train_detect&quot;, verbose=True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Map option components to mode names and execution order</span>
+    <span class="n">OPTION_TO_MODE</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;newproject&quot;</span><span class="p">:</span> <span class="s2">&quot;new_project&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;convertcsv&quot;</span><span class="p">:</span> <span class="s2">&quot;convert_csv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;prepareinputs&quot;</span><span class="p">:</span> <span class="s2">&quot;prepare_inputs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;detect&quot;</span><span class="p">:</span> <span class="s2">&quot;detect&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;plot&quot;</span><span class="p">:</span> <span class="s2">&quot;plot&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;diagnostics&quot;</span><span class="p">:</span> <span class="s2">&quot;diagnostics&quot;</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Map modes to their corresponding functions and arguments</span>
+    <span class="n">MODE_OPERATIONS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;new_project&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">create_new_project</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">workspace_name</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;convert_csv&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">convert_csv</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;prepare_inputs&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">prepare_inputs</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">run_training</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;detect&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">run_inference</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;plot&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">run_plots</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;diagnostics&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">run_diagnostics</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Split and validate options</span>
+    <span class="n">workflow</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">valid_options</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">OPTION_TO_MODE</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">workflow</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_options</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid option &#39;</span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">&#39; in options string. &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;Valid options: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">OPTION_TO_MODE</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Execute workflow steps in sequence</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">workflow</span><span class="p">:</span>
+        <span class="n">mode_name</span> <span class="o">=</span> <span class="n">OPTION_TO_MODE</span><span class="p">[</span><span class="n">step</span><span class="p">]</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">MODE_OPERATIONS</span><span class="p">[</span><span class="n">mode_name</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">40</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing step: </span><span class="si">{</span><span class="n">mode_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">40</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+        <span class="c1"># Execute the operation with its arguments</span>
+        <span class="n">operation</span><span class="p">[</span><span class="s2">&quot;func&quot;</span><span class="p">](</span><span class="o">*</span><span class="n">operation</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed step: </span><span class="si">{</span><span class="n">mode_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils.normalization &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.utils.normalization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.utils.normalization</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Custom normalization functions for analysis.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">helper</span>
+
+
+<div class="viewcode-block" id="normalize_jet_pj_custom">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.normalization.normalize_jet_pj_custom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_jet_pj_custom</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalizes jet data for HEP analysis using a chained normalization approach.</span>
+
+<span class="sd">    Input data is expected as a NumPy array of shape (N, 7) with columns in the order:</span>
+<span class="sd">    0: event_id         (unchanged)</span>
+<span class="sd">    1: jet_id           (unchanged)</span>
+<span class="sd">    2: num_constituents (to be normalized via &quot;robust&quot;)</span>
+<span class="sd">    3: b_tagged         (already integer; left unchanged)</span>
+<span class="sd">    4: jet_pt           (to be normalized via &quot;log+standard&quot;)</span>
+<span class="sd">    5: jet_eta          (to be normalized via &quot;standard&quot;)</span>
+<span class="sd">    6: jet_phi          (to be normalized via &quot;sin_cos&quot; transformation)</span>
+
+<span class="sd">    The output array will have 8 columns:</span>
+<span class="sd">    [event_id, jet_id, num_constituents_norm, b_tagged, jet_pt_norm, jet_eta_norm, jet_phi_sin, jet_phi_cos]    </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (np.ndarray): Input array of shape (N, 7).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        normalized_data (np.ndarray): Output array of shape (N, 8).</span>
+<span class="sd">        scalers (dict): Dictionary containing the fitted scalers for each feature.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Initialize the dictionary to store the fitted scalers.</span>
+    <span class="n">scalers</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># 1. event_id, jet_id and b_tagged (columns 0, 1 and 3), unchanged.</span>
+    <span class="n">event_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">jet_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">b_tagged</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># 2. num_constituents: column 2, use &quot;robust&quot;</span>
+    <span class="n">num_constituents</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">norm_num_const</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;num_constituents&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span>
+        <span class="n">num_constituents</span><span class="p">,</span> <span class="s2">&quot;robust&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 4. jet_pt: column 4, use chain &quot;log+standard&quot;</span>
+    <span class="n">jet_pt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">norm_jet_pt</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;jet_pt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span><span class="n">jet_pt</span><span class="p">,</span> <span class="s2">&quot;log+standard&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 5. jet_eta: column 5, use &quot;standard&quot;</span>
+    <span class="n">jet_eta</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">norm_jet_eta</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;jet_eta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span><span class="n">jet_eta</span><span class="p">,</span> <span class="s2">&quot;standard&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 6. jet_phi: column 6, use &quot;sin_cos&quot;</span>
+    <span class="n">jet_phi</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">norm_jet_phi</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;jet_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span><span class="n">jet_phi</span><span class="p">,</span> <span class="s2">&quot;sincos&quot;</span><span class="p">)</span>
+    <span class="c1"># norm_jet_phi will have 2 columns: sin and cos.</span>
+
+    <span class="c1"># Concatenate the processed features:</span>
+    <span class="n">normalized_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">event_id</span><span class="p">,</span>  <span class="c1"># unchanged</span>
+            <span class="n">jet_id</span><span class="p">,</span>  <span class="c1"># unchanged</span>
+            <span class="n">norm_num_const</span><span class="p">,</span>  <span class="c1"># normalized num_constituents</span>
+            <span class="n">b_tagged</span><span class="p">,</span>  <span class="c1"># unchanged</span>
+            <span class="n">norm_jet_pt</span><span class="p">,</span>  <span class="c1"># normalized jet_pt</span>
+            <span class="n">norm_jet_eta</span><span class="p">,</span>  <span class="c1"># normalized jet_eta</span>
+            <span class="n">norm_jet_phi</span><span class="p">,</span>  <span class="c1"># two columns: jet_phi_sin and jet_phi_cos</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">normalized_data</span><span class="p">,</span> <span class="n">scalers</span></div>
+
+
+
+<div class="viewcode-block" id="normalize_constit_pj_custom">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.normalization.normalize_constit_pj_custom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_constit_pj_custom</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalizes jet data for HEP analysis using a chained normalization approach.</span>
+
+<span class="sd">    Input data is expected as a NumPy array of shape (N, 7) with columns in the order:</span>
+<span class="sd">        0: event_id         (unchanged)</span>
+<span class="sd">        1: jet_id           (unchanged)</span>
+<span class="sd">        2: constit_id       (unchanged)</span>
+<span class="sd">        3: b_tagged         (unchanged)</span>
+<span class="sd">        4: constit_pt           (to be normalized via &quot;log+standard&quot;)</span>
+<span class="sd">        5: constit_eta          (to be normalized via &quot;standard&quot;)</span>
+<span class="sd">        6: constit_phi          (to be normalized via &quot;sin_cos&quot; transformation)</span>
+
+<span class="sd">    The output array will have 8 columns:</span>
+<span class="sd">        [event_id, jet_id, constit_id, b_tagged, constit_pt_norm, constit_eta_norm, constit_phi_sin, constit_phi_cos]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (np.ndarray): Input array of shape (N, 7).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        normalized_data (np.ndarray): Output array of shape (N, 8).</span>
+<span class="sd">        scalers (dict): Dictionary containing the fitted scalers for each feature.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Initialize the dictionary to store the fitted scalers.</span>
+    <span class="n">scalers</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># 1. event_id, jet_id and constit_id (columns 0 - 3), unchanged.</span>
+    <span class="n">event_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">jet_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">constit_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">b_tagged</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># 4. constit_pt: column 4, use chain &quot;log+standard&quot;</span>
+    <span class="n">constit_pt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">norm_constit_pt</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;constit_pt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span>
+        <span class="n">constit_pt</span><span class="p">,</span> <span class="s2">&quot;log+standard&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 5. constit_eta: column 5, use &quot;standard&quot;</span>
+    <span class="n">constit_eta</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">norm_constit_eta</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;constit_eta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span>
+        <span class="n">constit_eta</span><span class="p">,</span> <span class="s2">&quot;standard&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 6. constit_phi: column 6, use &quot;sin_cos&quot;</span>
+    <span class="n">constit_phi</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">norm_constit_phi</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;constit_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span>
+        <span class="n">constit_phi</span><span class="p">,</span> <span class="s2">&quot;sincos&quot;</span>
+    <span class="p">)</span>
+    <span class="c1"># norm_constit_phi will have 2 columns: sin and cos.</span>
+
+    <span class="c1"># Concatenate the processed features:</span>
+    <span class="n">normalized_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">event_id</span><span class="p">,</span>  <span class="c1"># unchanged</span>
+            <span class="n">jet_id</span><span class="p">,</span>  <span class="c1"># unchanged</span>
+            <span class="n">constit_id</span><span class="p">,</span>  <span class="c1"># unchanged</span>
+            <span class="n">b_tagged</span><span class="p">,</span>  <span class="c1"># unchanged</span>
+            <span class="n">norm_constit_pt</span><span class="p">,</span>  <span class="c1"># normalized constit_pt</span>
+            <span class="n">norm_constit_eta</span><span class="p">,</span>  <span class="c1"># normalized constit_eta</span>
+            <span class="n">norm_constit_phi</span><span class="p">,</span>  <span class="c1"># two columns: constit_phi_sin and constit_phi_cos</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">normalized_data</span><span class="p">,</span> <span class="n">scalers</span></div>
+
+
+
+<div class="viewcode-block" id="invert_normalize_jet_pj_custom">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.normalization.invert_normalize_jet_pj_custom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_normalize_jet_pj_custom</span><span class="p">(</span><span class="n">normalized_data</span><span class="p">,</span> <span class="n">scalers</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inverts the normalization applied by normalize_jet_data_np_chained.</span>
+
+<span class="sd">    The input normalized_data is assumed to be a NumPy array of shape (N, 8) with columns:</span>
+<span class="sd">        0: event_id              (unchanged)</span>
+<span class="sd">        1: jet_id                (unchanged)</span>
+<span class="sd">        2: num_constituents_norm (normalized via &quot;robust&quot;)</span>
+<span class="sd">        3: b_tagged              (unchanged)</span>
+<span class="sd">        4: jet_pt_norm           (normalized via &quot;log+standard&quot;)</span>
+<span class="sd">        5: jet_eta_norm          (normalized via &quot;standard&quot;)</span>
+<span class="sd">        6-7: jet_phi_sin, jet_phi_cos (normalized via &quot;sin_cos&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        original_data: NumPy array of shape (N, 7) with columns:</span>
+<span class="sd">          [event_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi]</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">      - The scaler for jet_pt (chain &quot;log+standard&quot;) is expected to invert first the StandardScaler then the Log1pScaler,</span>
+<span class="sd">        so that the original jet_pt is recovered.</span>
+<span class="sd">      - The scaler for jet_phi (chain &quot;sin_cos&quot;) converts the 2 columns back to the original angle using arctan2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. The unchanged columns: event_id, jet_id, b_tagged.</span>
+    <span class="n">event_id</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">jet_id</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">b_tagged</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># 2. Invert num_constituents (chain: &quot;robust&quot;)</span>
+    <span class="n">norm_num_const</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">original_num_const</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">invert_normalize_data</span><span class="p">(</span>
+        <span class="n">norm_num_const</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;num_constituents&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 3. Invert jet_pt (chain: &quot;log+standard&quot;)</span>
+    <span class="n">norm_jet_pt</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">original_jet_pt</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">invert_normalize_data</span><span class="p">(</span><span class="n">norm_jet_pt</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;jet_pt&quot;</span><span class="p">])</span>
+
+    <span class="c1"># 4. Invert jet_eta (chain: &quot;standard&quot;)</span>
+    <span class="n">norm_jet_eta</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">original_jet_eta</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">invert_normalize_data</span><span class="p">(</span><span class="n">norm_jet_eta</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;jet_eta&quot;</span><span class="p">])</span>
+
+    <span class="c1"># 5. Invert jet_phi (chain: &quot;sin_cos&quot;)</span>
+    <span class="c1"># The chain &quot;sin_cos&quot; returns 2 columns; we pass these into its inverse_transform.</span>
+    <span class="n">norm_jet_phi</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">original_jet_phi</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">invert_normalize_data</span><span class="p">(</span><span class="n">norm_jet_phi</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;jet_phi&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Concatenate the recovered columns in order:</span>
+    <span class="n">original_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">event_id</span><span class="p">,</span>
+            <span class="n">jet_id</span><span class="p">,</span>
+            <span class="n">original_num_const</span><span class="p">,</span>
+            <span class="n">b_tagged</span><span class="p">,</span>
+            <span class="n">original_jet_pt</span><span class="p">,</span>
+            <span class="n">original_jet_eta</span><span class="p">,</span>
+            <span class="n">original_jet_phi</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">original_data</span></div>
+
+
+
+<div class="viewcode-block" id="invert_normalize_constit_pj_custom">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.normalization.invert_normalize_constit_pj_custom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_normalize_constit_pj_custom</span><span class="p">(</span><span class="n">normalized_data</span><span class="p">,</span> <span class="n">scalers</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inverts the normalization applied by normalize_jet_data_np_chained.</span>
+
+<span class="sd">    The input normalized_data is assumed to be a NumPy array of shape (N, 8) with columns:</span>
+<span class="sd">        0: event_id              (unchanged)</span>
+<span class="sd">        1: jet_id                (unchanged)</span>
+<span class="sd">        2: num_constituents_norm (normalized via &quot;robust&quot;)</span>
+<span class="sd">        3: b_tagged              (unchanged)</span>
+<span class="sd">        4: jet_pt_norm           (normalized via &quot;log+standard&quot;)</span>
+<span class="sd">        5: jet_eta_norm          (normalized via &quot;standard&quot;)</span>
+<span class="sd">        6-7: jet_phi_sin, jet_phi_cos (normalized via &quot;sin_cos&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        original_data: NumPy array of shape (N, 7) with columns:</span>
+<span class="sd">          [event_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi]</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">      - The scaler for jet_pt (chain &quot;log+standard&quot;) is expected to invert first the StandardScaler then the Log1pScaler,</span>
+<span class="sd">        so that the original jet_pt is recovered.</span>
+<span class="sd">      - The scaler for jet_phi (chain &quot;sin_cos&quot;) converts the 2 columns back to the original angle using arctan2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. The unchanged columns: event_id, jet_id, constit_id, b_tagged.</span>
+    <span class="n">event_id</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">jet_id</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">constit_id</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">b_tagged</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># 3. Invert constit_pt (chain: &quot;log+standard&quot;)</span>
+    <span class="n">norm_constit_pt</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">original_constit_pt</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">invert_normalize_data</span><span class="p">(</span>
+        <span class="n">norm_constit_pt</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;constit_pt&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 4. Invert constit_eta (chain: &quot;standard&quot;)</span>
+    <span class="n">norm_constit_eta</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">original_constit_eta</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">invert_normalize_data</span><span class="p">(</span>
+        <span class="n">norm_constit_eta</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;constit_eta&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 5. Invert constit_phi (chain: &quot;sin_cos&quot;)</span>
+    <span class="c1"># The chain &quot;sin_cos&quot; returns 2 columns; we pass these into its inverse_transform.</span>
+    <span class="n">norm_constit_phi</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">original_constit_phi</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">invert_normalize_data</span><span class="p">(</span>
+        <span class="n">norm_constit_phi</span><span class="p">,</span> <span class="n">scalers</span><span class="p">[</span><span class="s2">&quot;constit_phi&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Concatenate the recovered columns in order:</span>
+    <span class="n">original_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">event_id</span><span class="p">,</span>
+            <span class="n">jet_id</span><span class="p">,</span>
+            <span class="n">original_num_const</span><span class="p">,</span>
+            <span class="n">b_tagged</span><span class="p">,</span>
+            <span class="n">original_constit_pt</span><span class="p">,</span>
+            <span class="n">original_constit_eta</span><span class="p">,</span>
+            <span class="n">original_constit_phi</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">original_data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

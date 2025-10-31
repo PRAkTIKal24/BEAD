@@ -1,0 +1,1292 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.models.models &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.models.models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.models.models</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2022 Baler Contributors</span>
+
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.utils.data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.autograd</span><span class="w"> </span><span class="kn">import</span> <span class="n">Function</span><span class="p">,</span> <span class="n">Variable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">helper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">flows</span>
+
+
+<div class="viewcode-block" id="AE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="c1"># This class is a modified version of the original class by George Dialektakis found at</span>
+    <span class="c1"># https://github.com/Autoencoders-compression-anomaly/Deep-Autoencoders-Data-Compression-GSoC-2021</span>
+    <span class="c1"># Released under the Apache License 2.0 found at https://www.apache.org/licenses/LICENSE-2.0.txt</span>
+    <span class="c1"># Copyright 2021 George Dialektakis</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">activations</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span> <span class="o">=</span> <span class="n">in_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">in_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span> <span class="o">=</span> <span class="n">z_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_shape</span> <span class="o">=</span> <span class="n">in_shape</span>
+
+        <span class="c1"># encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">en1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_features</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dr1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">en2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dr2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">en3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dr3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">en4</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dr4</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn4</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn5</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_features</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">leaky_relu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">()</span>
+
+        <span class="c1"># decoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de4</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AE.encode">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.encode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">h1</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">en1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">h2</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">en2</span><span class="p">(</span><span class="n">h1</span><span class="p">))</span>
+        <span class="n">h3</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">en3</span><span class="p">(</span><span class="n">h2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">en4</span><span class="p">(</span><span class="n">h3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AE.decode">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.decode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="n">h4</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">de1</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="n">h5</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">de2</span><span class="p">(</span><span class="n">h4</span><span class="p">))</span>
+        <span class="n">h6</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">de3</span><span class="p">(</span><span class="n">h5</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">de4</span><span class="p">(</span><span class="n">h6</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span></div>
+
+
+    <span class="c1"># Implementation of activation extraction using the forward_hook method</span>
+
+<div class="viewcode-block" id="AE.get_hook">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.get_hook">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_name</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">hook</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="p">[</span><span class="n">layer_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">hook</span></div>
+
+
+<div class="viewcode-block" id="AE.get_layers">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.get_layers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">en1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">en2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">en3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">de1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">de2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">de3</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="AE.store_hooks">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.store_hooks">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">store_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_layers</span><span class="p">()</span>
+        <span class="n">hooks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)):</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_hook</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))))</span>
+        <span class="k">return</span> <span class="n">hooks</span></div>
+
+
+<div class="viewcode-block" id="AE.get_activations">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.get_activations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_activations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="p">[</span><span class="n">kk</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">activations</span></div>
+
+
+<div class="viewcode-block" id="AE.detach_hooks">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE.detach_hooks">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detach_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hooks</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="n">hooks</span><span class="p">:</span>
+            <span class="n">hook</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AE_Dropout_BN">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE_Dropout_BN">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AE_Dropout_BN</span><span class="p">(</span><span class="n">AE</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enc_nn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn5</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">en1</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dr1</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn1</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">en2</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dr2</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn2</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">en3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dr3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">en4</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dr4</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn4</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># decoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec_nn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn4</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">de1</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">de2</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn2</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">de3</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leaky_relu</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn1</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">de4</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bn5</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="AE_Dropout_BN.enc_bn">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE_Dropout_BN.enc_bn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enc_bn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_nn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AE_Dropout_BN.dec_bn">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE_Dropout_BN.dec_bn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dec_bn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_nn</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AE_Dropout_BN.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.AE_Dropout_BN.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_bn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_bn</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ConvAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConvAE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span> <span class="o">=</span> <span class="n">z_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_shape</span> <span class="o">=</span> <span class="n">in_shape</span>
+
+        <span class="c1"># Encoder</span>
+
+        <span class="c1"># Conv Layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_z_conv</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Flatten</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(</span><span class="n">start_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Get size after flattening</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_z_output_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_qzconv_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_shape</span><span class="p">)</span>
+
+        <span class="c1"># Linear layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_z_lin</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_output_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_z_latent</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Decoder</span>
+
+        <span class="c1"># Linear layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_x_lin</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">z_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_output_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_output_dim</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Conv Layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_x_conv</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_qzconv_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span>
+        <span class="n">output_feat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_features</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">n_size</span> <span class="o">=</span> <span class="n">output_feat</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_size</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">qz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">qz</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvAE.encode">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvAE.encode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Conv</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># Flatten</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1"># Dense</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_lin</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1"># Latent</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_latent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="ConvAE.decode">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvAE.decode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="c1"># Dense</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_x_lin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="c1"># Unflatten</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># Conv transpose</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_x_conv</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="ConvAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConvVAE</span><span class="p">(</span><span class="n">ConvAE</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Latent distribution parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mean</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_z_logvar</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">)</span>
+
+        <span class="c1"># log-det-jacobian = 0 without flows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ldj</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span> <span class="o">=</span> <span class="n">z_dim</span>
+
+<div class="viewcode-block" id="ConvVAE.encode">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvVAE.encode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Conv</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># Flatten</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1"># Dense</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_lin</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1"># Latent</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mean</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">logvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_logvar</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">logvar</span></div>
+
+
+<div class="viewcode-block" id="ConvVAE.decode">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvVAE.decode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="c1"># Dense</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_x_lin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="c1"># Unflatten</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># Conv transpose</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_x_conv</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="ConvVAE.reparameterize">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvVAE.reparameterize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reparameterize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">logvar</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">logvar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z</span></div>
+
+
+<div class="viewcode-block" id="ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">logvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">logvar</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">logvar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ldj</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Planar_ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.Planar_ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Planar_ConvVAE</span><span class="p">(</span><span class="n">ConvVAE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variational auto-encoder with planar flows in the decoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Initialize log-det-jacobian to zero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Flow parameters</span>
+        <span class="n">flow</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">Planar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># args.num_flows</span>
+
+        <span class="c1"># Amortized flow parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_u</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_w</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+
+        <span class="c1"># Normalizing flow layers</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="n">flow</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">flow_k</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Planar_ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.Planar_ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">out</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># return amortized u an w for all flows</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_u</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_w</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Sample z_0</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">)]</span>
+
+        <span class="c1"># Normalizing flows</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>  <span class="c1"># planar.&#39;flow_&#39;+k</span>
+            <span class="n">z_k</span><span class="p">,</span> <span class="n">log_det_jacobian</span> <span class="o">=</span> <span class="n">flow_k</span><span class="p">(</span>
+                <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">u</span><span class="p">[:,</span> <span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">w</span><span class="p">[:,</span> <span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">b</span><span class="p">[:,</span> <span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+            <span class="p">)</span>
+            <span class="n">z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">+=</span> <span class="n">log_det_jacobian</span>
+
+        <span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">x_decoded</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OrthogonalSylvester_ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.OrthogonalSylvester_ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OrthogonalSylvester_ConvVAE</span><span class="p">(</span><span class="n">ConvVAE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variational auto-encoder with orthogonal flows in the decoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Initialize log-det-jacobian to zero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Flow parameters</span>
+        <span class="n">flow</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">Sylvester</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># args.num_flows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># args.num_ortho_vecs</span>
+
+        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Orthogonalization parameters</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="mf">1.0e-5</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="mf">1.0e-6</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">)</span>
+        <span class="c1"># Add batch dimension</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">identity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Put identity in buffer so that it will be moved to GPU if needed by any call of .cuda</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_eye&quot;</span><span class="p">,</span> <span class="n">Variable</span><span class="p">(</span><span class="n">identity</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eye</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Masks needed for triangular R1 and R2.</span>
+        <span class="n">triu_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">triu_mask</span> <span class="o">=</span> <span class="n">triu_mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">diag_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;triu_mask&quot;</span><span class="p">,</span> <span class="n">Variable</span><span class="p">(</span><span class="n">triu_mask</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;diag_idx&quot;</span><span class="p">,</span> <span class="n">diag_idx</span><span class="p">)</span>
+
+        <span class="c1"># Amortized flow parameters</span>
+        <span class="c1"># Diagonal elements of R1 * R2 have to satisfy -1 &lt; R1 * R2 for flow to be invertible</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">)</span>
+
+        <span class="c1"># Normalizing flow layers</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="n">flow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">flow_k</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OrthogonalSylvester_ConvVAE.batch_construct_orthogonal">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.OrthogonalSylvester_ConvVAE.batch_construct_orthogonal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_construct_orthogonal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+
+        <span class="c1"># Reshape to shape (num_flows * batch_size, z_size * num_ortho_vecs)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">)</span>
+
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">amat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="n">dim0</span> <span class="o">=</span> <span class="n">amat</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">amat</span> <span class="o">=</span> <span class="n">amat</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">dim0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">)</span>
+
+        <span class="n">max_norm</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Iterative orthogonalization</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">amat</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">amat</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eye</span> <span class="o">-</span> <span class="n">tmp</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eye</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">tmp</span>
+            <span class="n">amat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">amat</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
+
+            <span class="c1"># Testing for convergence</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">amat</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">amat</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eye</span>
+            <span class="n">norms2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">norms</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">norms2</span><span class="p">)</span>
+            <span class="n">max_norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">norms</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+            <span class="k">if</span> <span class="n">max_norm</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">max_norm</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING: orthogonalization not complete&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> Final max norm =&quot;</span><span class="p">,</span> <span class="n">max_norm</span><span class="p">)</span>
+
+            <span class="c1"># print()</span>
+
+        <span class="c1"># Reshaping: first dimension is batch_size</span>
+        <span class="n">amat</span> <span class="o">=</span> <span class="n">amat</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">)</span>
+        <span class="n">amat</span> <span class="o">=</span> <span class="n">amat</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">amat</span></div>
+
+
+<div class="viewcode-block" id="OrthogonalSylvester_ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.OrthogonalSylvester_ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">out</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Amortized r1, r2, q, b for all flows</span>
+
+        <span class="n">full_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_d</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag1</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">diag2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag2</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="n">full_d</span> <span class="o">=</span> <span class="n">full_d</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span>
+        <span class="p">)</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="n">diag1</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+        <span class="n">diag2</span> <span class="o">=</span> <span class="n">diag2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">full_d</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">full_d</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span>
+
+        <span class="n">r1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">diag1</span>
+        <span class="n">r2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">diag2</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_q</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c1"># Resize flow parameters to divide over K flows</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ortho_vecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+
+        <span class="c1"># Orthogonalize all q matrices</span>
+        <span class="n">q_ortho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_construct_orthogonal</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+        <span class="c1"># Sample z_0</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">)]</span>
+
+        <span class="c1"># Normalizing flows</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="n">z_k</span><span class="p">,</span> <span class="n">log_det_jacobian</span> <span class="o">=</span> <span class="n">flow_k</span><span class="p">(</span>
+                <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">r1</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">r2</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">q_ortho</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">b</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">+=</span> <span class="n">log_det_jacobian</span>
+
+        <span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">x_decoded</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="HouseholderSylvester_ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.HouseholderSylvester_ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HouseholderSylvester_ConvVAE</span><span class="p">(</span><span class="n">ConvVAE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variational auto-encoder with householder sylvester flows in the decoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Initialize log-det-jacobian to zero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Flow parameters</span>
+        <span class="n">flow</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">Sylvester</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># args.num_flows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_householder</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># args.num_householder</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_householder</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+        <span class="c1"># Add batch dimension</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">identity</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Put identity in buffer so that it will be moved to GPU if needed by any call of .cuda</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_eye&quot;</span><span class="p">,</span> <span class="n">Variable</span><span class="p">(</span><span class="n">identity</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eye</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Masks needed for triangular r1 and r2.</span>
+        <span class="n">triu_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">triu_mask</span> <span class="o">=</span> <span class="n">triu_mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">diag_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;triu_mask&quot;</span><span class="p">,</span> <span class="n">Variable</span><span class="p">(</span><span class="n">triu_mask</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;diag_idx&quot;</span><span class="p">,</span> <span class="n">diag_idx</span><span class="p">)</span>
+
+        <span class="c1"># Amortized flow parameters</span>
+        <span class="c1"># Diagonal elements of r1 * r2 have to satisfy -1 &lt; r1 * r2 for flow to be invertible</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_householder</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+
+        <span class="c1"># Normalizing flow layers</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="n">flow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">flow_k</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HouseholderSylvester_ConvVAE.batch_construct_orthogonal">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.HouseholderSylvester_ConvVAE.batch_construct_orthogonal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_construct_orthogonal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+
+        <span class="c1"># Reshape to shape (num_flows * batch_size * num_householder, z_size)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+
+        <span class="c1"># Calculate Householder Matrices</span>
+        <span class="n">vvT</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">v</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">amat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eye</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">vvT</span>
+
+        <span class="c1"># Reshaping: first dimension is batch_size * num_flows</span>
+        <span class="n">amat</span> <span class="o">=</span> <span class="n">amat</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_householder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">amat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_householder</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">amat</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">tmp</span><span class="p">)</span>
+
+        <span class="n">amat</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+        <span class="n">amat</span> <span class="o">=</span> <span class="n">amat</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">amat</span></div>
+
+
+<div class="viewcode-block" id="HouseholderSylvester_ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.HouseholderSylvester_ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">out</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Amortized r1, r2, q, b for all flows</span>
+        <span class="n">full_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_d</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag1</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">diag2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag2</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="n">full_d</span> <span class="o">=</span> <span class="n">full_d</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="n">diag1</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+        <span class="n">diag2</span> <span class="o">=</span> <span class="n">diag2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">full_d</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">full_d</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span>
+
+        <span class="n">r1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">diag1</span>
+        <span class="n">r2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">diag2</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_q</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c1"># Resize flow parameters to divide over K flows</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+
+        <span class="c1"># Orthogonalize all q matrices</span>
+        <span class="n">q_ortho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_construct_orthogonal</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+        <span class="c1"># Sample z_0</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">)]</span>
+
+        <span class="c1"># Normalizing flows</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="n">q_k</span> <span class="o">=</span> <span class="n">q_ortho</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+            <span class="n">z_k</span><span class="p">,</span> <span class="n">log_det_jacobian</span> <span class="o">=</span> <span class="n">flow_k</span><span class="p">(</span>
+                <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">r1</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">r2</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">q_k</span><span class="p">,</span> <span class="n">b</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">sum_ldj</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+            <span class="n">z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">+=</span> <span class="n">log_det_jacobian</span>
+
+        <span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">x_decoded</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TriangularSylvester_ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.TriangularSylvester_ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TriangularSylvester_ConvVAE</span><span class="p">(</span><span class="n">ConvVAE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variational auto-encoder with triangular sylvester flows in the decoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Initialize log-det-jacobian to zero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Flow parameters</span>
+        <span class="n">flow</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">TriangularSylvester</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># args.num_flows</span>
+
+        <span class="c1"># permuting indices corresponding to Q=P (permutation matrix) for every other flow</span>
+        <span class="n">flip_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;flip_idx&quot;</span><span class="p">,</span> <span class="n">flip_idx</span><span class="p">)</span>
+
+        <span class="c1"># Masks needed for triangular r1 and r2.</span>
+        <span class="n">triu_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">triu_mask</span> <span class="o">=</span> <span class="n">triu_mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">diag_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;triu_mask&quot;</span><span class="p">,</span> <span class="n">Variable</span><span class="p">(</span><span class="n">triu_mask</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;diag_idx&quot;</span><span class="p">,</span> <span class="n">diag_idx</span><span class="p">)</span>
+
+        <span class="c1"># Amortized flow parameters</span>
+        <span class="c1"># Diagonal elements of r1 * r2 have to satisfy -1 &lt; r1 * r2 for flow to be invertible</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diag_activation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+
+        <span class="c1"># Normalizing flow layers</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="n">flow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">flow_k</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TriangularSylvester_ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.TriangularSylvester_ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">out</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Amortized r1, r2, b for all flows</span>
+        <span class="n">full_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_d</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag1</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">diag2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_diag2</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="n">full_d</span> <span class="o">=</span> <span class="n">full_d</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="n">diag1</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+        <span class="n">diag2</span> <span class="o">=</span> <span class="n">diag2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">full_d</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">full_d</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">triu_mask</span>
+
+        <span class="n">r1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">diag1</span>
+        <span class="n">r2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diag_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">diag2</span>
+
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amor_b</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1"># Resize flow parameters to divide over K flows</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">)</span>
+
+        <span class="c1"># Sample z_0</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">)]</span>
+
+        <span class="c1"># Normalizing flows</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Alternate with reorderering z for triangular flow</span>
+                <span class="n">permute_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_idx</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">permute_z</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">z_k</span><span class="p">,</span> <span class="n">log_det_jacobian</span> <span class="o">=</span> <span class="n">flow_k</span><span class="p">(</span>
+                <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span>
+                <span class="n">r1</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span>
+                <span class="n">r2</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span>
+                <span class="n">b</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">],</span>
+                <span class="n">permute_z</span><span class="p">,</span>
+                <span class="n">sum_ldj</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">+=</span> <span class="n">log_det_jacobian</span>
+
+        <span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">x_decoded</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="IAF_ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.IAF_ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IAF_ConvVAE</span><span class="p">(</span><span class="n">ConvVAE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variational auto-encoder with inverse autoregressive flows in the decoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Initialize log-det-jacobian to zero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_size</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># args.made_h_size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_context</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_z_mid_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_size</span><span class="p">)</span>
+
+        <span class="c1"># Flow parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">IAF</span><span class="p">(</span>
+            <span class="n">z_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span>
+            <span class="n">num_flows</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">,</span>
+            <span class="n">num_hidden</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">h_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_size</span><span class="p">,</span>
+            <span class="n">conv2d</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="IAF_ConvVAE.encode">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.IAF_ConvVAE.encode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Conv</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_op_shape</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># Flatten</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1"># Dense</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_lin</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1"># Latent</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_mean</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">logvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_z_logvar</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c1"># context from previous layer</span>
+        <span class="n">h_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_context</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">logvar</span><span class="p">,</span> <span class="n">h_context</span></div>
+
+
+<div class="viewcode-block" id="IAF_ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.IAF_ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># mean and variance of z</span>
+        <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="n">h_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># sample z</span>
+        <span class="n">z_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">)</span>
+        <span class="c1"># iaf flows</span>
+        <span class="n">z_k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="n">z_0</span><span class="p">,</span> <span class="n">h_context</span><span class="p">)</span>
+        <span class="c1"># decode</span>
+        <span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_decoded</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span><span class="p">,</span> <span class="n">z_0</span><span class="p">,</span> <span class="n">z_k</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ConvFlow_ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvFlow_ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConvFlow_ConvVAE</span><span class="p">(</span><span class="n">ConvVAE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variational auto-encoder with convolutional flows in the decoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Initialize log-det-jacobian to zero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># args.num_flows # 6 for chan1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">7</span>  <span class="c1"># args.convFlow_kernel_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_mode</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">flow_k</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">CNN_Flow</span>
+
+        <span class="c1"># Normalizing flow layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="o">=</span> <span class="n">flow_k</span><span class="p">(</span>
+            <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">z_size</span><span class="p">,</span>
+            <span class="n">cnn_layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">,</span>
+            <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span>
+            <span class="n">test_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_mode</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ConvFlow_ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.ConvFlow_ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># mean and variance of z</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># sample z</span>
+        <span class="n">z_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">)</span>
+        <span class="c1"># Normalizing flows</span>
+        <span class="n">z_k</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="n">z_0</span><span class="p">)</span>
+        <span class="c1"># decode</span>
+        <span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_decoded</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span><span class="p">,</span> <span class="n">z_0</span><span class="p">,</span> <span class="n">z_k</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NSFAR_ConvVAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.NSFAR_ConvVAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NSFAR_ConvVAE</span><span class="p">(</span><span class="n">ConvVAE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variational auto-encoder with auto-regressive neural spline flows in the decoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># args.num_flows</span>
+
+        <span class="n">flow</span> <span class="o">=</span> <span class="n">flows</span><span class="o">.</span><span class="n">NSF_AR</span>
+
+        <span class="c1"># Normalizing flow layers</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="n">flow</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">flow_k</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NSFAR_ConvVAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.NSFAR_ConvVAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># mean and variance of z</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># sample z</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reparameterize</span><span class="p">(</span><span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">)]</span>
+        <span class="c1"># Normalizing flows</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_flows</span><span class="p">):</span>
+
+            <span class="n">flow_k</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;flow_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+            <span class="n">z_k</span><span class="p">,</span> <span class="n">log_det_jacobian</span> <span class="o">=</span> <span class="n">flow_k</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
+            <span class="n">z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span> <span class="o">+=</span> <span class="n">log_det_jacobian</span>
+        <span class="c1"># decode</span>
+        <span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">x_decoded</span><span class="p">,</span> <span class="n">z_mu</span><span class="p">,</span> <span class="n">z_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_det_j</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TransformerAE">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.TransformerAE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformerAE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Autoencoder mixed with the Transformer Encoder layer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nn (_type_): _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_dim</span><span class="p">,</span>
+        <span class="n">h_dim</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">n_heads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">latent_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">activation</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">gelu</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TransformerAE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_encoder_layer_1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">norm_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">d_model</span><span class="o">=</span><span class="n">in_dim</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">dim_feedforward</span><span class="o">=</span><span class="n">h_dim</span><span class="p">,</span>
+            <span class="n">nhead</span><span class="o">=</span><span class="n">n_heads</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_encoder_layer_2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">norm_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">d_model</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+            <span class="n">nhead</span><span class="o">=</span><span class="n">n_heads</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_encoder_layer_3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">norm_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">d_model</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+            <span class="n">nhead</span><span class="o">=</span><span class="n">n_heads</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder_layer_1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LazyBatchNorm1d</span><span class="p">(),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder_layer_2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LazyBatchNorm1d</span><span class="p">(),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder_layer_3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LazyBatchNorm1d</span><span class="p">(),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">latent_size</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer_3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LazyBatchNorm1d</span><span class="p">(),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">latent_size</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer_2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LazyBatchNorm1d</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer_1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LazyBatchNorm1d</span><span class="p">(),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">in_dim</span><span class="p">),</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder_layer_3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">d_model</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+            <span class="n">nhead</span><span class="o">=</span><span class="n">n_heads</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder_layer_2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">d_model</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+            <span class="n">nhead</span><span class="o">=</span><span class="n">n_heads</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder_layer_1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span>
+            <span class="n">d_model</span><span class="o">=</span><span class="n">in_dim</span><span class="p">,</span>
+            <span class="n">dim_feedforward</span><span class="o">=</span><span class="n">h_dim</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">nhead</span><span class="o">=</span><span class="n">n_heads</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="TransformerAE.encoder">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.TransformerAE.encoder">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (_type_): _description_</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            _type_: _description_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_encoder_layer_1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_layer_1</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_encoder_layer_2</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_layer_2</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_encoder_layer_3</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_layer_3</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">z</span></div>
+
+
+<div class="viewcode-block" id="TransformerAE.decoder">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.TransformerAE.decoder">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (_type_): _description_</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            _type_: _description_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer_3</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder_layer_3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer_2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder_layer_2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer_1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder_layer_1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="TransformerAE.forward">
+<a class="viewcode-back" href="../../../../bead.src.models.html#bead.src.models.models.TransformerAE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (_type_): _description_</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            _type_: _description_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

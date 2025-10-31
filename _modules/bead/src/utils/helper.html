@@ -1,0 +1,1264 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bead.src.utils.helper &mdash; bead 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            bead
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">bead</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">bead</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bead.src.utils.helper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bead.src.utils.helper</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file contains functions that help manipulate different artifacts as required</span>
+<span class="c1"># in the pipeline. The functions in this file are used to manipulate data, models, and tensors.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndarray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MinMaxScaler</span><span class="p">,</span>
+    <span class="n">StandardScaler</span><span class="p">,</span>
+    <span class="n">RobustScaler</span><span class="p">,</span>
+    <span class="n">PowerTransformer</span><span class="p">,</span>
+    <span class="n">QuantileTransformer</span><span class="p">,</span>
+    <span class="n">MaxAbsScaler</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">loss</span>
+
+
+<div class="viewcode-block" id="get_device">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.get_device">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_device</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the appropriate processing device. IF cuda is available it returns &quot;cuda:0&quot;</span>
+<span class="sd">        Otherwise it returns &quot;cpu&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: Device string, either &quot;cpu&quot; or &quot;cuda:0&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="s2">&quot;cuda:0&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">device</span></div>
+
+
+
+<div class="viewcode-block" id="detach_device">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.detach_device">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detach_device</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Detaches a given tensor to ndarray</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor (torch.Tensor): The PyTorch tensor one wants to convert to a ndarray</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ndarray: Converted torch.Tensor to ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="convert_to_tensor">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.convert_to_tensor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_tensor</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts ndarray to torch.Tensors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (ndarray): The data you wish to convert from ndarray to torch.Tensor.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Your data as a tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_to_tensor">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.numpy_to_tensor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">numpy_to_tensor</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts ndarray to torch.Tensors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (ndarray): The data you wish to convert from ndarray to torch.Tensor.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Your data as a tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_model">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.save_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves the models state dictionary as a `.pt` file to the given path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (nn.Module): The PyTorch model to save.</span>
+<span class="sd">        model_path (str): String defining the models save path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None: Saved model state dictionary as `.pt` file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">model_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="encoder_saver">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.encoder_saver">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encoder_saver</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves the Encoder state dictionary as a `.pt` file to the given path</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (nn.Module): The PyTorch model to save.</span>
+<span class="sd">        model_path (str): String defining the models save path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None: Saved encoder state dictionary as `.pt` file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">model_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="decoder_saver">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.decoder_saver">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decoder_saver</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves the Decoder state dictionary as a `.pt` file to the given path</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (nn.Module): The PyTorch model to save.</span>
+<span class="sd">        model_path (str): String defining the models save path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None: Saved decoder state dictionary as `.pt` file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">model_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Log1pScaler">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.Log1pScaler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Log1pScaler</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log(1+x) transformer for positive-skewed HEP features&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-8</span>  <span class="c1"># Small value to prevent log(0)</span>
+
+<div class="viewcode-block" id="Log1pScaler.fit">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.Log1pScaler.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">X</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data contains values &lt;= 0 after epsilon addition&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Log1pScaler.transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.Log1pScaler.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">X</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Log1pScaler.inverse_transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.Log1pScaler.inverse_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="L2Normalizer">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.L2Normalizer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">L2Normalizer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;L2 normalization per feature of data&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norms</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="L2Normalizer.fit">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.L2Normalizer.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norms</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">norms</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Prevent division by zero</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="L2Normalizer.transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.L2Normalizer.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">X</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">norms</span></div>
+
+
+<div class="viewcode-block" id="L2Normalizer.inverse_transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.L2Normalizer.inverse_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">X</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">norms</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SinCosTransformer">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.SinCosTransformer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SinCosTransformer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms an angle (in radians) into two features:</span>
+<span class="sd">    [sin(angle), cos(angle)]. Inverse transformation uses arctan2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SinCosTransformer.fit">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.SinCosTransformer.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Nothing to learn</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SinCosTransformer.transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.SinCosTransformer.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="c1"># Ensure X is of shape (N,1)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">sin_part</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">cos_part</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">sin_part</span><span class="p">,</span> <span class="n">cos_part</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="SinCosTransformer.inverse_transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.SinCosTransformer.inverse_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected input with 2 columns for inverse transformation.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">sin_part</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">cos_part</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">sin_part</span><span class="p">,</span> <span class="n">cos_part</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">angles</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ChainedScaler">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.ChainedScaler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChainedScaler</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Chains a list of scaler transformations.</span>
+<span class="sd">    The transformation is applied sequentially (in the order provided)</span>
+<span class="sd">    and the inverse transformation is applied in reverse order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalers</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalers</span> <span class="o">=</span> <span class="n">scalers</span>
+
+<div class="viewcode-block" id="ChainedScaler.fit">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.ChainedScaler.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="k">for</span> <span class="n">scaler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalers</span><span class="p">:</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ChainedScaler.transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.ChainedScaler.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="k">for</span> <span class="n">scaler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalers</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="ChainedScaler.inverse_transform">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.ChainedScaler.inverse_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="k">for</span> <span class="n">scaler</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scalers</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="normalize_data">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.normalize_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">normalization_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalizes jet data for VAE-based anomaly detection.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: 2D numpy array (n_jets, n_features)</span>
+<span class="sd">        normalization_type: A string indicating the normalization method(s).</span>
+<span class="sd">            It can be a single method or a chain of methods separated by &#39;+&#39;.</span>
+<span class="sd">            Valid options include:</span>
+<span class="sd">            &#39;minmax&#39;  - MinMaxScaler (scales features to [0,1])</span>
+<span class="sd">            &#39;standard&#39;- StandardScaler (zero mean, unit variance)</span>
+<span class="sd">            &#39;robust&#39;  - RobustScaler (less sensitive to outliers)</span>
+<span class="sd">            &#39;log&#39;     - Log1pScaler (applies log1p transformation)</span>
+<span class="sd">            &#39;l2&#39;      - L2Normalizer (scales each feature by its L2 norm)</span>
+<span class="sd">            &#39;power&#39;   - PowerTransformer (using Yeo-Johnson)</span>
+<span class="sd">            &#39;quantile&#39;- QuantileTransformer (transforms features to follow a normal or uniform distribution)</span>
+<span class="sd">            &#39;maxabs&#39;  - MaxAbsScaler (scales each feature by its maximum absolute value)</span>
+<span class="sd">            &#39;sincos&#39;  - SinCosTransformer (converts angles to sin/cos features)</span>
+<span class="sd">            Example: &#39;log+standard&#39; applies a log transformation followed by standard scaling.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        normalized_data: Transformed data array.</span>
+<span class="sd">        scaler: Fitted scaler object (or chained scaler) for inverse transformations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Handle potential NaN/inf in HEP data</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data contains NaN/infinite values&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Mapping from method names to corresponding scaler constructors.</span>
+    <span class="n">scaler_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;minmax&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="s2">&quot;standard&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">StandardScaler</span><span class="p">(),</span>
+        <span class="s2">&quot;robust&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">RobustScaler</span><span class="p">(</span>
+            <span class="n">quantile_range</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span>
+        <span class="p">),</span>  <span class="c1"># Reduced outlier sensitivity</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Log1pScaler</span><span class="p">(),</span>
+        <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">L2Normalizer</span><span class="p">(),</span>
+        <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">PowerTransformer</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;yeo-johnson&quot;</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;quantile&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">QuantileTransformer</span><span class="p">(</span><span class="n">output_distribution</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;maxabs&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">MaxAbsScaler</span><span class="p">(),</span>
+        <span class="s2">&quot;sincos&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">SinCosTransformer</span><span class="p">(),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Parse the chain of normalization methods.</span>
+    <span class="n">methods</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">normalization_type</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">normalization_type</span>
+        <span class="k">else</span> <span class="p">[</span><span class="n">normalization_type</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">scalers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">transformed_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scaler_map</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown normalization method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Valid options: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scaler_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="p">)</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">scaler_map</span><span class="p">[</span><span class="n">method</span><span class="p">]()</span>
+        <span class="n">scaler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">)</span>
+        <span class="n">transformed_data</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">)</span>
+        <span class="n">scalers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scaler</span><span class="p">)</span>
+
+    <span class="c1"># If multiple scalers are used, return a chained scaler; otherwise the single scaler.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scalers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">composite_scaler</span> <span class="o">=</span> <span class="n">ChainedScaler</span><span class="p">(</span><span class="n">scalers</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">composite_scaler</span> <span class="o">=</span> <span class="n">scalers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">transformed_data</span><span class="p">,</span> <span class="n">composite_scaler</span></div>
+
+
+
+<div class="viewcode-block" id="invert_normalize_data">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.invert_normalize_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_normalize_data</span><span class="p">(</span><span class="n">normalized_data</span><span class="p">,</span> <span class="n">scaler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inverts a chained normalization transformation.</span>
+
+<span class="sd">    This function accepts normalized data (for example, the output of a VAE&#39;s preprocessed input)</span>
+<span class="sd">    and the scaler (or ChainedScaler) that was used to perform the forward transformation.</span>
+<span class="sd">    It then returns the original data by calling the scaler&#39;s inverse_transform method.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        normalized_data (np.ndarray): The transformed data array.</span>
+<span class="sd">        scaler: The scaler object (or a ChainedScaler instance) used for the forward transformation,</span>
+<span class="sd">            which must implement an `inverse_transform` method.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The data mapped back to its original scale.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">scaler</span><span class="p">,</span> <span class="s2">&quot;inverse_transform&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The provided scaler object does not have an inverse_transform method.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">normalized_data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_tensors">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.load_tensors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_tensors</span><span class="p">(</span><span class="n">folder_path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;sig_test&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches through the specified folder for all &#39;.pt&#39; files containing the given keyword in their names.</span>
+<span class="sd">    Categorizes these files based on the presence of &#39;jets&#39;, &#39;events&#39;, or &#39;constituents&#39; in their filenames,</span>
+<span class="sd">    loads them into PyTorch tensors, concatenates them along axis=0, and returns the resulting tensors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder_path (str): The path to the folder to search.</span>
+<span class="sd">        keyword (str): The keyword to filter files (&#39;bkg_train&#39;, &#39;bkg_test&#39;, or &#39;sig_test&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing three PyTorch tensors: (jets_tensor, events_tensor, constituents_tensor).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If any specific category (&#39;jets&#39;, &#39;events&#39;, &#39;constituents&#39;) has no matching files.</span>
+<span class="sd">            The error message is:</span>
+<span class="sd">            &quot;Required files not found. Please run the --mode convert_csv and prepare inputs before retrying.&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">keyword</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bkg_train&quot;</span><span class="p">,</span> <span class="s2">&quot;bkg_test&quot;</span><span class="p">,</span> <span class="s2">&quot;sig_test&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid keyword. Please choose from &#39;bkg_train&#39;, &#39;bkg_test&#39;, or &#39;sig_test&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Initialize dictionaries to hold file lists for each category</span>
+    <span class="n">file_categories</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;jets&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;events&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;constituents&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="c1"># Iterate over all files in the specified directory</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder_path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pt&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="c1"># Categorize files based on their names</span>
+            <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">file_categories</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+                    <span class="n">file_categories</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+    <span class="c1"># Function to load and concatenate a list of .pt files along axis 0</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_and_concat</span><span class="p">(</span><span class="n">file_list</span><span class="p">):</span>
+        <span class="n">tensors</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">tensors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Load and concatenate tensors for each category</span>
+    <span class="n">result_tensors</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">file_categories</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Required files not found. Please run the --mode convert_csv and prepare_inputs before retrying.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">result_tensors</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_and_concat</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">result_tensors</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">],</span>
+        <span class="n">result_tensors</span><span class="p">[</span><span class="s2">&quot;jets&quot;</span><span class="p">],</span>
+        <span class="n">result_tensors</span><span class="p">[</span><span class="s2">&quot;constituents&quot;</span><span class="p">],</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_augment_tensors">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.load_augment_tensors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_augment_tensors</span><span class="p">(</span><span class="n">folder_path</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches through the specified folder for all &#39;.pt&#39; files whose names contain the specified</span>
+<span class="sd">    keyword (e.g., &#39;bkg_train&#39;, &#39;bkg_test&#39;, or &#39;sig_test&#39;). Files are then categorized by whether</span>
+<span class="sd">    their filename contains one of the three substrings: &#39;jets&#39;, &#39;events&#39;, or &#39;constituents&#39;.</span>
+
+<span class="sd">    For &#39;bkg_train&#39;, each file must contain one of the generator names: &#39;herwig&#39;, &#39;pythia&#39;, or &#39;sherpa&#39;.</span>
+<span class="sd">    For each file, the tensor is loaded and a new feature is appended along the last dimension:</span>
+<span class="sd">    - 0 for files containing &#39;herwig&#39;</span>
+<span class="sd">    - 1 for files containing &#39;pythia&#39;</span>
+<span class="sd">    - 2 for files containing &#39;sherpa&#39;</span>
+
+<span class="sd">    For &#39;bkg_test&#39; and &#39;sig_test&#39;, the appended new feature is filled with -1, since generator info</span>
+<span class="sd">    is not available at test time.</span>
+
+<span class="sd">    Finally, for each category the resulting tensors are concatenated along axis=0.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder_path (str): The path to the folder to search.</span>
+<span class="sd">        keyword (str): The keyword to filter files (e.g., &#39;bkg_train&#39;, &#39;bkg_test&#39;, or &#39;sig_test&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple of three PyTorch tensors: (jets_tensor, events_tensor, constituents_tensor)</span>
+<span class="sd">            corresponding to the concatenated tensors for each category.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If any category does not have at least one file for each generator type.</span>
+<span class="sd">            The error message is:</span>
+<span class="sd">            &quot;required files not found. please run the --mode convert_csv and prepare inputs before retrying&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the keyword is valid</span>
+    <span class="k">if</span> <span class="n">keyword</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bkg_train&quot;</span><span class="p">,</span> <span class="s2">&quot;bkg_test&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid keyword. Please choose from &#39;bkg_train&#39;, &#39;bkg_test&#39;, or &#39;sig_test&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Define the categories and generator subcategories.</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;jets&quot;</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">,</span> <span class="s2">&quot;constituents&quot;</span><span class="p">]</span>
+    <span class="n">generators</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;herwig&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;pythia&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;sherpa&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+
+    <span class="c1"># Initialize dictionary to store files per category and generator.</span>
+    <span class="n">file_categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="p">{</span><span class="n">gen</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">generators</span><span class="p">}</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">}</span>
+
+    <span class="c1"># Iterate over files in the folder.</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder_path</span><span class="p">):</span>
+        <span class="c1"># Only consider files ending with &#39;.pt&#39; that contain the specified keyword.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pt&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">keyword</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">lower_filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="c1"># Determine category based on substring in the filename.</span>
+        <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">lower_filename</span><span class="p">:</span>
+                <span class="c1"># Determine generator type.</span>
+                <span class="k">for</span> <span class="n">gen</span><span class="p">,</span> <span class="n">gen_val</span> <span class="ow">in</span> <span class="n">generators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">lower_filename</span><span class="p">:</span>
+                        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                        <span class="n">file_categories</span><span class="p">[</span><span class="n">cat</span><span class="p">][</span><span class="n">gen</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">full_path</span><span class="p">,</span> <span class="n">gen_val</span><span class="p">))</span>
+                <span class="c1"># Note: if a file contains multiple generator substrings (unlikely), it will be added</span>
+                <span class="c1"># to all matching generator groups.</span>
+
+    <span class="c1"># For each category in &#39;bkg_train&#39;, ensure that each generator type has at least one file.</span>
+    <span class="k">if</span> <span class="n">keyword</span> <span class="o">==</span> <span class="s2">&quot;bkg_train&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">generators</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_categories</span><span class="p">[</span><span class="n">cat</span><span class="p">][</span><span class="n">gen</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Required files not found. Please run the --mode convert_csv and prepare inputs before retrying.&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="c1"># For each file, load its tensor and append the generator feature.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_and_augment</span><span class="p">(</span><span class="n">file_info</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a tuple (file_path, generator_value), load the tensor and append a new feature column</span>
+<span class="sd">        with the constant generator_value along the last dimension.</span>
+<span class="sd">        Works for both 2D and 3D tensors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_path</span><span class="p">,</span> <span class="n">gen_val</span> <span class="o">=</span> <span class="n">file_info</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="c1"># Create a constant tensor with the same device and dtype as tensor.</span>
+        <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># For a 2D tensor of shape (m, n), create a (m, 1) tensor.</span>
+            <span class="n">constant_feature</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span> <span class="n">gen_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">device</span>
+            <span class="p">)</span>
+            <span class="n">augmented</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tensor</span><span class="p">,</span> <span class="n">constant_feature</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># For a 3D tensor of shape (m, p, n), create a (m, p, 1) tensor.</span>
+            <span class="n">constant_feature</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">gen_val</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">augmented</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tensor</span><span class="p">,</span> <span class="n">constant_feature</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Tensor from </span><span class="si">{}</span><span class="s2"> has unsupported dimensions: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">file_path</span><span class="p">,</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">augmented</span>
+
+    <span class="c1"># For each category, load the tensors for each generator, augment them, and then concatenate.</span>
+    <span class="n">concatenated</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+        <span class="n">cat_tensors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">generators</span><span class="p">:</span>
+            <span class="c1"># Get the list of file infos (tuples) for this generator.</span>
+            <span class="n">file_list</span> <span class="o">=</span> <span class="n">file_categories</span><span class="p">[</span><span class="n">cat</span><span class="p">][</span><span class="n">gen</span><span class="p">]</span>
+            <span class="c1"># For each file, load and augment.</span>
+            <span class="k">for</span> <span class="n">file_info</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+                <span class="n">cat_tensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">load_and_augment</span><span class="p">(</span><span class="n">file_info</span><span class="p">))</span>
+        <span class="c1"># Before concatenation, we want to split the data into a multiple of the sample count</span>
+        <span class="c1"># (here we simply concatenate along axis=0).</span>
+        <span class="n">concatenated</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">cat_tensors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">concatenated</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">],</span> <span class="n">concatenated</span><span class="p">[</span><span class="s2">&quot;jets&quot;</span><span class="p">],</span> <span class="n">concatenated</span><span class="p">[</span><span class="s2">&quot;constituents&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="select_features">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.select_features">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_features</span><span class="p">(</span><span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span><span class="p">,</span> <span class="n">input_features</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the jets_tensor and constituents_tensor based on the input_features flag.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        jets_tensor (torch.Tensor): Tensor with features</span>
+<span class="sd">            [evt_id, jet_id, num_constituents, b_tagged, jet_pt, jet_eta, jet_phi_sin, jet_phi_cos, generator_id]</span>
+<span class="sd">        constituents_tensor (torch.Tensor): Tensor with features</span>
+<span class="sd">            [evt_id, jet_id, constit_id, b_tagged, constit_pt, constit_eta, constit_phi_sin, constit_phi_cos, generator_id]</span>
+<span class="sd">        input_features (str): The flag to determine which features to select.</span>
+<span class="sd">            Options:</span>
+<span class="sd">            - &#39;all&#39;: return tensors as is.</span>
+<span class="sd">            - &#39;4momentum&#39;: select [pt, eta, phi_sin, phi_cos, generator_id] for both.</span>
+<span class="sd">            - &#39;4momentum_btag&#39;: select [b_tagged, pt, eta, phi_sin, phi_cos, generator_id] for both.</span>
+<span class="sd">            - &#39;pj_custom&#39;: select everything except [evt_id, jet_id] for jets and except [evt_id, jet_id, constit_id] for constituents.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Processed jets_tensor and constituents_tensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">input_features</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="c1"># Return tensors unchanged.</span>
+        <span class="k">return</span> <span class="n">jets_tensor</span><span class="p">,</span> <span class="n">constituents_tensor</span>
+
+    <span class="k">elif</span> <span class="n">input_features</span> <span class="o">==</span> <span class="s2">&quot;4momentum&quot;</span><span class="p">:</span>
+        <span class="c1"># For jets: [jet_pt, jet_eta, jet_phi_sin, jet_phi_cos, generator_id] -&gt; indices [4, 5, 6, 7, 8]</span>
+        <span class="n">jets_out</span> <span class="o">=</span> <span class="n">jets_tensor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">:]</span>
+        <span class="c1"># For constituents: [constit_pt, constit_eta, constit_phi_sin, constit_phi_cos, generator_id] -&gt; indices [4, 5, 6, 7, 8]</span>
+        <span class="n">constituents_out</span> <span class="o">=</span> <span class="n">constituents_tensor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">4</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">jets_out</span><span class="p">,</span> <span class="n">constituents_out</span>
+
+    <span class="k">elif</span> <span class="n">input_features</span> <span class="o">==</span> <span class="s2">&quot;4momentum_btag&quot;</span><span class="p">:</span>
+        <span class="c1"># For jets: [b_tagged, jet_pt, jet_eta, jet_phi_sin, jet_phi_cos, generator_id] -&gt; indices [3, 4, 5, 6, 7, 8]</span>
+        <span class="n">jets_out</span> <span class="o">=</span> <span class="n">jets_tensor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span>
+        <span class="c1"># For constituents: [b_tagged, constit_pt, constit_eta, constit_phi_sin, constit_phi_cos, generator_id] -&gt; indices [3, 4, 5, 6, 7, 8]</span>
+        <span class="n">constituents_out</span> <span class="o">=</span> <span class="n">constituents_tensor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">jets_out</span><span class="p">,</span> <span class="n">constituents_out</span>
+
+    <span class="k">elif</span> <span class="n">input_features</span> <span class="o">==</span> <span class="s2">&quot;pj_custom&quot;</span><span class="p">:</span>
+        <span class="c1"># For jets: exclude [evt_id, jet_id] -&gt; remove indices [0, 1]</span>
+        <span class="n">jets_out</span> <span class="o">=</span> <span class="n">jets_tensor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">:]</span>  <span class="c1"># returns indices 2 to end</span>
+        <span class="c1"># For constituents: exclude [evt_id, jet_id, constit_id] -&gt; remove indices [0, 1, 2]</span>
+        <span class="n">constituents_out</span> <span class="o">=</span> <span class="n">constituents_tensor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span>  <span class="c1"># returns indices 3 to end</span>
+        <span class="k">return</span> <span class="n">jets_out</span><span class="p">,</span> <span class="n">constituents_out</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid input_features flag provided.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="train_val_split">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.train_val_split">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">train_val_split</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">train_ratio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits a tensor into training and validation sets based on the specified train_ratio.</span>
+<span class="sd">    The split is done by sampling indices randomly ensuring that the data is shuffled.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor (torch.Tensor): The input tensor to be split.</span>
+<span class="sd">        train_ratio (float): Proportion of data to be used for training (e.g., 0.8 for 80% training data).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing two tensors:</span>
+<span class="sd">            - train_tensor: Tensor containing the training data.</span>
+<span class="sd">            - val_tensor: Tensor containing the validation data.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If train_ratio is not between 0 and 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">train_ratio</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;train_ratio must be a float between 0 and 1.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set the random seed for reproducibility.</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="c1"># Determine the split sizes</span>
+    <span class="n">total_size</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">train_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">train_ratio</span> <span class="o">*</span> <span class="n">total_size</span><span class="p">)</span>
+    <span class="n">val_size</span> <span class="o">=</span> <span class="n">total_size</span> <span class="o">-</span> <span class="n">train_size</span>
+
+    <span class="c1"># Generate a random permutation of indices.</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">total_size</span><span class="p">)</span>
+
+    <span class="c1"># Split the indices into train and validation indices.</span>
+    <span class="n">train_indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[:</span><span class="n">train_size</span><span class="p">]</span>
+    <span class="n">val_indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">train_size</span><span class="p">:]</span>
+
+    <span class="c1"># Use these indices to index into your tensor.</span>
+    <span class="n">train_tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">train_indices</span><span class="p">]</span>
+    <span class="n">val_tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">val_indices</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">train_tensor</span><span class="p">,</span> <span class="n">val_tensor</span></div>
+
+
+
+<div class="viewcode-block" id="add_sig_bkg_label">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.add_sig_bkg_label">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_sig_bkg_label</span><span class="p">(</span><span class="n">tensors</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a new feature to the last dimension of each tensor in the tuple.</span>
+<span class="sd">    The new feature is filled with 0 for &quot;bkg&quot; and 1 for &quot;sig&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensors: A tuple of three tensors (events, jets, constituents).</span>
+<span class="sd">        label: A string, either &quot;bkg&quot; or &quot;sig&quot;, to determine the value of the new feature.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple of the three tensors with the new feature added to the last dimension.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bkg&quot;</span><span class="p">,</span> <span class="s2">&quot;sig&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;label must be either &#39;bkg&#39; or &#39;sig&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Determine the value for the new feature</span>
+    <span class="n">feature_value</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;bkg&quot;</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_feature</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to add the feature to a single tensor.&quot;&quot;&quot;</span>
+        <span class="c1"># Get shape for the new feature tensor (same as input tensor but last dim=1)</span>
+        <span class="n">feature_shape</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+        
+        <span class="c1"># Create a tensor filled with the feature value, matching device and dtype</span>
+        <span class="n">feature</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">feature_shape</span><span class="p">,</span> <span class="n">feature_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="c1"># Concatenate along the last dimension</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tensor</span><span class="p">,</span> <span class="n">feature</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Apply the feature addition to each tensor in the tuple</span>
+    <span class="n">events</span><span class="p">,</span> <span class="n">jets</span><span class="p">,</span> <span class="n">constituents</span> <span class="o">=</span> <span class="n">tensors</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">add_feature</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+    <span class="n">jets</span> <span class="o">=</span> <span class="n">add_feature</span><span class="p">(</span><span class="n">jets</span><span class="p">)</span>
+    <span class="n">constituents</span> <span class="o">=</span> <span class="n">add_feature</span><span class="p">(</span><span class="n">constituents</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">events</span><span class="p">,</span> <span class="n">jets</span><span class="p">,</span> <span class="n">constituents</span></div>
+
+
+
+<div class="viewcode-block" id="data_label_split">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.data_label_split">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">data_label_split</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Splits the data into features and labels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (ndarray): The data you wish to split into features and labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing two ndarrays:</span>
+<span class="sd">            - data: The features of the data.</span>
+<span class="sd">            - labels: The labels of the data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span>
+        <span class="n">events_train</span><span class="p">,</span>
+        <span class="n">jets_train</span><span class="p">,</span>
+        <span class="n">constituents_train</span><span class="p">,</span>
+        <span class="n">events_val</span><span class="p">,</span>
+        <span class="n">jets_val</span><span class="p">,</span>
+        <span class="n">constituents_val</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">data</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">events_train</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">jets_train</span><span class="p">[:,:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">constituents_train</span><span class="p">[:,:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">events_val</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">jets_val</span><span class="p">[:,:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">constituents_val</span><span class="p">[:,:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">events_train</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">jets_train</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+        <span class="n">constituents_train</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+        <span class="n">events_val</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">jets_val</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+        <span class="n">constituents_val</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span></div>
+
+
+
+<span class="c1"># Define the custom dataset class</span>
+<div class="viewcode-block" id="CustomDataset">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.CustomDataset">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_tensor</span><span class="p">,</span> <span class="n">label_tensor</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data_tensor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">label_tensor</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+
+
+<span class="c1"># Function to create datasets</span>
+<div class="viewcode-block" id="create_datasets">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.create_datasets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_datasets</span><span class="p">(</span>
+    <span class="n">events_train</span><span class="p">,</span> <span class="n">jets_train</span><span class="p">,</span> <span class="n">constituents_train</span><span class="p">,</span>
+    <span class="n">events_val</span><span class="p">,</span> <span class="n">jets_val</span><span class="p">,</span> <span class="n">constituents_val</span><span class="p">,</span>
+    <span class="n">events_train_label</span><span class="p">,</span> <span class="n">jets_train_label</span><span class="p">,</span> <span class="n">constituents_train_label</span><span class="p">,</span>
+    <span class="n">events_val_label</span><span class="p">,</span> <span class="n">jets_val_label</span><span class="p">,</span> <span class="n">constituents_val_label</span>
+<span class="p">):</span>
+
+    <span class="c1"># Create datasets for training data</span>
+    <span class="n">events_train_dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">events_train</span><span class="p">,</span> <span class="n">events_train_label</span><span class="p">)</span>
+    <span class="n">jets_train_dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">jets_train</span><span class="p">,</span> <span class="n">jets_train_label</span><span class="p">)</span>
+    <span class="n">constituents_train_dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">constituents_train</span><span class="p">,</span> <span class="n">constituents_train_label</span><span class="p">)</span>
+
+    <span class="c1"># Create datasets for validation data</span>
+    <span class="n">events_val_dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">events_val</span><span class="p">,</span> <span class="n">events_val_label</span><span class="p">)</span>
+    <span class="n">jets_val_dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">jets_val</span><span class="p">,</span> <span class="n">jets_val_label</span><span class="p">)</span>
+    <span class="n">constituents_val_dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">constituents_val</span><span class="p">,</span> <span class="n">constituents_val_label</span><span class="p">)</span>
+
+    <span class="c1"># Return all datasets as a dictionary for easy access</span>
+    <span class="n">datasets</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;events_train&quot;</span><span class="p">:</span> <span class="n">events_train_dataset</span><span class="p">,</span>
+        <span class="s2">&quot;jets_train&quot;</span><span class="p">:</span> <span class="n">jets_train_dataset</span><span class="p">,</span>
+        <span class="s2">&quot;constituents_train&quot;</span><span class="p">:</span> <span class="n">constituents_train_dataset</span><span class="p">,</span>
+        <span class="s2">&quot;events_val&quot;</span><span class="p">:</span> <span class="n">events_val_dataset</span><span class="p">,</span>
+        <span class="s2">&quot;jets_val&quot;</span><span class="p">:</span> <span class="n">jets_val_dataset</span><span class="p">,</span>
+        <span class="s2">&quot;constituents_val&quot;</span><span class="p">:</span> <span class="n">constituents_val_dataset</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">datasets</span></div>
+
+
+
+<div class="viewcode-block" id="calculate_in_shape">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.calculate_in_shape">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_in_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the input shapes for the models based on the data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (ndarray): The data you wish to calculate the input shapes for.</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing the input shapes for the models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span>
+        <span class="n">events_train</span><span class="p">,</span>
+        <span class="n">jets_train</span><span class="p">,</span>
+        <span class="n">constituents_train</span><span class="p">,</span>
+        <span class="n">events_val</span><span class="p">,</span>
+        <span class="n">jets_val</span><span class="p">,</span>
+        <span class="n">constituents_val</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="c1"># Get the shapes of the data</span>
+    <span class="c1"># Calculate the input shapes to initialize the model</span>
+    
+    <span class="n">in_shape_e</span> <span class="o">=</span> <span class="p">[</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">events_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">in_shape_j</span> <span class="o">=</span> <span class="p">[</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">jets_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">in_shape_c</span> <span class="o">=</span> <span class="p">[</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">constituents_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span> <span class="o">==</span> <span class="s2">&quot;pj_ensemble&quot;</span><span class="p">:</span>        
+        <span class="c1"># Make in_shape tuple</span>
+        <span class="n">in_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_shape_e</span><span class="p">,</span> <span class="n">in_shape_j</span><span class="p">,</span> <span class="n">in_shape_c</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">input_level</span> <span class="o">==</span> <span class="s2">&quot;event&quot;</span><span class="p">:</span>
+            <span class="n">in_shape</span> <span class="o">=</span> <span class="n">in_shape_e</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">input_level</span> <span class="o">==</span> <span class="s2">&quot;jet&quot;</span><span class="p">:</span>
+            <span class="n">in_shape</span> <span class="o">=</span> <span class="n">in_shape_j</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">input_level</span> <span class="o">==</span> <span class="s2">&quot;constituent&quot;</span><span class="p">:</span>
+            <span class="n">in_shape</span> <span class="o">=</span> <span class="n">in_shape_c</span>
+
+    <span class="k">return</span> <span class="n">in_shape</span></div>
+
+
+
+<div class="viewcode-block" id="model_init">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.model_init">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_init</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializing the models attributes to a model_object variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_name (str): The name of the model you wish to initialize. This should correspond to what your Model name.</span>
+<span class="sd">        init (str): The initialization method you wish to use (Xavier support currently). Default is None.</span>
+<span class="sd">        config (dataClass): Base class selecting user inputs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        class: Object with the models class attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">xavier_init_weights</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies Xavier initialization to the weights of the given module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">):</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">zeros_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+
+    <span class="n">model_object</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span> <span class="o">==</span> <span class="s2">&quot;pj_custom&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_object</span><span class="p">(</span><span class="o">*</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">latent_space_size</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_object</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">latent_space_size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">model_init</span> <span class="o">==</span> <span class="s2">&quot;xavier&quot;</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xavier_init_weights</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="get_loss">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.get_loss">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_loss</span><span class="p">(</span><span class="n">loss_function</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the loss_object based on the string provided.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        loss_function (str): The loss function you wish to use. Options include:</span>
+<span class="sd">            - &#39;mse&#39;: Mean Squared Error</span>
+<span class="sd">            - &#39;bce&#39;: Binary Cross Entropy</span>
+<span class="sd">            - &#39;mae&#39;: Mean Absolute Error</span>
+<span class="sd">            - &#39;huber&#39;: Huber Loss</span>
+<span class="sd">            - &#39;l1&#39;: L1 Loss</span>
+<span class="sd">            - &#39;l2&#39;: L2 Loss</span>
+<span class="sd">            - &#39;smoothl1&#39;: Smooth L1 Loss</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        class: The loss function object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loss_object</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loss_object</span></div>
+
+
+
+<div class="viewcode-block" id="get_optimizer">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.get_optimizer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">lr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a PyTorch optimizer configured with optimal arguments for training a large VAE.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        optimizer_name (str): One of &quot;adam&quot;, &quot;adamw&quot;, &quot;rmsprop&quot;, &quot;sgd&quot;, &quot;radam&quot;, &quot;adagrad&quot;.</span>
+<span class="sd">        parameters (iterable): The parameters (or parameter groups) of your model.</span>
+<span class="sd">        lr (float): The learning rate for the optimizer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.optim.Optimizer: An instantiated optimizer with specified hyperparameters.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If an unsupported optimizer name is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;adam&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>  <span class="c1"># Default values</span>
+            <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+            <span class="n">weight_decay</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Set to a small value like 1e-5 if regularization is needed</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;adamw&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+            <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+            <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>  <span class="c1"># L2 regularization</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;rmsprop&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">RMSprop</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span>  <span class="c1"># Smoothing constant</span>
+            <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+            <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>  <span class="c1"># L2 regularization</span>
+            <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># Set to a value like 0.9 if momentum is desired</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;sgd&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># Momentum term</span>
+            <span class="n">weight_decay</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Set to a small value like 1e-5 if regularization is needed</span>
+            <span class="n">nesterov</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Set to True if Nesterov momentum is desired</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;radam&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">RAdam</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;adagrad&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adagrad</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">lr_decay</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Learning rate decay over each update</span>
+            <span class="n">weight_decay</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">initial_accumulator_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Starting value for the accumulators</span>
+            <span class="n">eps</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported optimizer: </span><span class="si">{</span><span class="n">optimizer_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="call_forward">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.call_forward">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">call_forward</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calls the `forward` method of the given object.</span>
+<span class="sd">    If the return value is not a tuple, packs it into a tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: An object that has a `forward` method.</span>
+<span class="sd">        inputs: The input data to pass to the model.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple containing the result(s) of the `forward` method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Call the forward method</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="c1"># Ensure the result is a tuple</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">result</span><span class="p">,)</span></div>
+
+
+
+<div class="viewcode-block" id="EarlyStopping">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.EarlyStopping">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EarlyStopping</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to perform early stopping during model training.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        patience (int): The number of epochs to wait before stopping the training process if the</span>
+<span class="sd">            validation loss doesn&#39;t improve.</span>
+<span class="sd">        min_delta (float): The minimum difference between the new loss and the previous best loss</span>
+<span class="sd">            for the new loss to be considered an improvement.</span>
+<span class="sd">        counter (int): Counts the number of times the validation loss hasn&#39;t improved.</span>
+<span class="sd">        best_loss (float): The best validation loss observed so far.</span>
+<span class="sd">        early_stop (bool): Flag that indicates whether early stopping criteria have been met.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patience</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patience</span> <span class="o">=</span> <span class="n">patience</span>  <span class="c1"># Nr of times we allow val. loss to not improve before early stopping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_delta</span> <span class="o">=</span> <span class="n">min_delta</span>  <span class="c1"># min(new loss - best loss) for new loss to be considered improvement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># counts nr of times val_loss dosent improve</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">early_stop</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_loss</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">=</span> <span class="n">train_loss</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">-</span> <span class="n">train_loss</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_delta</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">=</span> <span class="n">train_loss</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Resets if val_loss improves</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">-</span> <span class="n">train_loss</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_delta</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Early stopping counter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Early Stopping&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">early_stop</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="LRScheduler">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.LRScheduler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LRScheduler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A learning rate scheduler that adjusts the learning rate of an optimizer based on the training loss.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        optimizer (torch.optim.Optimizer): The optimizer whose learning rate will be adjusted.</span>
+<span class="sd">        patience (int): The number of epochs with no improvement in training loss after which the learning rate</span>
+<span class="sd">            will be reduced.</span>
+<span class="sd">        min_lr (float, optional): The minimum learning rate that can be reached (default: 1e-6).</span>
+<span class="sd">        factor (float, optional): The factor by which the learning rate will be reduced (default: 0.1).</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        lr_scheduler (torch.optim.lr_scheduler.ReduceLROnPlateau): The PyTorch learning rate scheduler that</span>
+<span class="sd">            actually performs the adjustments.</span>
+<span class="sd">    </span>
+<span class="sd">    Example usage:</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters(), lr=0.01)</span>
+<span class="sd">        lr_scheduler = LRScheduler(optimizer, patience=3, min_lr=1e-6, factor=0.5)</span>
+<span class="sd">        for epoch in range(num_epochs):</span>
+<span class="sd">        train_loss = train(model, train_data_loader)</span>
+<span class="sd">        lr_scheduler(train_loss)</span>
+<span class="sd">        # ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">patience</span><span class="p">,</span> <span class="n">min_lr</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patience</span> <span class="o">=</span> <span class="n">patience</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_lr</span> <span class="o">=</span> <span class="n">min_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+
+        <span class="c1"># Maybe add if statements for selectment of lr schedulers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ReduceLROnPlateau</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;min&quot;</span><span class="p">,</span>
+            <span class="n">patience</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">,</span>
+            <span class="n">factor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">,</span>
+            <span class="n">min_lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_lr</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_model">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.load_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the state dictionary of the trained model into a model variable. This variable is then used for passing</span>
+<span class="sd">    data through the encoding and decoding functions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_object (object): Object with the models attributes</span>
+<span class="sd">        model_path (str): Path to model</span>
+<span class="sd">        n_features (int): Input dimension size</span>
+<span class="sd">        z_dim (int): Latent space size</span>
+
+<span class="sd">    Returns: nn.Module: Returns a model object with the attributes of the model class, with the selected state</span>
+<span class="sd">    dictionary loaded into it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
+
+    <span class="n">model_object</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">model_name</span> <span class="o">==</span> <span class="s2">&quot;pj_custom&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_object</span><span class="p">(</span><span class="o">*</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">latent_space_size</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_object</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">z_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">latent_space_size</span><span class="p">)</span>
+    
+    <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># Loading the state_dict into the model</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">model_path</span><span class="p">),</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="save_loss_components">
+<a class="viewcode-back" href="../../../../bead.src.utils.html#bead.src.utils.helper.save_loss_components">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_loss_components</span><span class="p">(</span><span class="n">loss_data</span><span class="p">,</span> <span class="n">component_names</span><span class="p">,</span> <span class="n">suffix</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="s2">&quot;loss_outputs&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function unpacks loss_data into separate components, converts each into a NumPy array,</span>
+<span class="sd">    and saves each array as a .npy file with a filename of the form:</span>
+<span class="sd">    &lt;component_name&gt;_&lt;suffix&gt;.npy</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      - loss_data: a list of tuples, where each tuple contains loss components</span>
+<span class="sd">      - component_names: a list of strings naming each component in the tuple</span>
+<span class="sd">      - suffix: a string keyword to be appended (separated by &#39;_&#39;) to each filename</span>
+<span class="sd">      - save_dir: directory to save .npy files (default &quot;loss_outputs&quot;)</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure the save directory exists</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">loss_data</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;loss_data is empty.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check that the number of components in each tuple matches the number of names provided.</span>
+    <span class="n">n_components</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">loss_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">n_components</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">component_names</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of each loss tuple must match the number of component names provided.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Unpack the list of tuples into a list of components using zip.</span>
+    <span class="c1"># Each element in &#39;components&#39; is a tuple containing that component from every iteration.</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">loss_data</span><span class="p">))</span>
+
+    <span class="c1"># Process and save each component.</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">component_names</span><span class="p">,</span> <span class="n">components</span><span class="p">):</span>
+        <span class="c1"># Convert each element to a NumPy array if it&#39;s a PyTorch tensor.</span>
+        <span class="n">converted</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">comp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;detach&quot;</span><span class="p">):</span>  <span class="c1"># likely a PyTorch tensor</span>
+                <span class="n">converted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">converted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
+        
+        <span class="c1"># Create filename with component name and appended suffix</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.npy&quot;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pratik Jawahar.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
