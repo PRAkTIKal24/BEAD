@@ -16,7 +16,7 @@ echo "================================================================"
 
 # Run ROC plotting with verbose output to see the new debugging info
 # Replace 'your_project_name' with the actual project name you want to test
-uv run bead -m plot -p zprime your_project_name -o roc_per_signal -v
+uv run bead -m plot -p zprime convvae -o roc_per_signal -v
 
 echo ""
 echo "Test completed. Please copy the above output and share it."
