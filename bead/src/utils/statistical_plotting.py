@@ -744,19 +744,35 @@ def create_parameterized_violin_plots(
 
     for workspace_name in parsed_data.keys():
         if verbose:
-            print(f"Processing workspace: {workspace_name}")
+            print(f"  Processing workspace: {workspace_name}")
 
         # Convert data to structured format with parameters
         plot_data = _convert_to_dataframe(parsed_data, workspace_name)
 
         if not plot_data:
+            if verbose:
+                print(f"    No initial data for workspace {workspace_name}")
             continue
+
+        if verbose:
+            print(f"    Initial data entries: {len(plot_data)}")
+            # Show a sample entry to debug parameter extraction
+            if plot_data:
+                sample = plot_data[0]
+                print(f"    Sample signal: {sample['signal']}")
 
         # Add parameter columns
         for entry in plot_data:
             mass, r_inv = extract_signal_params(entry["signal"])
             entry["mass"] = mass
             entry["r_inv"] = r_inv
+
+        if verbose:
+            valid_entries = [e for e in plot_data if e['mass'] is not None]
+            print(f"    After parameter extraction: {len(valid_entries)} valid entries")
+            if valid_entries:
+                sample = valid_entries[0]
+                print(f"    Sample params: mass={sample['mass']}, r_inv={sample['r_inv']}")
 
         # Filter out entries with missing parameters
         plot_data = [entry for entry in plot_data if entry["mass"] is not None]
@@ -765,7 +781,12 @@ def create_parameterized_violin_plots(
         if skip_5000:
             plot_data = [entry for entry in plot_data if entry["mass"] != 5000]
 
+        if verbose:
+            print(f"    After filtering: {len(plot_data)} entries")
+
         if not plot_data:
+            if verbose:
+                print(f"    No data remaining after filtering for {workspace_name}")
             continue
 
         # Extract unique models and metrics
