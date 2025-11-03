@@ -1,1784 +1,286 @@
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Generating per-signal ROC plots...
+Info: CSV events (156177) != actual signal events (155377)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 1563282
+Background events: 1407905
+Available signal events: 155377
 Found 15 signal files for per-signal ROC plotting
 Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6364
-    TPR at FPR 1.0e-04: 0.0027
-    TPR at FPR 1.0e-03: 0.0192
-    TPR at FPR 1.0e-02: 0.0712
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.5959
-    TPR at FPR 1.0e-04: 0.0012
-    TPR at FPR 1.0e-03: 0.0127
-    TPR at FPR 1.0e-02: 0.0522
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.5930
-    TPR at FPR 1.0e-04: 0.0006
-    TPR at FPR 1.0e-03: 0.0103
-    TPR at FPR 1.0e-02: 0.0486
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.5894
-    TPR at FPR 1.0e-04: 0.0013
-    TPR at FPR 1.0e-03: 0.0138
-    TPR at FPR 1.0e-02: 0.0497
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6851
-    TPR at FPR 1.0e-04: 0.0033
-    TPR at FPR 1.0e-03: 0.0237
-    TPR at FPR 1.0e-02: 0.0927
+  sneaky2000R05: 10024 events (indices 1407905:1417929)
+  sneaky1000R075: 5305 events (indices 1417929:1423234)
+  sneaky4000R05: 11642 events (indices 1423234:1434876)
+  sneaky4000R075: 6673 events (indices 1434876:1441549)
+  sneaky5000R025: 15317 events (indices 1441549:1456866)
+  sneaky2000R025: 13294 events (indices 1456866:1470160)
+  sneaky3000R075: 6612 events (indices 1470160:1476772)
+  sneaky3000R05: 11300 events (indices 1476772:1488072)
+  sneaky5000R05: 11747 events (indices 1488072:1499819)
+  sneaky4000R025: 15042 events (indices 1499819:1514861)
+  sneaky5000R075: 6940 events (indices 1514861:1521801)
+  sneaky1000R025: 11797 events (indices 1521801:1533598)
+  sneaky1000R05: 8904 events (indices 1533598:1542502)
+  sneaky2000R075: 6043 events (indices 1542502:1548545)
+  sneaky3000R025: 14730 events (indices 1548545:1563275)
+Processing signal file: sneaky2000R05 (indices 1407905:1417929)
+  sneaky2000R05 - LOSS AUC: 0.6417
+    TPR at FPR 1.0e-04: 0.0031
+    TPR at FPR 1.0e-03: 0.0197
+    TPR at FPR 1.0e-02: 0.0735
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6398
-    TPR at FPR 1.0e-04: 0.0028
-    TPR at FPR 1.0e-03: 0.0179
-    TPR at FPR 1.0e-02: 0.0716
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6085
-    TPR at FPR 1.0e-04: 0.0014
-    TPR at FPR 1.0e-03: 0.0132
-    TPR at FPR 1.0e-02: 0.0552
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6436
-    TPR at FPR 1.0e-04: 0.0024
-    TPR at FPR 1.0e-03: 0.0157
-    TPR at FPR 1.0e-02: 0.0708
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6444
-    TPR at FPR 1.0e-04: 0.0020
-    TPR at FPR 1.0e-03: 0.0187
-    TPR at FPR 1.0e-02: 0.0710
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6414
-    TPR at FPR 1.0e-04: 0.0019
-    TPR at FPR 1.0e-03: 0.0173
-    TPR at FPR 1.0e-02: 0.0692
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6086
-    TPR at FPR 1.0e-04: 0.0014
-    TPR at FPR 1.0e-03: 0.0150
-    TPR at FPR 1.0e-02: 0.0586
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.5974
-    TPR at FPR 1.0e-04: 0.0018
+Processing signal file: sneaky1000R075 (indices 1417929:1423234)
+  sneaky1000R075 - LOSS AUC: 0.6002
+    TPR at FPR 1.0e-04: 0.0008
+    TPR at FPR 1.0e-03: 0.0128
+    TPR at FPR 1.0e-02: 0.0522
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky1000R075.pdf
+Processing signal file: sneaky4000R05 (indices 1423234:1434876)
+  sneaky4000R05 - LOSS AUC: 0.5925
+    TPR at FPR 1.0e-04: 0.0011
     TPR at FPR 1.0e-03: 0.0125
-    TPR at FPR 1.0e-02: 0.0550
+    TPR at FPR 1.0e-02: 0.0512
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky4000R05.pdf
+Processing signal file: sneaky4000R075 (indices 1434876:1441549)
+  sneaky4000R075 - LOSS AUC: 0.5906
+    TPR at FPR 1.0e-04: 0.0010
+    TPR at FPR 1.0e-03: 0.0123
+    TPR at FPR 1.0e-02: 0.0492
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6152
-    TPR at FPR 1.0e-04: 0.0014
-    TPR at FPR 1.0e-03: 0.0129
-    TPR at FPR 1.0e-02: 0.0557
+Processing signal file: sneaky5000R025 (indices 1441549:1456866)
+  sneaky5000R025 - LOSS AUC: 0.6487
+    TPR at FPR 1.0e-04: 0.0026
+    TPR at FPR 1.0e-03: 0.0200
+    TPR at FPR 1.0e-02: 0.0759
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6939
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0267
-    TPR at FPR 1.0e-02: 0.0993
+Processing signal file: sneaky2000R025 (indices 1456866:1470160)
+  sneaky2000R025 - LOSS AUC: 0.6180
+    TPR at FPR 1.0e-04: 0.0020
+    TPR at FPR 1.0e-03: 0.0158
+    TPR at FPR 1.0e-02: 0.0632
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky2000R025.pdf
+Processing signal file: sneaky3000R075 (indices 1470160:1476772)
+  sneaky3000R075 - LOSS AUC: 0.6173
+    TPR at FPR 1.0e-04: 0.0017
+    TPR at FPR 1.0e-03: 0.0136
+    TPR at FPR 1.0e-02: 0.0563
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky3000R075.pdf
+Processing signal file: sneaky3000R05 (indices 1476772:1488072)
+  sneaky3000R05 - LOSS AUC: 0.6436
+    TPR at FPR 1.0e-04: 0.0020
+    TPR at FPR 1.0e-03: 0.0153
+    TPR at FPR 1.0e-02: 0.0683
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky3000R05.pdf
+Processing signal file: sneaky5000R05 (indices 1488072:1499819)
+  sneaky5000R05 - LOSS AUC: 0.6414
+    TPR at FPR 1.0e-04: 0.0022
+    TPR at FPR 1.0e-03: 0.0183
+    TPR at FPR 1.0e-02: 0.0712
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
+Processing signal file: sneaky4000R025 (indices 1499819:1514861)
+  sneaky4000R025 - LOSS AUC: 0.6423
+    TPR at FPR 1.0e-04: 0.0018
+    TPR at FPR 1.0e-03: 0.0176
+    TPR at FPR 1.0e-02: 0.0701
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky4000R025.pdf
+Processing signal file: sneaky5000R075 (indices 1514861:1521801)
+  sneaky5000R075 - LOSS AUC: 0.5996
+    TPR at FPR 1.0e-04: 0.0014
+    TPR at FPR 1.0e-03: 0.0137
+    TPR at FPR 1.0e-02: 0.0545
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky5000R075.pdf
+Processing signal file: sneaky1000R025 (indices 1521801:1533598)
+  sneaky1000R025 - LOSS AUC: 0.5977
+    TPR at FPR 1.0e-04: 0.0014
+    TPR at FPR 1.0e-03: 0.0125
+    TPR at FPR 1.0e-02: 0.0539
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky1000R025.pdf
+Processing signal file: sneaky1000R05 (indices 1533598:1542502)
+  sneaky1000R05 - LOSS AUC: 0.6062
+    TPR at FPR 1.0e-04: 0.0009
+    TPR at FPR 1.0e-03: 0.0109
+    TPR at FPR 1.0e-02: 0.0487
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky1000R05.pdf
+Processing signal file: sneaky2000R075 (indices 1542502:1548545)
+  sneaky2000R075 - LOSS AUC: 0.6776
+    TPR at FPR 1.0e-04: 0.0023
+    TPR at FPR 1.0e-03: 0.0230
+    TPR at FPR 1.0e-02: 0.0913
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky2000R075.pdf
+Processing signal file: sneaky3000R025 (indices 1548545:1563275)
+  sneaky3000R025 - LOSS AUC: 0.6948
+    TPR at FPR 1.0e-04: 0.0024
+    TPR at FPR 1.0e-03: 0.0269
+    TPR at FPR 1.0e-02: 0.0991
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae/output/plots/loss/roc_sneaky3000R025.pdf
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
 Generating per-signal ROC plots...
+Info: CSV events (156177) != actual signal events (155377)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 1563282
+Background events: 1407905
+Available signal events: 155377
 Found 15 signal files for per-signal ROC plotting
 Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6630
-    TPR at FPR 1.0e-04: 0.0037
+  sneaky2000R05: 10024 events (indices 1407905:1417929)
+  sneaky1000R075: 5305 events (indices 1417929:1423234)
+  sneaky4000R05: 11642 events (indices 1423234:1434876)
+  sneaky4000R075: 6673 events (indices 1434876:1441549)
+  sneaky5000R025: 15317 events (indices 1441549:1456866)
+  sneaky2000R025: 13294 events (indices 1456866:1470160)
+  sneaky3000R075: 6612 events (indices 1470160:1476772)
+  sneaky3000R05: 11300 events (indices 1476772:1488072)
+  sneaky5000R05: 11747 events (indices 1488072:1499819)
+  sneaky4000R025: 15042 events (indices 1499819:1514861)
+  sneaky5000R075: 6940 events (indices 1514861:1521801)
+  sneaky1000R025: 11797 events (indices 1521801:1533598)
+  sneaky1000R05: 8904 events (indices 1533598:1542502)
+  sneaky2000R075: 6043 events (indices 1542502:1548545)
+  sneaky3000R025: 14730 events (indices 1548545:1563275)
+Processing signal file: sneaky2000R05 (indices 1407905:1417929)
+  sneaky2000R05 - LOSS AUC: 0.6626
+    TPR at FPR 1.0e-04: 0.0036
     TPR at FPR 1.0e-03: 0.0126
-    TPR at FPR 1.0e-02: 0.0615
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6599
-    TPR at FPR 1.0e-04: 0.0038
-    TPR at FPR 1.0e-03: 0.0107
-    TPR at FPR 1.0e-02: 0.0499
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6518
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0075
-    TPR at FPR 1.0e-02: 0.0491
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6525
-    TPR at FPR 1.0e-04: 0.0018
-    TPR at FPR 1.0e-03: 0.0078
-    TPR at FPR 1.0e-02: 0.0484
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6519
-    TPR at FPR 1.0e-04: 0.0046
-    TPR at FPR 1.0e-03: 0.0154
-    TPR at FPR 1.0e-02: 0.0650
+    TPR at FPR 1.0e-02: 0.0626
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6587
-    TPR at FPR 1.0e-04: 0.0049
-    TPR at FPR 1.0e-03: 0.0137
-    TPR at FPR 1.0e-02: 0.0579
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6563
-    TPR at FPR 1.0e-04: 0.0024
-    TPR at FPR 1.0e-03: 0.0099
-    TPR at FPR 1.0e-02: 0.0511
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
+Processing signal file: sneaky1000R075 (indices 1417929:1423234)
+  sneaky1000R075 - LOSS AUC: 0.6614
+    TPR at FPR 1.0e-04: 0.0038
+    TPR at FPR 1.0e-03: 0.0113
+    TPR at FPR 1.0e-02: 0.0526
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky1000R075.pdf
+Processing signal file: sneaky4000R05 (indices 1423234:1434876)
+  sneaky4000R05 - LOSS AUC: 0.6541
+    TPR at FPR 1.0e-04: 0.0030
+    TPR at FPR 1.0e-03: 0.0090
+    TPR at FPR 1.0e-02: 0.0484
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky4000R05.pdf
+Processing signal file: sneaky4000R075 (indices 1434876:1441549)
+  sneaky4000R075 - LOSS AUC: 0.6548
+    TPR at FPR 1.0e-04: 0.0022
+    TPR at FPR 1.0e-03: 0.0085
+    TPR at FPR 1.0e-02: 0.0502
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky4000R075.pdf
+Processing signal file: sneaky5000R025 (indices 1441549:1456866)
+  sneaky5000R025 - LOSS AUC: 0.6525
+    TPR at FPR 1.0e-04: 0.0031
+    TPR at FPR 1.0e-03: 0.0115
+    TPR at FPR 1.0e-02: 0.0580
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky5000R025.pdf
+Processing signal file: sneaky2000R025 (indices 1456866:1470160)
+  sneaky2000R025 - LOSS AUC: 0.6562
+    TPR at FPR 1.0e-04: 0.0041
+    TPR at FPR 1.0e-03: 0.0123
+    TPR at FPR 1.0e-02: 0.0540
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky2000R025.pdf
+Processing signal file: sneaky3000R075 (indices 1470160:1476772)
+  sneaky3000R075 - LOSS AUC: 0.6567
+    TPR at FPR 1.0e-04: 0.0021
+    TPR at FPR 1.0e-03: 0.0100
+    TPR at FPR 1.0e-02: 0.0529
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky3000R075.pdf
+Processing signal file: sneaky3000R05 (indices 1476772:1488072)
   sneaky3000R05 - LOSS AUC: 0.6623
     TPR at FPR 1.0e-04: 0.0027
-    TPR at FPR 1.0e-03: 0.0111
-    TPR at FPR 1.0e-02: 0.0587
+    TPR at FPR 1.0e-03: 0.0114
+    TPR at FPR 1.0e-02: 0.0579
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6609
-    TPR at FPR 1.0e-04: 0.0045
-    TPR at FPR 1.0e-03: 0.0134
-    TPR at FPR 1.0e-02: 0.0593
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6587
-    TPR at FPR 1.0e-04: 0.0029
-    TPR at FPR 1.0e-03: 0.0117
-    TPR at FPR 1.0e-02: 0.0593
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6551
-    TPR at FPR 1.0e-04: 0.0043
-    TPR at FPR 1.0e-03: 0.0115
-    TPR at FPR 1.0e-02: 0.0519
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6530
-    TPR at FPR 1.0e-04: 0.0021
-    TPR at FPR 1.0e-03: 0.0106
-    TPR at FPR 1.0e-02: 0.0519
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6628
-    TPR at FPR 1.0e-04: 0.0018
-    TPR at FPR 1.0e-03: 0.0084
-    TPR at FPR 1.0e-02: 0.0557
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6545
-    TPR at FPR 1.0e-04: 0.0064
-    TPR at FPR 1.0e-03: 0.0174
-    TPR at FPR 1.0e-02: 0.0722
+Processing signal file: sneaky5000R05 (indices 1488072:1499819)
+  sneaky5000R05 - LOSS AUC: 0.6595
+    TPR at FPR 1.0e-04: 0.0036
+    TPR at FPR 1.0e-03: 0.0116
+    TPR at FPR 1.0e-02: 0.0581
 Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6706
-    TPR at FPR 1.0e-04: 0.0063
-    TPR at FPR 1.0e-03: 0.0259
-    TPR at FPR 1.0e-02: 0.0919
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6638
-    TPR at FPR 1.0e-04: 0.0042
-    TPR at FPR 1.0e-03: 0.0187
-    TPR at FPR 1.0e-02: 0.0725
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6610
-    TPR at FPR 1.0e-04: 0.0045
-    TPR at FPR 1.0e-03: 0.0165
-    TPR at FPR 1.0e-02: 0.0754
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6585
-    TPR at FPR 1.0e-04: 0.0031
-    TPR at FPR 1.0e-03: 0.0165
-    TPR at FPR 1.0e-02: 0.0695
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6564
-    TPR at FPR 1.0e-04: 0.0074
-    TPR at FPR 1.0e-03: 0.0286
-    TPR at FPR 1.0e-02: 0.0918
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6647
-    TPR at FPR 1.0e-04: 0.0061
-    TPR at FPR 1.0e-03: 0.0229
-    TPR at FPR 1.0e-02: 0.0807
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6593
-    TPR at FPR 1.0e-04: 0.0029
-    TPR at FPR 1.0e-03: 0.0171
-    TPR at FPR 1.0e-02: 0.0707
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6643
-    TPR at FPR 1.0e-04: 0.0062
-    TPR at FPR 1.0e-03: 0.0223
-    TPR at FPR 1.0e-02: 0.0816
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6682
-    TPR at FPR 1.0e-04: 0.0069
-    TPR at FPR 1.0e-03: 0.0278
-    TPR at FPR 1.0e-02: 0.0876
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6646
-    TPR at FPR 1.0e-04: 0.0062
-    TPR at FPR 1.0e-03: 0.0249
-    TPR at FPR 1.0e-02: 0.0861
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6605
-    TPR at FPR 1.0e-04: 0.0056
-    TPR at FPR 1.0e-03: 0.0184
-    TPR at FPR 1.0e-02: 0.0738
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6605
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0185
-    TPR at FPR 1.0e-02: 0.0733
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6642
-    TPR at FPR 1.0e-04: 0.0029
-    TPR at FPR 1.0e-03: 0.0162
-    TPR at FPR 1.0e-02: 0.0753
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6612
-    TPR at FPR 1.0e-04: 0.0102
-    TPR at FPR 1.0e-03: 0.0341
-    TPR at FPR 1.0e-02: 0.1057
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6858
-    TPR at FPR 1.0e-04: 0.0030
-    TPR at FPR 1.0e-03: 0.0172
-    TPR at FPR 1.0e-02: 0.0784
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6755
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0118
-    TPR at FPR 1.0e-02: 0.0639
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6691
-    TPR at FPR 1.0e-04: 0.0013
-    TPR at FPR 1.0e-03: 0.0096
-    TPR at FPR 1.0e-02: 0.0587
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6696
-    TPR at FPR 1.0e-04: 0.0012
-    TPR at FPR 1.0e-03: 0.0099
-    TPR at FPR 1.0e-02: 0.0601
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6829
-    TPR at FPR 1.0e-04: 0.0042
-    TPR at FPR 1.0e-03: 0.0221
-    TPR at FPR 1.0e-02: 0.0853
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6833
-    TPR at FPR 1.0e-04: 0.0044
-    TPR at FPR 1.0e-03: 0.0178
-    TPR at FPR 1.0e-02: 0.0751
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6760
-    TPR at FPR 1.0e-04: 0.0015
-    TPR at FPR 1.0e-03: 0.0128
-    TPR at FPR 1.0e-02: 0.0648
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6851
-    TPR at FPR 1.0e-04: 0.0028
-    TPR at FPR 1.0e-03: 0.0144
-    TPR at FPR 1.0e-02: 0.0744
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6849
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0143
-    TPR at FPR 1.0e-02: 0.0755
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6830
-    TPR at FPR 1.0e-04: 0.0034
-    TPR at FPR 1.0e-03: 0.0167
-    TPR at FPR 1.0e-02: 0.0756
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6752
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0138
-    TPR at FPR 1.0e-02: 0.0646
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6705
-    TPR at FPR 1.0e-04: 0.0022
-    TPR at FPR 1.0e-03: 0.0122
-    TPR at FPR 1.0e-02: 0.0631
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6817
-    TPR at FPR 1.0e-04: 0.0020
-    TPR at FPR 1.0e-03: 0.0111
-    TPR at FPR 1.0e-02: 0.0662
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6890
-    TPR at FPR 1.0e-04: 0.0047
-    TPR at FPR 1.0e-03: 0.0222
-    TPR at FPR 1.0e-02: 0.0976
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6898
-    TPR at FPR 1.0e-04: 0.0046
-    TPR at FPR 1.0e-03: 0.0107
-    TPR at FPR 1.0e-02: 0.0413
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6515
-    TPR at FPR 1.0e-04: 0.0019
-    TPR at FPR 1.0e-03: 0.0061
-    TPR at FPR 1.0e-02: 0.0296
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6474
-    TPR at FPR 1.0e-04: 0.0024
-    TPR at FPR 1.0e-03: 0.0081
-    TPR at FPR 1.0e-02: 0.0328
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6500
-    TPR at FPR 1.0e-04: 0.0025
-    TPR at FPR 1.0e-03: 0.0070
-    TPR at FPR 1.0e-02: 0.0307
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.7251
-    TPR at FPR 1.0e-04: 0.0034
-    TPR at FPR 1.0e-03: 0.0106
-    TPR at FPR 1.0e-02: 0.0502
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6927
-    TPR at FPR 1.0e-04: 0.0025
-    TPR at FPR 1.0e-03: 0.0094
-    TPR at FPR 1.0e-02: 0.0407
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6667
-    TPR at FPR 1.0e-04: 0.0016
-    TPR at FPR 1.0e-03: 0.0056
-    TPR at FPR 1.0e-02: 0.0313
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6934
-    TPR at FPR 1.0e-04: 0.0039
-    TPR at FPR 1.0e-03: 0.0082
-    TPR at FPR 1.0e-02: 0.0380
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6924
-    TPR at FPR 1.0e-04: 0.0032
-    TPR at FPR 1.0e-03: 0.0089
-    TPR at FPR 1.0e-02: 0.0409
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6900
-    TPR at FPR 1.0e-04: 0.0030
-    TPR at FPR 1.0e-03: 0.0083
-    TPR at FPR 1.0e-02: 0.0405
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6630
-    TPR at FPR 1.0e-04: 0.0029
-    TPR at FPR 1.0e-03: 0.0088
-    TPR at FPR 1.0e-02: 0.0367
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6482
-    TPR at FPR 1.0e-04: 0.0022
-    TPR at FPR 1.0e-03: 0.0061
-    TPR at FPR 1.0e-02: 0.0332
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6731
-    TPR at FPR 1.0e-04: 0.0024
-    TPR at FPR 1.0e-03: 0.0062
-    TPR at FPR 1.0e-02: 0.0330
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.7343
-    TPR at FPR 1.0e-04: 0.0054
-    TPR at FPR 1.0e-03: 0.0135
-    TPR at FPR 1.0e-02: 0.0583
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/csf_results/dvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.7189
-    TPR at FPR 1.0e-04: 0.0051
-    TPR at FPR 1.0e-03: 0.0244
-    TPR at FPR 1.0e-02: 0.1345
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6840
-    TPR at FPR 1.0e-04: 0.0035
-    TPR at FPR 1.0e-03: 0.0165
-    TPR at FPR 1.0e-02: 0.1016
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6796
-    TPR at FPR 1.0e-04: 0.0026
-    TPR at FPR 1.0e-03: 0.0143
-    TPR at FPR 1.0e-02: 0.0998
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6768
-    TPR at FPR 1.0e-04: 0.0034
-    TPR at FPR 1.0e-03: 0.0157
-    TPR at FPR 1.0e-02: 0.0989
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.7455
-    TPR at FPR 1.0e-04: 0.0061
-    TPR at FPR 1.0e-03: 0.0283
-    TPR at FPR 1.0e-02: 0.1618
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.7176
-    TPR at FPR 1.0e-04: 0.0044
-    TPR at FPR 1.0e-03: 0.0189
-    TPR at FPR 1.0e-02: 0.1240
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6926
+Processing signal file: sneaky4000R025 (indices 1499819:1514861)
+  sneaky4000R025 - LOSS AUC: 0.6606
     TPR at FPR 1.0e-04: 0.0041
-    TPR at FPR 1.0e-03: 0.0147
-    TPR at FPR 1.0e-02: 0.1036
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.7204
+    TPR at FPR 1.0e-03: 0.0134
+    TPR at FPR 1.0e-02: 0.0605
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky4000R025.pdf
+Processing signal file: sneaky5000R075 (indices 1514861:1521801)
+  sneaky5000R075 - LOSS AUC: 0.6527
     TPR at FPR 1.0e-04: 0.0030
-    TPR at FPR 1.0e-03: 0.0191
-    TPR at FPR 1.0e-02: 0.1250
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.7213
-    TPR at FPR 1.0e-04: 0.0039
-    TPR at FPR 1.0e-03: 0.0212
-    TPR at FPR 1.0e-02: 0.1282
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.7192
-    TPR at FPR 1.0e-04: 0.0049
-    TPR at FPR 1.0e-03: 0.0214
-    TPR at FPR 1.0e-02: 0.1301
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6935
-    TPR at FPR 1.0e-04: 0.0038
-    TPR at FPR 1.0e-03: 0.0180
-    TPR at FPR 1.0e-02: 0.1049
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6793
-    TPR at FPR 1.0e-04: 0.0028
-    TPR at FPR 1.0e-03: 0.0148
-    TPR at FPR 1.0e-02: 0.1009
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6995
-    TPR at FPR 1.0e-04: 0.0030
-    TPR at FPR 1.0e-03: 0.0132
-    TPR at FPR 1.0e-02: 0.1050
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.7558
-    TPR at FPR 1.0e-04: 0.0077
-    TPR at FPR 1.0e-03: 0.0344
-    TPR at FPR 1.0e-02: 0.1788
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_sc/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.7204
-    TPR at FPR 1.0e-04: 0.0100
-    TPR at FPR 1.0e-03: 0.0401
-    TPR at FPR 1.0e-02: 0.1188
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.7032
-    TPR at FPR 1.0e-04: 0.0060
-    TPR at FPR 1.0e-03: 0.0269
-    TPR at FPR 1.0e-02: 0.0918
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6966
-    TPR at FPR 1.0e-04: 0.0062
-    TPR at FPR 1.0e-03: 0.0279
-    TPR at FPR 1.0e-02: 0.0938
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6968
-    TPR at FPR 1.0e-04: 0.0057
-    TPR at FPR 1.0e-03: 0.0265
-    TPR at FPR 1.0e-02: 0.0923
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.7281
-    TPR at FPR 1.0e-04: 0.0137
-    TPR at FPR 1.0e-03: 0.0505
-    TPR at FPR 1.0e-02: 0.1402
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.7176
-    TPR at FPR 1.0e-04: 0.0100
-    TPR at FPR 1.0e-03: 0.0362
-    TPR at FPR 1.0e-02: 0.1137
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.7076
-    TPR at FPR 1.0e-04: 0.0067
-    TPR at FPR 1.0e-03: 0.0278
-    TPR at FPR 1.0e-02: 0.0985
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.7209
-    TPR at FPR 1.0e-04: 0.0084
-    TPR at FPR 1.0e-03: 0.0373
-    TPR at FPR 1.0e-02: 0.1130
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.7220
-    TPR at FPR 1.0e-04: 0.0108
-    TPR at FPR 1.0e-03: 0.0421
-    TPR at FPR 1.0e-02: 0.1198
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.7204
-    TPR at FPR 1.0e-04: 0.0083
-    TPR at FPR 1.0e-03: 0.0394
-    TPR at FPR 1.0e-02: 0.1154
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.7056
-    TPR at FPR 1.0e-04: 0.0080
-    TPR at FPR 1.0e-03: 0.0329
-    TPR at FPR 1.0e-02: 0.0967
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6990
-    TPR at FPR 1.0e-04: 0.0078
-    TPR at FPR 1.0e-03: 0.0313
-    TPR at FPR 1.0e-02: 0.0929
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.7147
-    TPR at FPR 1.0e-04: 0.0057
-    TPR at FPR 1.0e-03: 0.0290
-    TPR at FPR 1.0e-02: 0.1027
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.7321
-    TPR at FPR 1.0e-04: 0.0158
-    TPR at FPR 1.0e-03: 0.0567
-    TPR at FPR 1.0e-02: 0.1515
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house_sc_anneal/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6400
-    TPR at FPR 1.0e-04: 0.0050
-    TPR at FPR 1.0e-03: 0.0195
-    TPR at FPR 1.0e-02: 0.0777
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.5922
-    TPR at FPR 1.0e-04: 0.0030
-    TPR at FPR 1.0e-03: 0.0149
-    TPR at FPR 1.0e-02: 0.0574
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.5877
-    TPR at FPR 1.0e-04: 0.0013
-    TPR at FPR 1.0e-03: 0.0113
-    TPR at FPR 1.0e-02: 0.0561
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.5855
-    TPR at FPR 1.0e-04: 0.0029
-    TPR at FPR 1.0e-03: 0.0129
-    TPR at FPR 1.0e-02: 0.0563
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6869
-    TPR at FPR 1.0e-04: 0.0058
-    TPR at FPR 1.0e-03: 0.0279
-    TPR at FPR 1.0e-02: 0.1094
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6426
-    TPR at FPR 1.0e-04: 0.0033
-    TPR at FPR 1.0e-03: 0.0191
-    TPR at FPR 1.0e-02: 0.0770
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6078
-    TPR at FPR 1.0e-04: 0.0028
-    TPR at FPR 1.0e-03: 0.0149
-    TPR at FPR 1.0e-02: 0.0618
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6465
-    TPR at FPR 1.0e-04: 0.0037
-    TPR at FPR 1.0e-03: 0.0193
-    TPR at FPR 1.0e-02: 0.0775
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6476
-    TPR at FPR 1.0e-04: 0.0035
-    TPR at FPR 1.0e-03: 0.0188
-    TPR at FPR 1.0e-02: 0.0767
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6442
-    TPR at FPR 1.0e-04: 0.0036
-    TPR at FPR 1.0e-03: 0.0185
-    TPR at FPR 1.0e-02: 0.0801
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6068
-    TPR at FPR 1.0e-04: 0.0033
-    TPR at FPR 1.0e-03: 0.0141
-    TPR at FPR 1.0e-02: 0.0643
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.5919
-    TPR at FPR 1.0e-04: 0.0028
-    TPR at FPR 1.0e-03: 0.0121
-    TPR at FPR 1.0e-02: 0.0519
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6139
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0152
-    TPR at FPR 1.0e-02: 0.0645
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6977
-    TPR at FPR 1.0e-04: 0.0059
-    TPR at FPR 1.0e-03: 0.0298
-    TPR at FPR 1.0e-02: 0.1145
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/2class/hp_convvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6329
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0194
-    TPR at FPR 1.0e-02: 0.0767
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.5886
-    TPR at FPR 1.0e-04: 0.0032
-    TPR at FPR 1.0e-03: 0.0137
-    TPR at FPR 1.0e-02: 0.0556
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.5846
-    TPR at FPR 1.0e-04: 0.0017
-    TPR at FPR 1.0e-03: 0.0116
-    TPR at FPR 1.0e-02: 0.0559
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.5825
-    TPR at FPR 1.0e-04: 0.0026
-    TPR at FPR 1.0e-03: 0.0131
-    TPR at FPR 1.0e-02: 0.0552
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6774
-    TPR at FPR 1.0e-04: 0.0069
-    TPR at FPR 1.0e-03: 0.0304
-    TPR at FPR 1.0e-02: 0.1070
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6352
-    TPR at FPR 1.0e-04: 0.0035
-    TPR at FPR 1.0e-03: 0.0184
-    TPR at FPR 1.0e-02: 0.0734
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6023
-    TPR at FPR 1.0e-04: 0.0025
-    TPR at FPR 1.0e-03: 0.0140
-    TPR at FPR 1.0e-02: 0.0596
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6397
-    TPR at FPR 1.0e-04: 0.0048
-    TPR at FPR 1.0e-03: 0.0195
-    TPR at FPR 1.0e-02: 0.0760
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6420
-    TPR at FPR 1.0e-04: 0.0038
-    TPR at FPR 1.0e-03: 0.0203
-    TPR at FPR 1.0e-02: 0.0782
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6384
-    TPR at FPR 1.0e-04: 0.0032
-    TPR at FPR 1.0e-03: 0.0196
-    TPR at FPR 1.0e-02: 0.0757
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6041
-    TPR at FPR 1.0e-04: 0.0037
-    TPR at FPR 1.0e-03: 0.0167
-    TPR at FPR 1.0e-02: 0.0637
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.5895
-    TPR at FPR 1.0e-04: 0.0033
-    TPR at FPR 1.0e-03: 0.0131
-    TPR at FPR 1.0e-02: 0.0540
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6087
-    TPR at FPR 1.0e-04: 0.0027
-    TPR at FPR 1.0e-03: 0.0147
-    TPR at FPR 1.0e-02: 0.0622
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6880
-    TPR at FPR 1.0e-04: 0.0075
-    TPR at FPR 1.0e-03: 0.0303
-    TPR at FPR 1.0e-02: 0.1114
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/2class/hs_convvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6231
-    TPR at FPR 1.0e-04: 0.0046
-    TPR at FPR 1.0e-03: 0.0177
-    TPR at FPR 1.0e-02: 0.0688
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.5787
-    TPR at FPR 1.0e-04: 0.0029
-    TPR at FPR 1.0e-03: 0.0111
-    TPR at FPR 1.0e-02: 0.0505
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.5744
-    TPR at FPR 1.0e-04: 0.0024
-    TPR at FPR 1.0e-03: 0.0126
-    TPR at FPR 1.0e-02: 0.0495
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.5722
-    TPR at FPR 1.0e-04: 0.0028
-    TPR at FPR 1.0e-03: 0.0128
-    TPR at FPR 1.0e-02: 0.0489
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6678
-    TPR at FPR 1.0e-04: 0.0067
-    TPR at FPR 1.0e-03: 0.0259
-    TPR at FPR 1.0e-02: 0.0956
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6257
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0178
-    TPR at FPR 1.0e-02: 0.0675
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.5922
-    TPR at FPR 1.0e-04: 0.0027
-    TPR at FPR 1.0e-03: 0.0143
-    TPR at FPR 1.0e-02: 0.0526
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6294
-    TPR at FPR 1.0e-04: 0.0041
-    TPR at FPR 1.0e-03: 0.0165
-    TPR at FPR 1.0e-02: 0.0668
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6313
-    TPR at FPR 1.0e-04: 0.0044
-    TPR at FPR 1.0e-03: 0.0205
-    TPR at FPR 1.0e-02: 0.0719
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6280
-    TPR at FPR 1.0e-04: 0.0043
-    TPR at FPR 1.0e-03: 0.0169
-    TPR at FPR 1.0e-02: 0.0688
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.5933
-    TPR at FPR 1.0e-04: 0.0033
-    TPR at FPR 1.0e-03: 0.0132
-    TPR at FPR 1.0e-02: 0.0554
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.5789
-    TPR at FPR 1.0e-04: 0.0028
-    TPR at FPR 1.0e-03: 0.0116
-    TPR at FPR 1.0e-02: 0.0507
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.5980
-    TPR at FPR 1.0e-04: 0.0022
-    TPR at FPR 1.0e-03: 0.0129
-    TPR at FPR 1.0e-02: 0.0577
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6794
-    TPR at FPR 1.0e-04: 0.0067
-    TPR at FPR 1.0e-03: 0.0273
-    TPR at FPR 1.0e-02: 0.1035
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/2class/ps_convvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.7571
-    TPR at FPR 1.0e-04: 0.0081
-    TPR at FPR 1.0e-03: 0.0464
-    TPR at FPR 1.0e-02: 0.1920
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.7169
-    TPR at FPR 1.0e-04: 0.0049
-    TPR at FPR 1.0e-03: 0.0293
-    TPR at FPR 1.0e-02: 0.1476
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.7103
-    TPR at FPR 1.0e-04: 0.0043
-    TPR at FPR 1.0e-03: 0.0313
-    TPR at FPR 1.0e-02: 0.1481
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.7082
-    TPR at FPR 1.0e-04: 0.0054
-    TPR at FPR 1.0e-03: 0.0305
-    TPR at FPR 1.0e-02: 0.1416
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.7978
-    TPR at FPR 1.0e-04: 0.0106
-    TPR at FPR 1.0e-03: 0.0650
-    TPR at FPR 1.0e-02: 0.2506
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.7577
-    TPR at FPR 1.0e-04: 0.0063
-    TPR at FPR 1.0e-03: 0.0456
-    TPR at FPR 1.0e-02: 0.1901
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.7307
-    TPR at FPR 1.0e-04: 0.0056
-    TPR at FPR 1.0e-03: 0.0322
-    TPR at FPR 1.0e-02: 0.1582
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.7646
-    TPR at FPR 1.0e-04: 0.0085
-    TPR at FPR 1.0e-03: 0.0441
-    TPR at FPR 1.0e-02: 0.1967
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.7619
-    TPR at FPR 1.0e-04: 0.0068
-    TPR at FPR 1.0e-03: 0.0453
-    TPR at FPR 1.0e-02: 0.1965
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.7614
-    TPR at FPR 1.0e-04: 0.0075
-    TPR at FPR 1.0e-03: 0.0438
-    TPR at FPR 1.0e-02: 0.1953
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.7267
-    TPR at FPR 1.0e-04: 0.0054
-    TPR at FPR 1.0e-03: 0.0327
-    TPR at FPR 1.0e-02: 0.1589
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.7101
-    TPR at FPR 1.0e-04: 0.0048
-    TPR at FPR 1.0e-03: 0.0292
-    TPR at FPR 1.0e-02: 0.1476
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.7371
-    TPR at FPR 1.0e-04: 0.0044
-    TPR at FPR 1.0e-03: 0.0329
-    TPR at FPR 1.0e-02: 0.1594
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.8081
-    TPR at FPR 1.0e-04: 0.0128
-    TPR at FPR 1.0e-03: 0.0705
-    TPR at FPR 1.0e-02: 0.2697
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/2class/hp_sc_convvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6063
-    TPR at FPR 1.0e-04: 0.0012
-    TPR at FPR 1.0e-03: 0.0078
-    TPR at FPR 1.0e-02: 0.0422
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.5615
-    TPR at FPR 1.0e-04: 0.0009
-    TPR at FPR 1.0e-03: 0.0063
-    TPR at FPR 1.0e-02: 0.0303
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.5543
-    TPR at FPR 1.0e-04: 0.0008
-    TPR at FPR 1.0e-03: 0.0049
-    TPR at FPR 1.0e-02: 0.0281
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.5538
-    TPR at FPR 1.0e-04: 0.0010
-    TPR at FPR 1.0e-03: 0.0056
-    TPR at FPR 1.0e-02: 0.0317
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6480
-    TPR at FPR 1.0e-04: 0.0021
-    TPR at FPR 1.0e-03: 0.0116
-    TPR at FPR 1.0e-02: 0.0600
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6077
-    TPR at FPR 1.0e-04: 0.0010
-    TPR at FPR 1.0e-03: 0.0086
-    TPR at FPR 1.0e-02: 0.0408
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.5766
-    TPR at FPR 1.0e-04: 0.0007
-    TPR at FPR 1.0e-03: 0.0066
-    TPR at FPR 1.0e-02: 0.0333
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6137
-    TPR at FPR 1.0e-04: 0.0011
-    TPR at FPR 1.0e-03: 0.0085
-    TPR at FPR 1.0e-02: 0.0462
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6130
-    TPR at FPR 1.0e-04: 0.0015
-    TPR at FPR 1.0e-03: 0.0072
-    TPR at FPR 1.0e-02: 0.0394
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6123
-    TPR at FPR 1.0e-04: 0.0009
-    TPR at FPR 1.0e-03: 0.0067
-    TPR at FPR 1.0e-02: 0.0431
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.5747
-    TPR at FPR 1.0e-04: 0.0014
-    TPR at FPR 1.0e-03: 0.0073
-    TPR at FPR 1.0e-02: 0.0340
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.5584
-    TPR at FPR 1.0e-04: 0.0007
-    TPR at FPR 1.0e-03: 0.0061
-    TPR at FPR 1.0e-02: 0.0291
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.5833
-    TPR at FPR 1.0e-04: 0.0011
-    TPR at FPR 1.0e-03: 0.0062
-    TPR at FPR 1.0e-02: 0.0355
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6575
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0129
-    TPR at FPR 1.0e-02: 0.0619
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/2class/hs_sc_convvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6833
-    TPR at FPR 1.0e-04: 0.0039
-    TPR at FPR 1.0e-03: 0.0144
-    TPR at FPR 1.0e-02: 0.0697
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6337
-    TPR at FPR 1.0e-04: 0.0022
     TPR at FPR 1.0e-03: 0.0098
-    TPR at FPR 1.0e-02: 0.0488
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6286
-    TPR at FPR 1.0e-04: 0.0021
-    TPR at FPR 1.0e-03: 0.0086
+    TPR at FPR 1.0e-02: 0.0491
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky5000R075.pdf
+Processing signal file: sneaky1000R025 (indices 1521801:1533598)
+  sneaky1000R025 - LOSS AUC: 0.6546
+    TPR at FPR 1.0e-04: 0.0019
+    TPR at FPR 1.0e-03: 0.0093
     TPR at FPR 1.0e-02: 0.0501
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6246
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0095
-    TPR at FPR 1.0e-02: 0.0465
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.7311
-    TPR at FPR 1.0e-04: 0.0048
-    TPR at FPR 1.0e-03: 0.0227
-    TPR at FPR 1.0e-02: 0.0979
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6824
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0153
-    TPR at FPR 1.0e-02: 0.0703
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6521
-    TPR at FPR 1.0e-04: 0.0020
-    TPR at FPR 1.0e-03: 0.0105
-    TPR at FPR 1.0e-02: 0.0527
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6920
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0145
-    TPR at FPR 1.0e-02: 0.0677
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6879
-    TPR at FPR 1.0e-04: 0.0027
-    TPR at FPR 1.0e-03: 0.0129
-    TPR at FPR 1.0e-02: 0.0688
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6862
-    TPR at FPR 1.0e-04: 0.0035
-    TPR at FPR 1.0e-03: 0.0141
-    TPR at FPR 1.0e-02: 0.0685
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6477
-    TPR at FPR 1.0e-04: 0.0033
-    TPR at FPR 1.0e-03: 0.0131
-    TPR at FPR 1.0e-02: 0.0556
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6293
-    TPR at FPR 1.0e-04: 0.0013
-    TPR at FPR 1.0e-03: 0.0081
-    TPR at FPR 1.0e-02: 0.0507
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6600
-    TPR at FPR 1.0e-04: 0.0020
-    TPR at FPR 1.0e-03: 0.0112
-    TPR at FPR 1.0e-02: 0.0566
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.7403
-    TPR at FPR 1.0e-04: 0.0064
-    TPR at FPR 1.0e-03: 0.0246
-    TPR at FPR 1.0e-02: 0.1031
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/2class/ps_sc_convvae/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6679
-    TPR at FPR 1.0e-04: 0.0064
-    TPR at FPR 1.0e-03: 0.0263
-    TPR at FPR 1.0e-02: 0.0939
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6163
-    TPR at FPR 1.0e-04: 0.0050
-    TPR at FPR 1.0e-03: 0.0179
-    TPR at FPR 1.0e-02: 0.0720
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.6116
-    TPR at FPR 1.0e-04: 0.0024
-    TPR at FPR 1.0e-03: 0.0158
-    TPR at FPR 1.0e-02: 0.0673
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.6089
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0173
-    TPR at FPR 1.0e-02: 0.0679
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.7200
-    TPR at FPR 1.0e-04: 0.0075
-    TPR at FPR 1.0e-03: 0.0365
-    TPR at FPR 1.0e-02: 0.1310
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6710
-    TPR at FPR 1.0e-04: 0.0041
-    TPR at FPR 1.0e-03: 0.0255
-    TPR at FPR 1.0e-02: 0.0928
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6359
-    TPR at FPR 1.0e-04: 0.0036
-    TPR at FPR 1.0e-03: 0.0176
-    TPR at FPR 1.0e-02: 0.0758
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6780
-    TPR at FPR 1.0e-04: 0.0055
-    TPR at FPR 1.0e-03: 0.0246
-    TPR at FPR 1.0e-02: 0.0956
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6778
-    TPR at FPR 1.0e-04: 0.0057
-    TPR at FPR 1.0e-03: 0.0251
-    TPR at FPR 1.0e-02: 0.0985
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6734
-    TPR at FPR 1.0e-04: 0.0054
-    TPR at FPR 1.0e-03: 0.0253
-    TPR at FPR 1.0e-02: 0.0973
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6335
-    TPR at FPR 1.0e-04: 0.0051
-    TPR at FPR 1.0e-03: 0.0211
-    TPR at FPR 1.0e-02: 0.0774
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.6155
-    TPR at FPR 1.0e-04: 0.0039
-    TPR at FPR 1.0e-03: 0.0171
-    TPR at FPR 1.0e-02: 0.0668
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6423
-    TPR at FPR 1.0e-04: 0.0035
-    TPR at FPR 1.0e-03: 0.0189
-    TPR at FPR 1.0e-02: 0.0760
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.7309
-    TPR at FPR 1.0e-04: 0.0097
-    TPR at FPR 1.0e-03: 0.0390
-    TPR at FPR 1.0e-02: 0.1373
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_h/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6501
-    TPR at FPR 1.0e-04: 0.0051
-    TPR at FPR 1.0e-03: 0.0239
-    TPR at FPR 1.0e-02: 0.0907
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.6003
-    TPR at FPR 1.0e-04: 0.0032
-    TPR at FPR 1.0e-03: 0.0152
-    TPR at FPR 1.0e-02: 0.0664
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.5951
-    TPR at FPR 1.0e-04: 0.0024
-    TPR at FPR 1.0e-03: 0.0144
-    TPR at FPR 1.0e-02: 0.0673
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.5935
-    TPR at FPR 1.0e-04: 0.0031
-    TPR at FPR 1.0e-03: 0.0165
-    TPR at FPR 1.0e-02: 0.0666
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.7029
-    TPR at FPR 1.0e-04: 0.0090
-    TPR at FPR 1.0e-03: 0.0398
-    TPR at FPR 1.0e-02: 0.1306
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6544
-    TPR at FPR 1.0e-04: 0.0074
-    TPR at FPR 1.0e-03: 0.0281
-    TPR at FPR 1.0e-02: 0.0979
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.6187
-    TPR at FPR 1.0e-04: 0.0036
-    TPR at FPR 1.0e-03: 0.0178
-    TPR at FPR 1.0e-02: 0.0702
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6613
-    TPR at FPR 1.0e-04: 0.0052
-    TPR at FPR 1.0e-03: 0.0239
-    TPR at FPR 1.0e-02: 0.0972
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6601
-    TPR at FPR 1.0e-04: 0.0065
-    TPR at FPR 1.0e-03: 0.0257
-    TPR at FPR 1.0e-02: 0.0948
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6562
-    TPR at FPR 1.0e-04: 0.0052
-    TPR at FPR 1.0e-03: 0.0255
-    TPR at FPR 1.0e-02: 0.0935
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.6167
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0210
-    TPR at FPR 1.0e-02: 0.0759
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.5988
-    TPR at FPR 1.0e-04: 0.0049
-    TPR at FPR 1.0e-03: 0.0177
-    TPR at FPR 1.0e-02: 0.0626
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.6253
-    TPR at FPR 1.0e-04: 0.0040
-    TPR at FPR 1.0e-03: 0.0190
-    TPR at FPR 1.0e-02: 0.0755
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.7137
-    TPR at FPR 1.0e-04: 0.0098
-    TPR at FPR 1.0e-03: 0.0412
-    TPR at FPR 1.0e-02: 0.1373
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_p/output/plots/loss/roc_sneaky5000R075.pdf
-Plotting complete
-/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
-  from . import conversion, data_processing, diagnostics, helper, plotting
-Generating per-signal ROC plots...
-Found 15 signal files for per-signal ROC plotting
-Background test event count: 1407905
-  sneaky1000R025: 11858 events (indices 1407905:1419763)
-  sneaky1000R05: 8950 events (indices 1419763:1428713)
-  sneaky1000R075: 5333 events (indices 1428713:1434046)
-  sneaky2000R025: 13363 events (indices 1434046:1447409)
-  sneaky2000R05: 10076 events (indices 1447409:1457485)
-  sneaky2000R075: 6075 events (indices 1457485:1463560)
-  sneaky3000R025: 14806 events (indices 1463560:1478366)
-  sneaky3000R05: 11359 events (indices 1478366:1489725)
-  sneaky3000R075: 6647 events (indices 1489725:1496372)
-  sneaky4000R025: 15120 events (indices 1496372:1511492)
-  sneaky4000R05: 11702 events (indices 1511492:1523194)
-  sneaky4000R075: 6708 events (indices 1523194:1529902)
-  sneaky5000R025: 15396 events (indices 1529902:1545298)
-  sneaky5000R05: 11808 events (indices 1545298:1557106)
-  sneaky5000R075: 6976 events (indices 1557106:1564082)
-Processing signal file: sneaky1000R025 (indices 1407905:1419763)
-  sneaky1000R025 - LOSS AUC: 0.6047
-    TPR at FPR 1.0e-04: 0.0046
-    TPR at FPR 1.0e-03: 0.0220
-    TPR at FPR 1.0e-02: 0.0735
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky1000R025.pdf
-Processing signal file: sneaky1000R05 (indices 1419763:1428713)
-  sneaky1000R05 - LOSS AUC: 0.5594
-    TPR at FPR 1.0e-04: 0.0030
-    TPR at FPR 1.0e-03: 0.0146
-    TPR at FPR 1.0e-02: 0.0541
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky1000R05.pdf
-Processing signal file: sneaky1000R075 (indices 1428713:1434046)
-  sneaky1000R075 - LOSS AUC: 0.5581
-    TPR at FPR 1.0e-04: 0.0017
-    TPR at FPR 1.0e-03: 0.0135
-    TPR at FPR 1.0e-02: 0.0523
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky1000R075.pdf
-Processing signal file: sneaky2000R025 (indices 1434046:1447409)
-  sneaky2000R025 - LOSS AUC: 0.5545
-    TPR at FPR 1.0e-04: 0.0024
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky1000R025.pdf
+Processing signal file: sneaky1000R05 (indices 1533598:1542502)
+  sneaky1000R05 - LOSS AUC: 0.6632
+    TPR at FPR 1.0e-04: 0.0015
+    TPR at FPR 1.0e-03: 0.0077
+    TPR at FPR 1.0e-02: 0.0555
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky1000R05.pdf
+Processing signal file: sneaky2000R075 (indices 1542502:1548545)
+  sneaky2000R075 - LOSS AUC: 0.6561
+    TPR at FPR 1.0e-04: 0.0058
     TPR at FPR 1.0e-03: 0.0147
-    TPR at FPR 1.0e-02: 0.0528
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky2000R025.pdf
-Processing signal file: sneaky2000R05 (indices 1447409:1457485)
-  sneaky2000R05 - LOSS AUC: 0.6506
-    TPR at FPR 1.0e-04: 0.0069
-    TPR at FPR 1.0e-03: 0.0317
-    TPR at FPR 1.0e-02: 0.1047
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky2000R05.pdf
-Processing signal file: sneaky2000R075 (indices 1457485:1463560)
-  sneaky2000R075 - LOSS AUC: 0.6072
-    TPR at FPR 1.0e-04: 0.0044
-    TPR at FPR 1.0e-03: 0.0217
-    TPR at FPR 1.0e-02: 0.0733
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky2000R075.pdf
-Processing signal file: sneaky3000R025 (indices 1463560:1478366)
-  sneaky3000R025 - LOSS AUC: 0.5719
-    TPR at FPR 1.0e-04: 0.0031
-    TPR at FPR 1.0e-03: 0.0153
-    TPR at FPR 1.0e-02: 0.0582
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky3000R025.pdf
-Processing signal file: sneaky3000R05 (indices 1478366:1489725)
-  sneaky3000R05 - LOSS AUC: 0.6094
-    TPR at FPR 1.0e-04: 0.0036
-    TPR at FPR 1.0e-03: 0.0207
-    TPR at FPR 1.0e-02: 0.0724
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky3000R05.pdf
-Processing signal file: sneaky3000R075 (indices 1489725:1496372)
-  sneaky3000R075 - LOSS AUC: 0.6129
-    TPR at FPR 1.0e-04: 0.0035
-    TPR at FPR 1.0e-03: 0.0193
-    TPR at FPR 1.0e-02: 0.0749
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky3000R075.pdf
-Processing signal file: sneaky4000R025 (indices 1496372:1511492)
-  sneaky4000R025 - LOSS AUC: 0.6090
-    TPR at FPR 1.0e-04: 0.0037
-    TPR at FPR 1.0e-03: 0.0199
-    TPR at FPR 1.0e-02: 0.0732
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky4000R025.pdf
-Processing signal file: sneaky4000R05 (indices 1511492:1523194)
-  sneaky4000R05 - LOSS AUC: 0.5758
-    TPR at FPR 1.0e-04: 0.0031
-    TPR at FPR 1.0e-03: 0.0165
-    TPR at FPR 1.0e-02: 0.0606
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky4000R05.pdf
-Processing signal file: sneaky4000R075 (indices 1523194:1529902)
-  sneaky4000R075 - LOSS AUC: 0.5648
-    TPR at FPR 1.0e-04: 0.0034
-    TPR at FPR 1.0e-03: 0.0139
-    TPR at FPR 1.0e-02: 0.0514
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky4000R075.pdf
-Processing signal file: sneaky5000R025 (indices 1529902:1545298)
-  sneaky5000R025 - LOSS AUC: 0.5765
-    TPR at FPR 1.0e-04: 0.0023
-    TPR at FPR 1.0e-03: 0.0147
-    TPR at FPR 1.0e-02: 0.0593
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky5000R025.pdf
-Processing signal file: sneaky5000R05 (indices 1545298:1557106)
-  sneaky5000R05 - LOSS AUC: 0.6619
-    TPR at FPR 1.0e-04: 0.0082
-    TPR at FPR 1.0e-03: 0.0319
-    TPR at FPR 1.0e-02: 0.1141
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky5000R05.pdf
-Processing signal file: sneaky5000R075 (indices 1557106:1564082)
-Warning: Length mismatch for loss and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for reco and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Warning: Length mismatch for kl and sneaky5000R075, skipping
-  Data length: 1414081, Ground truth length: 1414881
-Saved per-signal ROC plot: bead/workspaces/1class/convvae_s/output/plots/loss/roc_sneaky5000R075.pdf
+    TPR at FPR 1.0e-02: 0.0707
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky2000R075.pdf
+Processing signal file: sneaky3000R025 (indices 1548545:1563275)
+  sneaky3000R025 - LOSS AUC: 0.6535
+    TPR at FPR 1.0e-04: 0.0058
+    TPR at FPR 1.0e-03: 0.0170
+    TPR at FPR 1.0e-02: 0.0699
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_planar/output/plots/loss/roc_sneaky3000R025.pdf
 Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Found 15 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  sneaky2000R05: 10076 events (indices 1407905:1417981)
+  sneaky1000R075: 5333 events (indices 1417981:1423314)
+  sneaky4000R05: 11702 events (indices 1423314:1435016)
+  sneaky4000R075: 6708 events (indices 1435016:1441724)
+  sneaky5000R025: 15396 events (indices 1441724:1457120)
+  sneaky2000R025: 13363 events (indices 1457120:1470483)
+  sneaky3000R075: 6647 events (indices 1470483:1477130)
+  sneaky3000R05: 11359 events (indices 1477130:1488489)
+  sneaky5000R05: 11808 events (indices 1488489:1500297)
+  sneaky4000R025: 15120 events (indices 1500297:1515417)
+  sneaky5000R075: 6976 events (indices 1515417:1522393)
+  sneaky1000R025: 11858 events (indices 1522393:1534251)
+  sneaky1000R05: 8950 events (indices 1534251:1543201)
+  sneaky2000R075: 6075 events (indices 1543201:1549276)
+  sneaky3000R025: 14806 events (indices 1549276:1564082)
+Processing signal file: sneaky2000R05 (indices 1407905:1417981)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky2000R05.pdf
+Processing signal file: sneaky1000R075 (indices 1417981:1423314)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky1000R075.pdf
+Processing signal file: sneaky4000R05 (indices 1423314:1435016)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky4000R05.pdf
+Processing signal file: sneaky4000R075 (indices 1435016:1441724)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky4000R075.pdf
+Processing signal file: sneaky5000R025 (indices 1441724:1457120)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky5000R025.pdf
+Processing signal file: sneaky2000R025 (indices 1457120:1470483)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky2000R025.pdf
+Processing signal file: sneaky3000R075 (indices 1470483:1477130)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky3000R075.pdf
+Processing signal file: sneaky3000R05 (indices 1477130:1488489)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky3000R05.pdf
+Processing signal file: sneaky5000R05 (indices 1488489:1500297)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky5000R05.pdf
+Processing signal file: sneaky4000R025 (indices 1500297:1515417)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky4000R025.pdf
+Processing signal file: sneaky5000R075 (indices 1515417:1522393)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky5000R075.pdf
+Processing signal file: sneaky1000R025 (indices 1522393:1534251)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky1000R025.pdf
+Processing signal file: sneaky1000R05 (indices 1534251:1543201)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky1000R05.pdf
+Processing signal file: sneaky2000R075 (indices 1543201:1549276)
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky2000R075.pdf
+Processing signal file: sneaky3000R025 (indices 1549276:1564082)
+Warning: Signal indices 1549276:1564082 exceed data length 1563282 for kl and sneaky3000R025, skipping
+Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plots/loss/roc_sneaky3000R025.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
