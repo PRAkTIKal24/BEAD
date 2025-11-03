@@ -1,0 +1,1053 @@
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4764
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0013
+    TPR at FPR 1.0e-02: 0.0110
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9284
+    TPR at FPR 1.0e-04: 0.0008
+    TPR at FPR 1.0e-03: 0.0464
+    TPR at FPR 1.0e-02: 0.3326
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6941
+    TPR at FPR 1.0e-04: 0.0004
+    TPR at FPR 1.0e-03: 0.0201
+    TPR at FPR 1.0e-02: 0.1508
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7372
+    TPR at FPR 1.0e-04: 0.0004
+    TPR at FPR 1.0e-03: 0.0279
+    TPR at FPR 1.0e-02: 0.2073
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9393
+    TPR at FPR 1.0e-04: 0.0007
+    TPR at FPR 1.0e-03: 0.0521
+    TPR at FPR 1.0e-02: 0.3762
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9430
+    TPR at FPR 1.0e-04: 0.0008
+    TPR at FPR 1.0e-03: 0.0513
+    TPR at FPR 1.0e-02: 0.3849
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7252
+    TPR at FPR 1.0e-04: 0.0004
+    TPR at FPR 1.0e-03: 0.0272
+    TPR at FPR 1.0e-02: 0.2067
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8392
+    TPR at FPR 1.0e-04: 0.0006
+    TPR at FPR 1.0e-03: 0.0258
+    TPR at FPR 1.0e-02: 0.2124
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4781
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0012
+    TPR at FPR 1.0e-02: 0.0106
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5643
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0017
+    TPR at FPR 1.0e-02: 0.0172
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.3814
+    TPR at FPR 1.0e-04: 0.0012
+    TPR at FPR 1.0e-03: 0.0032
+    TPR at FPR 1.0e-02: 0.0089
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9108
+    TPR at FPR 1.0e-04: 0.2453
+    TPR at FPR 1.0e-03: 0.4915
+    TPR at FPR 1.0e-02: 0.6695
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6547
+    TPR at FPR 1.0e-04: 0.0983
+    TPR at FPR 1.0e-03: 0.2100
+    TPR at FPR 1.0e-02: 0.3000
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7032
+    TPR at FPR 1.0e-04: 0.1727
+    TPR at FPR 1.0e-03: 0.3096
+    TPR at FPR 1.0e-02: 0.4000
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9275
+    TPR at FPR 1.0e-04: 0.3213
+    TPR at FPR 1.0e-03: 0.5751
+    TPR at FPR 1.0e-02: 0.7342
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9350
+    TPR at FPR 1.0e-04: 0.3531
+    TPR at FPR 1.0e-03: 0.6099
+    TPR at FPR 1.0e-02: 0.7623
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.6826
+    TPR at FPR 1.0e-04: 0.1856
+    TPR at FPR 1.0e-03: 0.3197
+    TPR at FPR 1.0e-02: 0.4034
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.7969
+    TPR at FPR 1.0e-04: 0.0960
+    TPR at FPR 1.0e-03: 0.2745
+    TPR at FPR 1.0e-02: 0.4469
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.3710
+    TPR at FPR 1.0e-04: 0.0004
+    TPR at FPR 1.0e-03: 0.0016
+    TPR at FPR 1.0e-02: 0.0068
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5121
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0017
+    TPR at FPR 1.0e-02: 0.0156
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_planar/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.3827
+    TPR at FPR 1.0e-04: 0.0009
+    TPR at FPR 1.0e-03: 0.0028
+    TPR at FPR 1.0e-02: 0.0088
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9039
+    TPR at FPR 1.0e-04: 0.1314
+    TPR at FPR 1.0e-03: 0.3391
+    TPR at FPR 1.0e-02: 0.5843
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6511
+    TPR at FPR 1.0e-04: 0.0515
+    TPR at FPR 1.0e-03: 0.1430
+    TPR at FPR 1.0e-02: 0.2601
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7012
+    TPR at FPR 1.0e-04: 0.0976
+    TPR at FPR 1.0e-03: 0.2249
+    TPR at FPR 1.0e-02: 0.3582
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9235
+    TPR at FPR 1.0e-04: 0.1799
+    TPR at FPR 1.0e-03: 0.4173
+    TPR at FPR 1.0e-02: 0.6571
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9313
+    TPR at FPR 1.0e-04: 0.2049
+    TPR at FPR 1.0e-03: 0.4541
+    TPR at FPR 1.0e-02: 0.6885
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.6810
+    TPR at FPR 1.0e-04: 0.1079
+    TPR at FPR 1.0e-03: 0.2391
+    TPR at FPR 1.0e-02: 0.3643
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.7858
+    TPR at FPR 1.0e-04: 0.0484
+    TPR at FPR 1.0e-03: 0.1763
+    TPR at FPR 1.0e-02: 0.3753
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.3723
+    TPR at FPR 1.0e-04: 0.0003
+    TPR at FPR 1.0e-03: 0.0016
+    TPR at FPR 1.0e-02: 0.0069
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5097
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0018
+    TPR at FPR 1.0e-02: 0.0147
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.3813
+    TPR at FPR 1.0e-04: 0.0010
+    TPR at FPR 1.0e-03: 0.0030
+    TPR at FPR 1.0e-02: 0.0086
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9292
+    TPR at FPR 1.0e-04: 0.1893
+    TPR at FPR 1.0e-03: 0.4437
+    TPR at FPR 1.0e-02: 0.6853
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6624
+    TPR at FPR 1.0e-04: 0.0764
+    TPR at FPR 1.0e-03: 0.1900
+    TPR at FPR 1.0e-02: 0.3080
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7106
+    TPR at FPR 1.0e-04: 0.1352
+    TPR at FPR 1.0e-03: 0.2816
+    TPR at FPR 1.0e-02: 0.4064
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9428
+    TPR at FPR 1.0e-04: 0.2513
+    TPR at FPR 1.0e-03: 0.5238
+    TPR at FPR 1.0e-02: 0.7467
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9488
+    TPR at FPR 1.0e-04: 0.2810
+    TPR at FPR 1.0e-03: 0.5609
+    TPR at FPR 1.0e-02: 0.7747
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.6894
+    TPR at FPR 1.0e-04: 0.1475
+    TPR at FPR 1.0e-03: 0.2940
+    TPR at FPR 1.0e-02: 0.4093
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8186
+    TPR at FPR 1.0e-04: 0.0761
+    TPR at FPR 1.0e-03: 0.2511
+    TPR at FPR 1.0e-02: 0.4687
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.3713
+    TPR at FPR 1.0e-04: 0.0004
+    TPR at FPR 1.0e-03: 0.0015
+    TPR at FPR 1.0e-02: 0.0063
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5110
+    TPR at FPR 1.0e-04: 0.0003
+    TPR at FPR 1.0e-03: 0.0020
+    TPR at FPR 1.0e-02: 0.0161
+Saved per-signal ROC plot: bead/workspaces/zprime/ntx_convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4314
+    TPR at FPR 1.0e-04: 0.0007
+    TPR at FPR 1.0e-03: 0.0044
+    TPR at FPR 1.0e-02: 0.0178
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9563
+    TPR at FPR 1.0e-04: 0.0180
+    TPR at FPR 1.0e-03: 0.2614
+    TPR at FPR 1.0e-02: 0.6356
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6873
+    TPR at FPR 1.0e-04: 0.0074
+    TPR at FPR 1.0e-03: 0.1091
+    TPR at FPR 1.0e-02: 0.2862
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7322
+    TPR at FPR 1.0e-04: 0.0128
+    TPR at FPR 1.0e-03: 0.1768
+    TPR at FPR 1.0e-02: 0.3810
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9639
+    TPR at FPR 1.0e-04: 0.0231
+    TPR at FPR 1.0e-03: 0.3273
+    TPR at FPR 1.0e-02: 0.6962
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9675
+    TPR at FPR 1.0e-04: 0.0235
+    TPR at FPR 1.0e-03: 0.3537
+    TPR at FPR 1.0e-02: 0.7239
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7167
+    TPR at FPR 1.0e-04: 0.0128
+    TPR at FPR 1.0e-03: 0.1861
+    TPR at FPR 1.0e-02: 0.3854
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8642
+    TPR at FPR 1.0e-04: 0.0066
+    TPR at FPR 1.0e-03: 0.1196
+    TPR at FPR 1.0e-02: 0.4236
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4337
+    TPR at FPR 1.0e-04: 0.0009
+    TPR at FPR 1.0e-03: 0.0041
+    TPR at FPR 1.0e-02: 0.0170
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5359
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0012
+    TPR at FPR 1.0e-02: 0.0139
+Saved per-signal ROC plot: bead/workspaces/zprime/dvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4201
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0021
+    TPR at FPR 1.0e-02: 0.0102
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9588
+    TPR at FPR 1.0e-04: 0.0093
+    TPR at FPR 1.0e-03: 0.2562
+    TPR at FPR 1.0e-02: 0.7483
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6946
+    TPR at FPR 1.0e-04: 0.0042
+    TPR at FPR 1.0e-03: 0.1067
+    TPR at FPR 1.0e-02: 0.3396
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7392
+    TPR at FPR 1.0e-04: 0.0062
+    TPR at FPR 1.0e-03: 0.1736
+    TPR at FPR 1.0e-02: 0.4358
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9668
+    TPR at FPR 1.0e-04: 0.0112
+    TPR at FPR 1.0e-03: 0.3208
+    TPR at FPR 1.0e-02: 0.8007
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9702
+    TPR at FPR 1.0e-04: 0.0114
+    TPR at FPR 1.0e-03: 0.3509
+    TPR at FPR 1.0e-02: 0.8225
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7181
+    TPR at FPR 1.0e-04: 0.0062
+    TPR at FPR 1.0e-03: 0.1850
+    TPR at FPR 1.0e-02: 0.4344
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8616
+    TPR at FPR 1.0e-04: 0.0051
+    TPR at FPR 1.0e-03: 0.1282
+    TPR at FPR 1.0e-02: 0.5417
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4148
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0012
+    TPR at FPR 1.0e-02: 0.0077
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5518
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0015
+    TPR at FPR 1.0e-02: 0.0169
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_sc/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.3762
+    TPR at FPR 1.0e-04: 0.0009
+    TPR at FPR 1.0e-03: 0.0026
+    TPR at FPR 1.0e-02: 0.0080
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9160
+    TPR at FPR 1.0e-04: 0.1707
+    TPR at FPR 1.0e-03: 0.3691
+    TPR at FPR 1.0e-02: 0.5825
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6560
+    TPR at FPR 1.0e-04: 0.0691
+    TPR at FPR 1.0e-03: 0.1579
+    TPR at FPR 1.0e-02: 0.2597
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7050
+    TPR at FPR 1.0e-04: 0.1216
+    TPR at FPR 1.0e-03: 0.2395
+    TPR at FPR 1.0e-02: 0.3544
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9325
+    TPR at FPR 1.0e-04: 0.2253
+    TPR at FPR 1.0e-03: 0.4469
+    TPR at FPR 1.0e-02: 0.6528
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9389
+    TPR at FPR 1.0e-04: 0.2475
+    TPR at FPR 1.0e-03: 0.4829
+    TPR at FPR 1.0e-02: 0.6852
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.6824
+    TPR at FPR 1.0e-04: 0.1304
+    TPR at FPR 1.0e-03: 0.2540
+    TPR at FPR 1.0e-02: 0.3626
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8035
+    TPR at FPR 1.0e-04: 0.0646
+    TPR at FPR 1.0e-03: 0.2048
+    TPR at FPR 1.0e-02: 0.3856
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.3673
+    TPR at FPR 1.0e-04: 0.0003
+    TPR at FPR 1.0e-03: 0.0012
+    TPR at FPR 1.0e-02: 0.0059
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5239
+    TPR at FPR 1.0e-04: 0.0004
+    TPR at FPR 1.0e-03: 0.0017
+    TPR at FPR 1.0e-02: 0.0140
+Saved per-signal ROC plot: bead/workspaces/zprime/convvae_house_sc_anneal/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4269
+    TPR at FPR 1.0e-04: 0.0005
+    TPR at FPR 1.0e-03: 0.0023
+    TPR at FPR 1.0e-02: 0.0100
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9556
+    TPR at FPR 1.0e-04: 0.0748
+    TPR at FPR 1.0e-03: 0.2660
+    TPR at FPR 1.0e-02: 0.7259
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6904
+    TPR at FPR 1.0e-04: 0.0296
+    TPR at FPR 1.0e-03: 0.1092
+    TPR at FPR 1.0e-02: 0.3280
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7358
+    TPR at FPR 1.0e-04: 0.0571
+    TPR at FPR 1.0e-03: 0.1861
+    TPR at FPR 1.0e-02: 0.4260
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9650
+    TPR at FPR 1.0e-04: 0.1056
+    TPR at FPR 1.0e-03: 0.3453
+    TPR at FPR 1.0e-02: 0.7829
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9692
+    TPR at FPR 1.0e-04: 0.1174
+    TPR at FPR 1.0e-03: 0.3830
+    TPR at FPR 1.0e-02: 0.8077
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7185
+    TPR at FPR 1.0e-04: 0.0618
+    TPR at FPR 1.0e-03: 0.2014
+    TPR at FPR 1.0e-02: 0.4268
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8584
+    TPR at FPR 1.0e-04: 0.0219
+    TPR at FPR 1.0e-03: 0.1184
+    TPR at FPR 1.0e-02: 0.5165
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4235
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0013
+    TPR at FPR 1.0e-02: 0.0084
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5391
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0015
+    TPR at FPR 1.0e-02: 0.0155
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4354
+    TPR at FPR 1.0e-04: 0.0004
+    TPR at FPR 1.0e-03: 0.0036
+    TPR at FPR 1.0e-02: 0.0175
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9550
+    TPR at FPR 1.0e-04: 0.0387
+    TPR at FPR 1.0e-03: 0.3080
+    TPR at FPR 1.0e-02: 0.7533
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6940
+    TPR at FPR 1.0e-04: 0.0157
+    TPR at FPR 1.0e-03: 0.1299
+    TPR at FPR 1.0e-02: 0.3451
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7392
+    TPR at FPR 1.0e-04: 0.0273
+    TPR at FPR 1.0e-03: 0.2046
+    TPR at FPR 1.0e-02: 0.4408
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9647
+    TPR at FPR 1.0e-04: 0.0509
+    TPR at FPR 1.0e-03: 0.3791
+    TPR at FPR 1.0e-02: 0.8052
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9689
+    TPR at FPR 1.0e-04: 0.0551
+    TPR at FPR 1.0e-03: 0.4103
+    TPR at FPR 1.0e-02: 0.8268
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7224
+    TPR at FPR 1.0e-04: 0.0289
+    TPR at FPR 1.0e-03: 0.2165
+    TPR at FPR 1.0e-02: 0.4403
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8574
+    TPR at FPR 1.0e-04: 0.0148
+    TPR at FPR 1.0e-03: 0.1591
+    TPR at FPR 1.0e-02: 0.5505
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4321
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0025
+    TPR at FPR 1.0e-02: 0.0156
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5428
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0023
+    TPR at FPR 1.0e-02: 0.0197
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4374
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0019
+    TPR at FPR 1.0e-02: 0.0098
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9500
+    TPR at FPR 1.0e-04: 0.0160
+    TPR at FPR 1.0e-03: 0.2196
+    TPR at FPR 1.0e-02: 0.6944
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6937
+    TPR at FPR 1.0e-04: 0.0065
+    TPR at FPR 1.0e-03: 0.0892
+    TPR at FPR 1.0e-02: 0.3136
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7388
+    TPR at FPR 1.0e-04: 0.0111
+    TPR at FPR 1.0e-03: 0.1566
+    TPR at FPR 1.0e-02: 0.4121
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9607
+    TPR at FPR 1.0e-04: 0.0222
+    TPR at FPR 1.0e-03: 0.2902
+    TPR at FPR 1.0e-02: 0.7564
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9655
+    TPR at FPR 1.0e-04: 0.0233
+    TPR at FPR 1.0e-03: 0.3217
+    TPR at FPR 1.0e-02: 0.7833
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7220
+    TPR at FPR 1.0e-04: 0.0120
+    TPR at FPR 1.0e-03: 0.1680
+    TPR at FPR 1.0e-02: 0.4145
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8523
+    TPR at FPR 1.0e-04: 0.0046
+    TPR at FPR 1.0e-03: 0.0879
+    TPR at FPR 1.0e-02: 0.4838
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4338
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0011
+    TPR at FPR 1.0e-02: 0.0080
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5486
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0012
+    TPR at FPR 1.0e-02: 0.0159
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4151
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0017
+    TPR at FPR 1.0e-02: 0.0075
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9572
+    TPR at FPR 1.0e-04: 0.0081
+    TPR at FPR 1.0e-03: 0.2346
+    TPR at FPR 1.0e-02: 0.7152
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6932
+    TPR at FPR 1.0e-04: 0.0038
+    TPR at FPR 1.0e-03: 0.0965
+    TPR at FPR 1.0e-02: 0.3233
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7372
+    TPR at FPR 1.0e-04: 0.0045
+    TPR at FPR 1.0e-03: 0.1584
+    TPR at FPR 1.0e-02: 0.4159
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9650
+    TPR at FPR 1.0e-04: 0.0084
+    TPR at FPR 1.0e-03: 0.2923
+    TPR at FPR 1.0e-02: 0.7673
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9686
+    TPR at FPR 1.0e-04: 0.0083
+    TPR at FPR 1.0e-03: 0.3199
+    TPR at FPR 1.0e-02: 0.7902
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7153
+    TPR at FPR 1.0e-04: 0.0044
+    TPR at FPR 1.0e-03: 0.1675
+    TPR at FPR 1.0e-02: 0.4165
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8624
+    TPR at FPR 1.0e-04: 0.0066
+    TPR at FPR 1.0e-03: 0.1176
+    TPR at FPR 1.0e-02: 0.5200
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4100
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0008
+    TPR at FPR 1.0e-02: 0.0054
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5604
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0011
+    TPR at FPR 1.0e-02: 0.0136
+Saved per-signal ROC plot: bead/workspaces/2classzp/hp_sc_convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4351
+    TPR at FPR 1.0e-04: 0.0005
+    TPR at FPR 1.0e-03: 0.0038
+    TPR at FPR 1.0e-02: 0.0151
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9475
+    TPR at FPR 1.0e-04: 0.0364
+    TPR at FPR 1.0e-03: 0.3005
+    TPR at FPR 1.0e-02: 0.7082
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6928
+    TPR at FPR 1.0e-04: 0.0144
+    TPR at FPR 1.0e-03: 0.1268
+    TPR at FPR 1.0e-02: 0.3224
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7381
+    TPR at FPR 1.0e-04: 0.0272
+    TPR at FPR 1.0e-03: 0.2029
+    TPR at FPR 1.0e-02: 0.4182
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9588
+    TPR at FPR 1.0e-04: 0.0501
+    TPR at FPR 1.0e-03: 0.3756
+    TPR at FPR 1.0e-02: 0.7648
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9638
+    TPR at FPR 1.0e-04: 0.0554
+    TPR at FPR 1.0e-03: 0.4115
+    TPR at FPR 1.0e-02: 0.7893
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7202
+    TPR at FPR 1.0e-04: 0.0292
+    TPR at FPR 1.0e-03: 0.2169
+    TPR at FPR 1.0e-02: 0.4206
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8462
+    TPR at FPR 1.0e-04: 0.0113
+    TPR at FPR 1.0e-03: 0.1494
+    TPR at FPR 1.0e-02: 0.5027
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4297
+    TPR at FPR 1.0e-04: 0.0003
+    TPR at FPR 1.0e-03: 0.0029
+    TPR at FPR 1.0e-02: 0.0133
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5499
+    TPR at FPR 1.0e-04: 0.0002
+    TPR at FPR 1.0e-03: 0.0026
+    TPR at FPR 1.0e-02: 0.0195
+Saved per-signal ROC plot: bead/workspaces/2classzp/hs_sc_convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (2446164) != actual signal events (2445254)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 3853159
+Background events: 1407905
+Available signal events: 2445254
+Found 10 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  zp_py8zp3000: 199924 events (indices 1407905:1607829)
+  zp_h7zp4000: 380620 events (indices 1607829:1988449)
+  zp_py8zp1000: 199924 events (indices 1988449:2188373)
+  zp_py8zp5000: 199924 events (indices 2188373:2388297)
+  zp_h7zp2000: 273244 events (indices 2388297:2661541)
+  zp_py8zp2000: 199924 events (indices 2661541:2861465)
+  zp_h7zp5000: 421130 events (indices 2861465:3282595)
+  zp_py8zp4000: 199924 events (indices 3282595:3482519)
+  zp_h7zp1000: 170711 events (indices 3482519:3653230)
+  zp_h7zp3000: 199924 events (indices 3653230:3853154)
+Processing signal file: zp_py8zp3000 (indices 1407905:1607829)
+  zp_py8zp3000 - LOSS AUC: 0.4305
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0018
+    TPR at FPR 1.0e-02: 0.0092
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_py8zp3000.pdf
+Processing signal file: zp_h7zp4000 (indices 1607829:1988449)
+  zp_h7zp4000 - LOSS AUC: 0.9458
+    TPR at FPR 1.0e-04: 0.0033
+    TPR at FPR 1.0e-03: 0.1988
+    TPR at FPR 1.0e-02: 0.6542
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_h7zp4000.pdf
+Processing signal file: zp_py8zp1000 (indices 1988449:2188373)
+  zp_py8zp1000 - LOSS AUC: 0.6912
+    TPR at FPR 1.0e-04: 0.0014
+    TPR at FPR 1.0e-03: 0.0814
+    TPR at FPR 1.0e-02: 0.2937
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_py8zp1000.pdf
+Processing signal file: zp_py8zp5000 (indices 2188373:2388297)
+  zp_py8zp5000 - LOSS AUC: 0.7366
+    TPR at FPR 1.0e-04: 0.0024
+    TPR at FPR 1.0e-03: 0.1385
+    TPR at FPR 1.0e-02: 0.3929
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_py8zp5000.pdf
+Processing signal file: zp_h7zp2000 (indices 2388297:2661541)
+  zp_h7zp2000 - LOSS AUC: 0.9576
+    TPR at FPR 1.0e-04: 0.0044
+    TPR at FPR 1.0e-03: 0.2559
+    TPR at FPR 1.0e-02: 0.7222
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_h7zp2000.pdf
+Processing signal file: zp_py8zp2000 (indices 2661541:2861465)
+  zp_py8zp2000 - LOSS AUC: 0.9623
+    TPR at FPR 1.0e-04: 0.0046
+    TPR at FPR 1.0e-03: 0.2841
+    TPR at FPR 1.0e-02: 0.7500
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_py8zp2000.pdf
+Processing signal file: zp_h7zp5000 (indices 2861465:3282595)
+  zp_h7zp5000 - LOSS AUC: 0.7184
+    TPR at FPR 1.0e-04: 0.0024
+    TPR at FPR 1.0e-03: 0.1496
+    TPR at FPR 1.0e-02: 0.3967
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_h7zp5000.pdf
+Processing signal file: zp_py8zp4000 (indices 3282595:3482519)
+  zp_py8zp4000 - LOSS AUC: 0.8455
+    TPR at FPR 1.0e-04: 0.0014
+    TPR at FPR 1.0e-03: 0.0850
+    TPR at FPR 1.0e-02: 0.4420
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_py8zp4000.pdf
+Processing signal file: zp_h7zp1000 (indices 3482519:3653230)
+  zp_h7zp1000 - LOSS AUC: 0.4252
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0010
+    TPR at FPR 1.0e-02: 0.0075
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_h7zp1000.pdf
+Processing signal file: zp_h7zp3000 (indices 3653230:3853154)
+  zp_h7zp3000 - LOSS AUC: 0.5564
+    TPR at FPR 1.0e-04: 0.0001
+    TPR at FPR 1.0e-03: 0.0013
+    TPR at FPR 1.0e-02: 0.0167
+Saved per-signal ROC plot: bead/workspaces/2classzp/ps_sc_convvae/output/plots/loss/roc_zp_h7zp3000.pdf
+Plotting complete
