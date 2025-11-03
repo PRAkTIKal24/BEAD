@@ -89,15 +89,17 @@ def extract_zprime_params(signal_name):
     Returns
     -------
     tuple
-        (mass, generator) or (None, None) if parsing fails
+        (mass, generator_code) or (None, None) if parsing fails
+        For compatibility with parameterized plots, generator_code is used as second parameter
     """
     match = re.match(r"(h7|py8)zp(\d+)", signal_name)
     if match:
         generator_code = match.group(1)
         mass = int(match.group(2))
-        # Convert generator code to readable name
-        generator = "herwig" if generator_code == "h7" else "pythia"
-        return mass, generator
+        # Return generator code as the second parameter for compatibility
+        # This allows zprime signals to be grouped by generator in parameterized plots
+        return mass, generator_code
+    return None, None
     return None, None
 
 
@@ -704,17 +706,19 @@ def create_parameterized_violin_plots(
         "convvae_house_sc_anneal": "pink",
     }
 
-    # Parameter extraction function
-    def extract_signal_params(signal_name):
+    # Parameter extraction function for violin plots
+    def extract_signal_params_violin(signal_name):
         """Extract parameters from signal name based on signal type."""
         signal_type = detect_signal_type(signal_name)
 
         if signal_type == "sneaky":
-            return extract_sneaky_params(signal_name)
+            mass, r_inv = extract_sneaky_params(signal_name)
+            return mass, r_inv, "sneaky"
         elif signal_type == "zprime":
-            return extract_zprime_params(signal_name)
+            mass, generator = extract_zprime_params(signal_name)
+            return mass, generator, "zprime"
 
-        return None, None
+        return None, None, "unknown"
 
     for workspace_name in parsed_data.keys():
         if verbose:
