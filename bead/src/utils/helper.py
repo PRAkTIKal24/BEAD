@@ -386,9 +386,9 @@ def get_signal_file_info_from_csv(csv_folder_path, keyword="sig_test"):
     """
     import csv
 
-    # Get all signal CSV files and sort them to ensure consistent ordering
+    # Get all signal CSV files using system ordering (same as tensor files)
     signal_files = []
-    for filename in sorted(os.listdir(csv_folder_path)):
+    for filename in os.listdir(csv_folder_path):
         if filename.endswith(".csv") and keyword in filename:
             signal_files.append(filename)
 
@@ -451,6 +451,54 @@ def get_bkg_test_count_from_csv(csv_folder_path):
                 total_bkg_count += events_count
 
     return total_bkg_count
+
+
+def validate_csv_tensor_ordering(csv_folder_path, tensor_folder_path, keyword="sig_test"):
+    """
+    Validate that CSV files and tensor files have the same ordering.
+    
+    This function helps debug ordering mismatches between CSV-based indexing
+    and tensor file concatenation order.
+    
+    Args:
+        csv_folder_path (str): Path to CSV files
+        tensor_folder_path (str): Path to tensor files  
+        keyword (str): Keyword to filter files (default: 'sig_test')
+        
+    Returns:
+        tuple: (csv_order, tensor_order, matches) where matches is True if orders match
+    """
+    # Get CSV file order (system ordering, not sorted)
+    csv_files = []
+    for filename in os.listdir(csv_folder_path):
+        if filename.endswith(".csv") and keyword in filename:
+            csv_files.append(filename)
+    
+    # Extract signal names from CSV files
+    csv_signal_names = []
+    for filename in csv_files:
+        base_name = filename.replace(".csv", "")
+        sig_name = base_name.replace(f"{keyword}_", "")
+        csv_signal_names.append(sig_name)
+    
+    # Get tensor file order (system ordering)
+    tensor_files = []
+    for filename in os.listdir(tensor_folder_path):
+        if filename.endswith(".pt") and keyword in filename and "events" in filename:
+            tensor_files.append(filename)
+    
+    # Extract signal names from tensor files
+    tensor_signal_names = []
+    for filename in tensor_files:
+        base_name = filename.replace(".pt", "")
+        # Remove keyword and 'events' suffix
+        sig_name = base_name.replace(f"{keyword}_", "").replace("_events", "")
+        tensor_signal_names.append(sig_name)
+    
+    # Check if orders match
+    matches = csv_signal_names == tensor_signal_names
+    
+    return csv_signal_names, tensor_signal_names, matches
 
 
 def load_augment_tensors(folder_path, keyword):
