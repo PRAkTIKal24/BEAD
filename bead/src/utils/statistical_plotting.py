@@ -124,6 +124,30 @@ def get_signal_display_name(signal_type):
     return signal_type.capitalize()
 
 
+def _format_r_inv_label(r_inv):
+    """Format the r_inv value for display in legends."""
+    if isinstance(r_inv, str):
+        if r_inv == "h7":
+            return "Herwig"
+        elif r_inv == "py8":
+            return "Pythia"
+        else:
+            return r_inv
+    else:
+        return f"R={r_inv}"
+
+
+def _get_r_inv_alpha_map():
+    """Get alpha mapping for r_inv values supporting both sneaky and zprime."""
+    return {
+        0.25: 0.9,
+        0.5: 0.7,
+        0.75: 0.5,
+        "h7": 0.9,  # Herwig - darker
+        "py8": 0.6,  # Pythia - lighter
+    }
+
+
 def parse_roc_output(output_file_path, verbose=False):
     """
     Parse ROC output file to extract AUC and TPR values for each model and signal.
@@ -873,7 +897,7 @@ def create_parameterized_violin_plots(
                             s=30,
                             edgecolors="black",
                             linewidth=0.3,
-                            label=f"{mass}GeV, R={r_inv}" if j == 0 else "",
+                            label=f"{mass}GeV, {_format_r_inv_label(r_inv)}" if j == 0 else "",
                         )
 
                 ax.set_xticks(violin_positions)
@@ -1489,15 +1513,45 @@ def generate_statistical_plots_from_roc_output(
     create_combined_box_violin_plots(
         parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
     )
-    create_parameterized_violin_plots(
-        parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
-    )
-    create_parameterized_box_plots(
-        parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
-    )
-    create_parameterized_combined_plots(
-        parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
-    )
+    
+    if verbose:
+        print("Creating parameterized plots...")
+    
+    try:
+        create_parameterized_violin_plots(
+            parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
+        )
+        if verbose:
+            print("✓ Parameterized violin plots created")
+    except Exception as e:
+        print(f"✗ Error creating parameterized violin plots: {e}")
+        if verbose:
+            import traceback
+            traceback.print_exc()
+    
+    try:
+        create_parameterized_box_plots(
+            parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
+        )
+        if verbose:
+            print("✓ Parameterized box plots created")
+    except Exception as e:
+        print(f"✗ Error creating parameterized box plots: {e}")
+        if verbose:
+            import traceback
+            traceback.print_exc()
+            
+    try:
+        create_parameterized_combined_plots(
+            parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
+        )
+        if verbose:
+            print("✓ Parameterized combined plots created")
+    except Exception as e:
+        print(f"✗ Error creating parameterized combined plots: {e}")
+        if verbose:
+            import traceback
+            traceback.print_exc()
 
     if verbose:
         print(f"All statistical plots saved to: {save_dir}")
