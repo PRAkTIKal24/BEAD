@@ -41,7 +41,7 @@ def detect_signal_type(signal_name):
     """
     if signal_name.startswith("sneaky"):
         return "sneaky"
-    elif re.match(r"(h7|py8)zp\d+", signal_name):
+    elif re.match(r"zp_(h7|py8)zp\d+", signal_name):
         return "zprime"
     return "unknown"
 
