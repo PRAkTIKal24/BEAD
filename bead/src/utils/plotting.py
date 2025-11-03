@@ -834,23 +834,25 @@ def plot_roc_curve(config, paths, verbose: bool = False):
 
                 csv_path = os.path.join(paths["data_path"], "csv")
                 bkg_count = helper.get_bkg_test_count_from_csv(csv_path)
-                
+
                 # Check actual data length first
                 output_dir = os.path.join(paths["output_path"], "results")
                 loss_file_path = os.path.join(output_dir, "loss_test.npy")
-                
+
                 if os.path.exists(loss_file_path):
                     actual_data_length = len(np.load(loss_file_path))
-                    
+
                     # Use corrected signal file info that accounts for actual data length
                     signal_file_info = helper.get_signal_file_info_corrected(
                         csv_path, actual_data_length, bkg_count, "sig_test"
                     )
-                    
+
                     if verbose:
                         print(f"Actual data length: {actual_data_length}")
                         print(f"Background events: {bkg_count}")
-                        print(f"Available signal events: {actual_data_length - bkg_count}")
+                        print(
+                            f"Available signal events: {actual_data_length - bkg_count}"
+                        )
                 else:
                     # Fallback to original method if no data file exists
                     signal_file_info = helper.get_signal_file_info_from_csv(
@@ -907,7 +909,7 @@ def plot_roc_curve(config, paths, verbose: bool = False):
                                     f"Warning: Signal indices {sig_start_idx}:{sig_end_idx} exceed data length {len(full_data)} for {component} and {sig_filename}, skipping"
                                 )
                             continue
-                        
+
                         # Extract background losses and this specific signal's losses
                         bkg_losses = full_data[:bkg_count]
                         signal_losses = full_data[sig_start_idx:sig_end_idx]

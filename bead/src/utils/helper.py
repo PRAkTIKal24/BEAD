@@ -375,14 +375,14 @@ def load_tensors(folder_path, keyword="sig_test", include_efp=False):
 def get_actual_signal_order_from_tensors(tensor_folder_path, keyword="sig_test"):
     """
     Determine the actual order of signal files as they were concatenated in tensors.
-    
+
     This function looks at the tensor file creation to determine the order signals
     were concatenated, which may differ from CSV alphabetical order.
-    
+
     Args:
         tensor_folder_path (str): Path to tensor folder
         keyword (str): Keyword to filter files (default: 'sig_test')
-        
+
     Returns:
         list: List of signal names in the order they appear in concatenated tensors
     """
@@ -392,88 +392,98 @@ def get_actual_signal_order_from_tensors(tensor_folder_path, keyword="sig_test")
     for filename in os.listdir(tensor_folder_path):
         if filename.endswith(".pt") and keyword in filename:
             tensor_files.append(filename)
-    
+
     # If we only have concatenated files (like sig_test_events.pt), we need a different approach
     # We'll look at the CSV folder and use system ordering (not alphabetical)
     return None  # Indicates we need to use CSV system ordering
 
 
-def get_signal_file_info_corrected(csv_folder_path, actual_data_length, bkg_count, keyword="sig_test"):
+def get_signal_file_info_corrected(
+    csv_folder_path, actual_data_length, bkg_count, keyword="sig_test"
+):
     """
     Get corrected signal file info that accounts for actual data length and ordering.
-    
+
     This function adjusts the CSV-based calculation to match the actual tensor data
     structure, accounting for drop_last=True and system file ordering.
-    
+
     Args:
         csv_folder_path (str): Path to CSV files
         actual_data_length (int): Actual length of the numpy data arrays
         bkg_count (int): Number of background events
         keyword (str): Keyword to filter files (default: 'sig_test')
-        
+
     Returns:
         list: Corrected signal file info with proper indices
     """
     import csv
-    
+
     # Get signal files in system order (not alphabetical) to match tensor creation
     signal_files = []
     for filename in os.listdir(csv_folder_path):
         if filename.endswith(".csv") and keyword in filename:
             signal_files.append(filename)
-    
+
     # Calculate total available signal events in the actual data
     available_signal_events = actual_data_length - bkg_count
-    
+
     # Get event counts for each signal file
     file_event_counts = []
     total_csv_events = 0
-    
+
     for filename in signal_files:
         csv_path = os.path.join(csv_folder_path, filename)
         with open(csv_path, "r") as f:
             reader = csv.reader(f)
             next(reader, None)  # Skip header
             events_count = sum(1 for row in reader)
-        
+
         base_name = filename.replace(".csv", "")
         sig_filename = base_name.replace(f"{keyword}_", "")
-        
-        file_event_counts.append({
-            "filename": filename,
-            "sig_filename": sig_filename,
-            "csv_events_count": events_count
-        })
+
+        file_event_counts.append(
+            {
+                "filename": filename,
+                "sig_filename": sig_filename,
+                "csv_events_count": events_count,
+            }
+        )
         total_csv_events += events_count
-    
+
     # Calculate scaling factor if there's a discrepancy due to drop_last
     if total_csv_events != available_signal_events:
-        print(f"Info: CSV events ({total_csv_events}) != actual signal events ({available_signal_events})")
-        print(f"Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.")
-        
+        print(
+            f"Info: CSV events ({total_csv_events}) != actual signal events ({available_signal_events})"
+        )
+        print(
+            "Likely due to drop_last=True in DataLoader. Adjusting indices proportionally."
+        )
+
         # Scale each signal's event count proportionally
         scale_factor = available_signal_events / total_csv_events
     else:
         scale_factor = 1.0
-    
+
     # Create corrected file info with proper indices
     file_info = []
     current_idx = 0
-    
+
     for file_data in file_event_counts:
         # Scale the event count proportionally
         adjusted_events_count = int(file_data["csv_events_count"] * scale_factor)
-        
-        file_info.append({
-            "filename": file_data["filename"],
-            "sig_filename": file_data["sig_filename"],
-            "events_count": adjusted_events_count,
-            "start_idx": current_idx,
-            "end_idx": current_idx + adjusted_events_count,
-        })
-        
+
+        file_info.append(
+            {
+                "filename": file_data["filename"],
+                "sig_filename": file_data["sig_filename"],
+                "events_count": adjusted_events_count,
+                "start_idx": current_idx,
+                "end_idx": current_idx + adjusted_events_count,
+            }
+        )
+
         current_idx += adjusted_events_count
-    
+
     return file_info
 
 
@@ -558,34 +568,36 @@ def get_bkg_test_count_from_csv(csv_folder_path):
     return total_bkg_count
 
 
-def validate_csv_tensor_data_consistency(csv_folder_path, output_results_path, keyword="sig_test"):
+def validate_csv_tensor_data_consistency(
+    csv_folder_path, output_results_path, keyword="sig_test"
+):
     """
     Validate that CSV-based event counts match actual tensor data lengths.
-    
+
     This function helps debug length mismatches between CSV-based indexing
     and actual tensor data arrays.
-    
+
     Args:
         csv_folder_path (str): Path to CSV files
         output_results_path (str): Path to inference results (numpy files)
         keyword (str): Keyword to filter files (default: 'sig_test')
-        
+
     Returns:
         dict: Validation results including expected vs actual lengths
     """
     import numpy as np
-    
+
     # Get CSV-based counts
     signal_file_info = get_signal_file_info_from_csv(csv_folder_path, keyword)
     bkg_count = get_bkg_test_count_from_csv(csv_folder_path)
-    
-    total_signal_events = sum(info['events_count'] for info in signal_file_info)
+
+    total_signal_events = sum(info["events_count"] for info in signal_file_info)
     expected_total = bkg_count + total_signal_events
-    
+
     # Check actual numpy file lengths
     actual_lengths = {}
-    test_files = ['loss_test.npy', 'reco_test.npy', 'kl_test.npy']
-    
+    test_files = ["loss_test.npy", "reco_test.npy", "kl_test.npy"]
+
     for test_file in test_files:
         file_path = os.path.join(output_results_path, test_file)
         if os.path.exists(file_path):
@@ -596,21 +608,21 @@ def validate_csv_tensor_data_consistency(csv_folder_path, output_results_path, k
                 actual_lengths[test_file] = f"Error: {e}"
         else:
             actual_lengths[test_file] = "File not found"
-    
+
     # Calculate discrepancies
     length_discrepancies = {}
     for file_name, actual_length in actual_lengths.items():
         if isinstance(actual_length, int):
             length_discrepancies[file_name] = expected_total - actual_length
-    
+
     return {
-        'csv_files_count': len(signal_file_info),
-        'background_count': bkg_count,
-        'total_signal_events': total_signal_events,
-        'expected_total_events': expected_total,
-        'actual_lengths': actual_lengths,
-        'length_discrepancies': length_discrepancies,
-        'signal_file_info': signal_file_info
+        "csv_files_count": len(signal_file_info),
+        "background_count": bkg_count,
+        "total_signal_events": total_signal_events,
+        "expected_total_events": expected_total,
+        "actual_lengths": actual_lengths,
+        "length_discrepancies": length_discrepancies,
+        "signal_file_info": signal_file_info,
     }
 
 

@@ -142,7 +142,7 @@ def _get_r_inv_alpha_map():
         0.25: 0.9,
         0.5: 0.7,
         0.75: 0.5,
-        "h7": 1.0,   # Herwig - very dark (fully opaque)
+        "h7": 1.0,  # Herwig - very dark (fully opaque)
         "py8": 0.2,  # Pythia - very transparent
     }
 
@@ -150,11 +150,11 @@ def _get_r_inv_alpha_map():
 def _get_r_inv_marker_map():
     """Get marker mapping for r_inv values supporting both sneaky and zprime."""
     return {
-        0.25: "o",    # Circle for R_inv 0.25
-        0.5: "^",     # Triangle for R_inv 0.5  
-        0.75: "s",    # Square for R_inv 0.75
-        "h7": "o",    # Circle for Herwig
-        "py8": "^",   # Triangle for Pythia
+        0.25: "o",  # Circle for R_inv 0.25
+        0.5: "^",  # Triangle for R_inv 0.5
+        0.75: "s",  # Square for R_inv 0.75
+        "h7": "o",  # Circle for Herwig
+        "py8": "^",  # Triangle for Pythia
     }
 
 
@@ -778,11 +778,13 @@ def create_parameterized_violin_plots(
             entry["r_inv"] = r_inv
 
         if verbose:
-            valid_entries = [e for e in plot_data if e['mass'] is not None]
+            valid_entries = [e for e in plot_data if e["mass"] is not None]
             print(f"    After parameter extraction: {len(valid_entries)} valid entries")
             if valid_entries:
                 sample = valid_entries[0]
-                print(f"    Sample params: mass={sample['mass']}, r_inv={sample['r_inv']}")
+                print(
+                    f"    Sample params: mass={sample['mass']}, r_inv={sample['r_inv']}"
+                )
 
         # Filter out entries with missing parameters
         plot_data = [entry for entry in plot_data if entry["mass"] is not None]
@@ -839,7 +841,7 @@ def create_parameterized_violin_plots(
             0.5: 0.7,
             0.75: 0.5,
         }  # Higher alpha = more opaque = darker
-        
+
         # R_inv marker mapping
         r_inv_marker_map = _get_r_inv_marker_map()
 
@@ -933,7 +935,9 @@ def create_parameterized_violin_plots(
                             marker=marker,
                             edgecolors="black",
                             linewidth=0.3,
-                            label=f"{mass}GeV, {_format_r_inv_label(r_inv)}" if j == 0 else "",
+                            label=f"{mass}GeV, {_format_r_inv_label(r_inv)}"
+                            if j == 0
+                            else "",
                         )
 
                 ax.set_xticks(violin_positions)
@@ -1099,9 +1103,9 @@ def create_parameterized_box_plots(
             0.5: 0.7,
             0.75: 0.5,
         }  # Higher alpha = more opaque = darker
-        
+
         # R_inv marker mapping
-        r_inv_marker_map = _get_r_inv_marker_map()
+        _get_r_inv_marker_map()
 
         # Create figure with subplots for each metric
         fig, axes = plt.subplots(1, 4, figsize=(20, 8))
@@ -1557,10 +1561,10 @@ def generate_statistical_plots_from_roc_output(
     create_combined_box_violin_plots(
         parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
     )
-    
+
     if verbose:
         print("Creating parameterized plots...")
-    
+
     try:
         create_parameterized_violin_plots(
             parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
@@ -1571,8 +1575,9 @@ def generate_statistical_plots_from_roc_output(
         print(f"✗ Error creating parameterized violin plots: {e}")
         if verbose:
             import traceback
+
             traceback.print_exc()
-    
+
     try:
         create_parameterized_box_plots(
             parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
@@ -1583,8 +1588,9 @@ def generate_statistical_plots_from_roc_output(
         print(f"✗ Error creating parameterized box plots: {e}")
         if verbose:
             import traceback
+
             traceback.print_exc()
-            
+
     try:
         create_parameterized_combined_plots(
             parsed_data, save_dir, verbose=verbose, skip_5000=skip_5000
@@ -1595,6 +1601,7 @@ def generate_statistical_plots_from_roc_output(
         print(f"✗ Error creating parameterized combined plots: {e}")
         if verbose:
             import traceback
+
             traceback.print_exc()
 
     if verbose:
