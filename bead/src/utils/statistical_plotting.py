@@ -84,7 +84,7 @@ def extract_zprime_params(signal_name):
     Parameters
     ----------
     signal_name : str
-        Signal name like 'h7zp1000' or 'py8zp1000'
+        Signal name like 'zp_h7zp1000' or 'zp_py8zp1000'
 
     Returns
     -------
@@ -92,14 +92,13 @@ def extract_zprime_params(signal_name):
         (mass, generator_code) or (None, None) if parsing fails
         For compatibility with parameterized plots, generator_code is used as second parameter
     """
-    match = re.match(r"(h7|py8)zp(\d+)", signal_name)
+    match = re.match(r"zp_(h7|py8)zp(\d+)", signal_name)
     if match:
         generator_code = match.group(1)
         mass = int(match.group(2))
         # Return generator code as the second parameter for compatibility
         # This allows zprime signals to be grouped by generator in parameterized plots
         return mass, generator_code
-    return None, None
     return None, None
 
 
