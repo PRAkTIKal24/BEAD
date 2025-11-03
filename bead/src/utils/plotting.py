@@ -833,25 +833,30 @@ def plot_roc_curve(config, paths, verbose: bool = False):
                 from . import helper
 
                 csv_path = os.path.join(paths["data_path"], "csv")
-                signal_file_info = helper.get_signal_file_info_from_csv(
-                    csv_path, "sig_test"
-                )
                 bkg_count = helper.get_bkg_test_count_from_csv(csv_path)
                 
-                # Validate CSV and tensor ordering match
-                tensor_path = os.path.join(paths["data_path"], "h5", "tensors", "processed")
-                csv_order, tensor_order, ordering_matches = helper.validate_csv_tensor_ordering(
-                    csv_path, tensor_path, "sig_test"
-                )
+                # Check actual data length first
+                output_dir = os.path.join(paths["output_path"], "results")
+                loss_file_path = os.path.join(output_dir, "loss_test.npy")
                 
-                if verbose:
-                    print(f"CSV signal order: {csv_order}")
-                    print(f"Tensor signal order: {tensor_order}")
-                    print(f"Ordering matches: {ordering_matches}")
+                if os.path.exists(loss_file_path):
+                    import numpy as np
+                    actual_data_length = len(np.load(loss_file_path))
                     
-                if not ordering_matches:
-                    print("Warning: CSV and tensor file ordering mismatch detected!")
-                    print("This may cause incorrect per-signal ROC calculations.")
+                    # Use corrected signal file info that accounts for actual data length
+                    signal_file_info = helper.get_signal_file_info_corrected(
+                        csv_path, actual_data_length, bkg_count, "sig_test"
+                    )
+                    
+                    if verbose:
+                        print(f"Actual data length: {actual_data_length}")
+                        print(f"Background events: {bkg_count}")
+                        print(f"Available signal events: {actual_data_length - bkg_count}")
+                else:
+                    # Fallback to original method if no data file exists
+                    signal_file_info = helper.get_signal_file_info_from_csv(
+                        csv_path, "sig_test"
+                    )
 
                 if verbose:
                     print(
