@@ -837,6 +837,21 @@ def plot_roc_curve(config, paths, verbose: bool = False):
                     csv_path, "sig_test"
                 )
                 bkg_count = helper.get_bkg_test_count_from_csv(csv_path)
+                
+                # Validate CSV and tensor ordering match
+                tensor_path = os.path.join(paths["data_path"], "h5", "tensors", "processed")
+                csv_order, tensor_order, ordering_matches = helper.validate_csv_tensor_ordering(
+                    csv_path, tensor_path, "sig_test"
+                )
+                
+                if verbose:
+                    print(f"CSV signal order: {csv_order}")
+                    print(f"Tensor signal order: {tensor_order}")
+                    print(f"Ordering matches: {ordering_matches}")
+                    
+                if not ordering_matches:
+                    print("Warning: CSV and tensor file ordering mismatch detected!")
+                    print("This may cause incorrect per-signal ROC calculations.")
 
                 if verbose:
                     print(
@@ -881,6 +896,14 @@ def plot_roc_curve(config, paths, verbose: bool = False):
                         if full_data.ndim > 1:
                             full_data = full_data.flatten()
 
+                        # Validate array bounds before extraction
+                        if sig_end_idx > len(full_data):
+                            if verbose:
+                                print(
+                                    f"Warning: Signal indices {sig_start_idx}:{sig_end_idx} exceed data length {len(full_data)} for {component} and {sig_filename}, skipping"
+                                )
+                            continue
+                        
                         # Extract background losses and this specific signal's losses
                         bkg_losses = full_data[:bkg_count]
                         signal_losses = full_data[sig_start_idx:sig_end_idx]
@@ -894,6 +917,12 @@ def plot_roc_curve(config, paths, verbose: bool = False):
                                 )
                                 print(
                                     f"  Data length: {len(per_signal_data)}, Ground truth length: {len(per_signal_ground_truth)}"
+                                )
+                                print(
+                                    f"  Full data length: {len(full_data)}, Background count: {bkg_count}"
+                                )
+                                print(
+                                    f"  Signal indices: {sig_start_idx}:{sig_end_idx}, Signal events: {sig_end_idx - sig_start_idx}"
                                 )
                             continue
 
