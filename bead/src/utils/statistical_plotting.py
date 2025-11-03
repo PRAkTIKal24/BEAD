@@ -147,6 +147,17 @@ def _get_r_inv_alpha_map():
     }
 
 
+def _get_r_inv_marker_map():
+    """Get marker mapping for r_inv values supporting both sneaky and zprime."""
+    return {
+        0.25: "o",    # Circle for R_inv 0.25
+        0.5: "^",     # Triangle for R_inv 0.5  
+        0.75: "s",    # Square for R_inv 0.75
+        "h7": "o",    # Circle for Herwig
+        "py8": "^",   # Triangle for Pythia
+    }
+
+
 def parse_roc_output(output_file_path, verbose=False):
     """
     Parse ROC output file to extract AUC and TPR values for each model and signal.
@@ -828,6 +839,9 @@ def create_parameterized_violin_plots(
             0.5: 0.7,
             0.75: 0.5,
         }  # Higher alpha = more opaque = darker
+        
+        # R_inv marker mapping
+        r_inv_marker_map = _get_r_inv_marker_map()
 
         # Create figure with subplots for each metric
         fig, axes = plt.subplots(1, 4, figsize=(20, 8))
@@ -905,9 +919,10 @@ def create_parameterized_violin_plots(
                         jitter = np.random.normal(0, 0.02, len(values))
                         x_pos = [violin_positions[j] + jit for jit in jitter]
 
-                        # Get color and alpha based on mass and R_inv
+                        # Get color, alpha, and marker based on mass and R_inv
                         base_color = mass_color_map[mass]
                         alpha = r_inv_alpha_map.get(r_inv, 0.7)
+                        marker = r_inv_marker_map.get(r_inv, "o")
 
                         ax.scatter(
                             x_pos,
@@ -915,6 +930,7 @@ def create_parameterized_violin_plots(
                             color=base_color,
                             alpha=alpha,
                             s=30,
+                            marker=marker,
                             edgecolors="black",
                             linewidth=0.3,
                             label=f"{mass}GeV, {_format_r_inv_label(r_inv)}" if j == 0 else "",
@@ -937,11 +953,12 @@ def create_parameterized_violin_plots(
                 ]:
                     base_color = mass_color_map[mass]
                     alpha = r_inv_alpha_map.get(r_inv, 0.7)
+                    marker = r_inv_marker_map.get(r_inv, "o")
                     handles.append(
                         plt.Line2D(
                             [0],
                             [0],
-                            marker="o",
+                            marker=marker,
                             color="w",
                             markerfacecolor=base_color,
                             markersize=8,
@@ -1082,6 +1099,9 @@ def create_parameterized_box_plots(
             0.5: 0.7,
             0.75: 0.5,
         }  # Higher alpha = more opaque = darker
+        
+        # R_inv marker mapping
+        r_inv_marker_map = _get_r_inv_marker_map()
 
         # Create figure with subplots for each metric
         fig, axes = plt.subplots(1, 4, figsize=(20, 8))
@@ -1324,8 +1344,9 @@ def create_parameterized_combined_plots(
             color_name = custom_mass_colors.get(mass, "gray")
             mass_color_map[mass] = mcolors.to_rgb(color_name)
 
-        # R_inv brightness mapping
-        r_inv_alpha_map = {0.25: 0.9, 0.5: 0.7, 0.75: 0.5}
+        # R_inv brightness and marker mapping
+        r_inv_alpha_map = _get_r_inv_alpha_map()
+        r_inv_marker_map = _get_r_inv_marker_map()
 
         # Create figure with subplots for each metric
         fig, axes = plt.subplots(1, 4, figsize=(20, 8))
@@ -1400,9 +1421,10 @@ def create_parameterized_combined_plots(
                     # Plot each parameter group with scatter + mini boxes
                     box_offset = -0.3
                     for (mass, r_inv), values in param_groups.items():
-                        # Get color and alpha based on mass and R_inv
+                        # Get color, alpha, and marker based on mass and R_inv
                         base_color = mass_color_map[mass]
                         alpha = r_inv_alpha_map.get(r_inv, 0.7)
+                        marker = r_inv_marker_map.get(r_inv, "o")
 
                         # Add scatter points with jitter
                         jitter = np.random.normal(0, 0.02, len(values))
@@ -1414,6 +1436,7 @@ def create_parameterized_combined_plots(
                             color=base_color,
                             alpha=alpha,
                             s=25,
+                            marker=marker,
                             edgecolors="black",
                             linewidth=0.2,
                             label=f"{mass}GeV, R={r_inv}" if j == 0 else "",
@@ -1455,11 +1478,12 @@ def create_parameterized_combined_plots(
                 ):
                     base_color = mass_color_map[mass]
                     alpha = r_inv_alpha_map.get(r_inv, 0.7)
+                    marker = r_inv_marker_map.get(r_inv, "o")
                     handles.append(
                         plt.Line2D(
                             [0],
                             [0],
-                            marker="o",
+                            marker=marker,
                             color="w",
                             markerfacecolor=base_color,
                             markersize=8,
