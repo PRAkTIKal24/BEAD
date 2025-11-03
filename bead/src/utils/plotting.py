@@ -840,7 +840,6 @@ def plot_roc_curve(config, paths, verbose: bool = False):
                 loss_file_path = os.path.join(output_dir, "loss_test.npy")
                 
                 if os.path.exists(loss_file_path):
-                    import numpy as np
                     actual_data_length = len(np.load(loss_file_path))
                     
                     # Use corrected signal file info that accounts for actual data length
