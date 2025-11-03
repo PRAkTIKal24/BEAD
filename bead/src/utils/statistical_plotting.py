@@ -142,8 +142,8 @@ def _get_r_inv_alpha_map():
         0.25: 0.9,
         0.5: 0.7,
         0.75: 0.5,
-        "h7": 0.9,  # Herwig - darker
-        "py8": 0.6,  # Pythia - lighter
+        "h7": 1.0,   # Herwig - very dark (fully opaque)
+        "py8": 0.2,  # Pythia - very transparent
     }
 
 
