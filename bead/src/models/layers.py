@@ -507,11 +507,11 @@ def RQS(
 class EFPEmbedding(nn.Module):
     """
     Energy-Flow Polynomial (EFP) Embedding Layer.
-    
+
     Transforms high-dimensional EFP features into compact embedding tokens suitable
     for transformer architectures and other downstream models. Provides learnable
     feature selection through gated sparsification and dimensionality reduction.
-    
+
     Scientific Motivation:
         EFP features are high-dimensional (140-531 features per jet) and potentially
         redundant. This embedding layer enables:
@@ -519,7 +519,7 @@ class EFPEmbedding(nn.Module):
         - Selection: Learnable gating mechanism for feature importance
         - Sparsification: Threshold-based pruning to prevent overfitting
         - Standardization: Consistent output format for downstream architectures
-    
+
     Architecture:
         Input: (batch_size, n_jets, n_efp_features)
         ↓ Linear projection (dimensionality reduction)
@@ -527,7 +527,7 @@ class EFPEmbedding(nn.Module):
         ↓ Layer normalization (training stability)
         ↓ Dropout (regularization)
         Output: (batch_size, n_jets, embedding_dim)
-    
+
     Args:
         n_efp_features (int): Number of input EFP features (140 or 531)
         embedding_dim (int): Output embedding dimension (default: 64)
@@ -536,14 +536,14 @@ class EFPEmbedding(nn.Module):
         dropout_rate (float): Dropout rate for regularization (default: 0.1)
         use_layer_norm (bool): Enable layer normalization (default: True)
         monitor_sparsity (bool): Track gate activation statistics (default: True)
-    
+
     Example:
         >>> embedding = EFPEmbedding(n_efp_features=140, embedding_dim=64)
         >>> efp_features = torch.randn(32, 3, 140)  # batch_size=32, n_jets=3
         >>> embeddings = embedding(efp_features)
         >>> print(embeddings.shape)  # torch.Size([32, 3, 64])
     """
-    
+
     def __init__(
         self,
         n_efp_features: int,
@@ -555,19 +555,21 @@ class EFPEmbedding(nn.Module):
         monitor_sparsity: bool = True,
     ):
         super(EFPEmbedding, self).__init__()
-        
+
         # Validate inputs
         if n_efp_features <= 0:
             raise ValueError(f"n_efp_features must be positive, got {n_efp_features}")
         if embedding_dim <= 0:
             raise ValueError(f"embedding_dim must be positive, got {embedding_dim}")
         if gate_type not in ["sigmoid", "relu6", "tanh"]:
-            raise ValueError(f"gate_type must be one of ['sigmoid', 'relu6', 'tanh'], got {gate_type}")
+            raise ValueError(
+                f"gate_type must be one of ['sigmoid', 'relu6', 'tanh'], got {gate_type}"
+            )
         if not 0.0 <= dropout_rate <= 1.0:
             raise ValueError(f"dropout_rate must be in [0, 1], got {dropout_rate}")
         if not 0.0 <= gate_threshold <= 1.0:
             raise ValueError(f"gate_threshold must be in [0, 1], got {gate_threshold}")
-        
+
         # Store configuration
         self.n_efp_features = n_efp_features
         self.embedding_dim = embedding_dim
@@ -576,123 +578,135 @@ class EFPEmbedding(nn.Module):
         self.dropout_rate = dropout_rate
         self.use_layer_norm = use_layer_norm
         self.monitor_sparsity = monitor_sparsity
-        
+
         # Core embedding layers
         self.projection = nn.Linear(n_efp_features, embedding_dim)
         self.gate = nn.Linear(n_efp_features, embedding_dim)
-        
+
         # Optional normalization and regularization
         if self.use_layer_norm:
             self.layer_norm = nn.LayerNorm(embedding_dim)
         else:
             self.layer_norm = None
-            
+
         if self.dropout_rate > 0.0:
             self.dropout = nn.Dropout(dropout_rate)
         else:
             self.dropout = None
-        
+
         # Gate activation function
         if gate_type == "sigmoid":
             self.gate_activation = torch.sigmoid
         elif gate_type == "relu6":
             self.gate_activation = lambda x: F.relu6(x) / 6.0  # Normalize to [0, 1]
         elif gate_type == "tanh":
-            self.gate_activation = lambda x: (torch.tanh(x) + 1.0) / 2.0  # Map to [0, 1]
-        
+            self.gate_activation = (
+                lambda x: (torch.tanh(x) + 1.0) / 2.0
+            )  # Map to [0, 1]
+
         # Sparsity monitoring (if enabled)
         if self.monitor_sparsity:
-            self.register_buffer('gate_activation_count', torch.zeros(1))
-            self.register_buffer('total_gate_count', torch.zeros(1))
-        
+            self.register_buffer("gate_activation_count", torch.zeros(1))
+            self.register_buffer("total_gate_count", torch.zeros(1))
+
         # Initialize parameters
         self._initialize_parameters()
-    
+
     def _initialize_parameters(self):
         """
         Initialize layer parameters using Xavier/Glorot initialization.
-        
+
         This ensures stable gradients and proper scaling for the embedding
         transformation, especially important for high-dimensional EFP inputs.
         """
         # Xavier initialization for projection and gate layers
         nn.init.xavier_uniform_(self.projection.weight)
         nn.init.xavier_uniform_(self.gate.weight)
-        
+
         # Initialize biases to zero
         if self.projection.bias is not None:
             nn.init.zeros_(self.projection.bias)
         if self.gate.bias is not None:
             nn.init.zeros_(self.gate.bias)
-    
-    def forward(self, efp_features: torch.Tensor, jet_mask: torch.Tensor = None) -> torch.Tensor:
+
+    def forward(
+        self, efp_features: torch.Tensor, jet_mask: torch.Tensor = None
+    ) -> torch.Tensor:
         """
         Forward pass through the EFP embedding layer.
-        
+
         Args:
             efp_features (torch.Tensor): Input EFP features of shape (B, J, N_efp)
             jet_mask (torch.Tensor, optional): Jet validity mask of shape (B, J)
                                              True for valid jets, False for padded jets
-        
+
         Returns:
             torch.Tensor: Embedded EFP tokens of shape (B, J, embedding_dim)
-        
+
         Raises:
             ValueError: If input tensor has incorrect shape or contains invalid values
         """
         # Validate input shape
         if efp_features.dim() != 3:
-            raise ValueError(f"Expected 3D input (batch_size, n_jets, n_efp_features), got {efp_features.dim()}D")
-        
+            raise ValueError(
+                f"Expected 3D input (batch_size, n_jets, n_efp_features), got {efp_features.dim()}D"
+            )
+
         batch_size, n_jets, n_features = efp_features.shape
         if n_features != self.n_efp_features:
-            raise ValueError(f"Expected {self.n_efp_features} EFP features, got {n_features}")
-        
+            raise ValueError(
+                f"Expected {self.n_efp_features} EFP features, got {n_features}"
+            )
+
         # Check for invalid values (NaN, Inf)
         if torch.isnan(efp_features).any() or torch.isinf(efp_features).any():
             raise ValueError("Input contains NaN or Inf values")
-        
+
         # Linear projection: (B, J, N_efp) -> (B, J, embedding_dim)
         projected = self.projection(efp_features)
-        
+
         # Gated sparsification: learnable feature selection
         gate_logits = self.gate(efp_features)
         gate_weights = self.gate_activation(gate_logits)
-        
+
         # Apply sparsification threshold
         if self.gate_threshold > 0.0:
             gate_weights = gate_weights * (gate_weights >= self.gate_threshold).float()
-        
+
         # Apply gating to projection
         gated_projection = projected * gate_weights
-        
+
         # Layer normalization (optional)
         if self.layer_norm is not None:
             gated_projection = self.layer_norm(gated_projection)
-        
+
         # Dropout regularization (optional)
         if self.dropout is not None and self.training:
             gated_projection = self.dropout(gated_projection)
-        
+
         # Apply jet masking if provided
         if jet_mask is not None:
             if jet_mask.shape != (batch_size, n_jets):
-                raise ValueError(f"jet_mask shape {jet_mask.shape} doesn't match input shape ({batch_size}, {n_jets})")
-            
+                raise ValueError(
+                    f"jet_mask shape {jet_mask.shape} doesn't match input shape ({batch_size}, {n_jets})"
+                )
+
             # Zero out embeddings for padded jets
             mask_expanded = jet_mask.unsqueeze(-1).float()  # (B, J, 1)
             gated_projection = gated_projection * mask_expanded
-        
+
         # Update sparsity statistics (if monitoring enabled)
         if self.monitor_sparsity and self.training:
             self._update_sparsity_stats(gate_weights, jet_mask)
-        
+
         return gated_projection
-    
-    def _update_sparsity_stats(self, gate_weights: torch.Tensor, jet_mask: torch.Tensor = None):
+
+    def _update_sparsity_stats(
+        self, gate_weights: torch.Tensor, jet_mask: torch.Tensor = None
+    ):
         """
         Update running statistics for gate activation sparsity.
-        
+
         Args:
             gate_weights (torch.Tensor): Gate activation weights (B, J, embedding_dim)
             jet_mask (torch.Tensor, optional): Jet validity mask (B, J)
@@ -700,7 +714,7 @@ class EFPEmbedding(nn.Module):
         with torch.no_grad():
             # Count active gates (above threshold)
             active_gates = (gate_weights >= self.gate_threshold).float()
-            
+
             if jet_mask is not None:
                 # Only count gates for valid jets
                 mask_expanded = jet_mask.unsqueeze(-1).float()
@@ -708,15 +722,15 @@ class EFPEmbedding(nn.Module):
                 total_gates = jet_mask.sum() * self.embedding_dim
             else:
                 total_gates = gate_weights.numel()
-            
+
             # Update running counts
             self.gate_activation_count += active_gates.sum()
             self.total_gate_count += total_gates
-    
+
     def get_sparsity_stats(self) -> dict:
         """
         Get current sparsity statistics.
-        
+
         Returns:
             dict: Dictionary containing sparsity metrics:
                 - 'sparsity_ratio': Fraction of gates below threshold
@@ -724,20 +738,28 @@ class EFPEmbedding(nn.Module):
                 - 'total_gates_seen': Total number of gates processed
         """
         if not self.monitor_sparsity:
-            return {'sparsity_ratio': None, 'activation_ratio': None, 'total_gates_seen': 0}
-        
+            return {
+                "sparsity_ratio": None,
+                "activation_ratio": None,
+                "total_gates_seen": 0,
+            }
+
         if self.total_gate_count == 0:
-            return {'sparsity_ratio': 0.0, 'activation_ratio': 0.0, 'total_gates_seen': 0}
-        
+            return {
+                "sparsity_ratio": 0.0,
+                "activation_ratio": 0.0,
+                "total_gates_seen": 0,
+            }
+
         activation_ratio = (self.gate_activation_count / self.total_gate_count).item()
         sparsity_ratio = 1.0 - activation_ratio
-        
+
         return {
-            'sparsity_ratio': sparsity_ratio,
-            'activation_ratio': activation_ratio,
-            'total_gates_seen': self.total_gate_count.item()
+            "sparsity_ratio": sparsity_ratio,
+            "activation_ratio": activation_ratio,
+            "total_gates_seen": self.total_gate_count.item(),
         }
-    
+
     def reset_sparsity_stats(self):
         """
         Reset sparsity monitoring statistics.
@@ -745,11 +767,11 @@ class EFPEmbedding(nn.Module):
         if self.monitor_sparsity:
             self.gate_activation_count.zero_()
             self.total_gate_count.zero_()
-    
+
     def extra_repr(self) -> str:
         """
         Extra representation string for the module.
-        
+
         Returns:
             str: String representation of the layer configuration
         """

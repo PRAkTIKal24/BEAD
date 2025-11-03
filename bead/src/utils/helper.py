@@ -375,79 +375,81 @@ def load_tensors(folder_path, keyword="sig_test", include_efp=False):
 def get_signal_file_info_from_csv(csv_folder_path, keyword="sig_test"):
     """
     Get information about signal files for per-signal ROC plotting by counting CSV lines.
-    
+
     Args:
         csv_folder_path (str): The path to the folder containing CSV files.
         keyword (str): The keyword to filter files (default: 'sig_test').
-    
+
     Returns:
         list: List of dictionaries containing file info with keys:
               'filename', 'sig_filename', 'events_count', 'start_idx', 'end_idx'
     """
     import csv
-    
+
     # Get all signal CSV files and sort them to ensure consistent ordering
     signal_files = []
     for filename in sorted(os.listdir(csv_folder_path)):
         if filename.endswith(".csv") and keyword in filename:
             signal_files.append(filename)
-    
+
     # Extract signal file info by counting CSV lines
     file_info = []
     current_idx = 0
-    
+
     for filename in signal_files:
         # Count lines in CSV file (excluding header)
         csv_path = os.path.join(csv_folder_path, filename)
-        with open(csv_path, 'r') as f:
+        with open(csv_path, "r") as f:
             reader = csv.reader(f)
             # Skip header and count data rows
             next(reader, None)  # Skip header
             events_count = sum(1 for row in reader)
-        
+
         # Extract signal filename from CSV filename
         # Convert from 'sig_test_sneaky1000R025.csv' to 'sneaky1000R025'
-        base_name = filename.replace('.csv', '')
-        sig_filename = base_name.replace(f'{keyword}_', '')
-        
-        file_info.append({
-            'filename': filename,
-            'sig_filename': sig_filename,
-            'events_count': events_count,
-            'start_idx': current_idx,
-            'end_idx': current_idx + events_count
-        })
-        
+        base_name = filename.replace(".csv", "")
+        sig_filename = base_name.replace(f"{keyword}_", "")
+
+        file_info.append(
+            {
+                "filename": filename,
+                "sig_filename": sig_filename,
+                "events_count": events_count,
+                "start_idx": current_idx,
+                "end_idx": current_idx + events_count,
+            }
+        )
+
         current_idx += events_count
-    
+
     return file_info
 
 
 def get_bkg_test_count_from_csv(csv_folder_path):
     """
     Get the total count of background test events by counting CSV lines.
-    
+
     Args:
         csv_folder_path (str): The path to the folder containing CSV files.
-    
+
     Returns:
         int: Total number of background test events
     """
     import csv
-    
+
     total_bkg_count = 0
-    
+
     # Get all background test CSV files
     for filename in os.listdir(csv_folder_path):
         if filename.endswith(".csv") and filename.startswith("bkg_test"):
             csv_path = os.path.join(csv_folder_path, filename)
-            with open(csv_path, 'r') as f:
+            with open(csv_path, "r") as f:
                 reader = csv.reader(f)
                 # Skip header and count data rows
                 next(reader, None)  # Skip header
                 events_count = sum(1 for row in reader)
                 total_bkg_count += events_count
-    
+
     return total_bkg_count
 
 
@@ -835,7 +837,7 @@ def create_datasets(
         "jets_val": jets_val_dataset,
         "constituents_val": constituents_val_dataset,
     }
-    
+
     # Add EFP datasets if provided
     if efp_train is not None and efp_train_label is not None:
         datasets["efp_train"] = CustomDataset(efp_train, efp_train_label)
@@ -860,7 +862,7 @@ def calculate_in_shape(data, config, test_mode=False):
         bs = 1
     else:
         bs = config.batch_size
-    
+
     # Handle data unpacking with optional EFP features
     if len(data) == 8:  # EFP features included
         (
@@ -1057,16 +1059,16 @@ def call_forward(model, inputs):
 def unpack_model_outputs(outputs):
     """
     Standardizes model outputs to a consistent 6-tuple format regardless of model type.
-    
+
     This function takes the raw outputs from different model types and ensures they all
     conform to the standard 6-tuple format: (recon, mu, logvar, ldj, z0, zk).
-    
+
     For models that don't naturally produce all these values:
     - AE models (len(outputs) == 2): Returns (recon, zeros, zeros, zeros, z, z)
     - VAE models (len(outputs) == 4): Returns (recon, mu, logvar, zeros, z, z)
     - Flow models (len(outputs) == 6): Returns (recon, mu, logvar, ldj, z0, zk)
     - Dirichlet VAE (len(outputs) == 6): Returns (recon, mu, logvar, zeros, G_z, D_z)
-    
+
     Args:
         outputs (tuple): The raw outputs tuple from a model's forward method.
             Could be one of:
@@ -1074,7 +1076,7 @@ def unpack_model_outputs(outputs):
             - (recon, mu, logvar, z) for VAEs (ConvVAE)
             - (recon, mu, logvar, ldj, z0, zk) for flow-based models (Planar_ConvVAE, etc.)
             - (recon, mu, logvar, G_z, G_z, D_z) for Dirichlet_ConvVAE
-    
+
     Returns:
         tuple: A standardized 6-tuple (recon, mu, logvar, ldj, z0, zk) where:
             - recon: Reconstructed input
@@ -1083,11 +1085,11 @@ def unpack_model_outputs(outputs):
             - ldj: Log determinant of the Jacobian (or zeros for non-flow models)
             - z0: Initial sample from the latent distribution (G_z for Dirichlet VAE)
             - zk: Final transformed latent variable (D_z for Dirichlet VAE)
-    
+
     Raises:
         ValueError: If the length of outputs is not 2, 4, or 6.
     """
-    if len(outputs) == 2:  # Basic AE model: (recon, z)     
+    if len(outputs) == 2:  # Basic AE model: (recon, z)
         recon, zk = outputs
         # Create zero tensors with proper shape and device for mu, logvar, ldj
         shape = zk.shape
@@ -1097,17 +1099,17 @@ def unpack_model_outputs(outputs):
         ldj = torch.zeros(1, device=device)
         z0 = zk  # For AE, initial and final latent are the same
         return recon, mu, logvar, ldj, z0, zk
-        
+
     elif len(outputs) == 4:  # VAE model: (recon, mu, logvar, z)
         recon, mu, logvar, zk = outputs
         # Create zero tensor for ldj
         ldj = torch.zeros(1, device=recon.device)
         z0 = zk  # For VAEs without flows, initial and final latent are the same
         return recon, mu, logvar, ldj, z0, zk
-        
+
     elif len(outputs) == 6:  # Could be Flow model or Dirichlet VAE
         recon, mu, logvar = outputs[0], outputs[1], outputs[2]
-        
+
         # Check if this is likely a Dirichlet VAE output (recon, mu, logvar, G_z, G_z, D_z)
         # We can identify this by checking if the 4th and 5th elements are identical (both G_z)
         # This is a heuristic that should work reliably for the known models
@@ -1120,9 +1122,11 @@ def unpack_model_outputs(outputs):
         else:
             # This is likely a Flow model output (already in correct format)
             return outputs
-        
+
     else:
-        raise ValueError(f"Unexpected number of outputs from model: {len(outputs)}. Expected 2, 4, or 6.")
+        raise ValueError(
+            f"Unexpected number of outputs from model: {len(outputs)}. Expected 2, 4, or 6."
+        )
 
 
 class EarlyStopping:
@@ -1248,18 +1252,18 @@ def load_model(model_path: str, in_shape, config):
 def get_ntxent_outputs(model, inputs, config):
     """
     Performs a dual forward pass through the model with augmented input views for NT-Xent contrastive learning.
-    
+
     This function:
     1. Generates two augmented views of the input data using naive gaussian smearing strategy
     2. Passes each view through the model
     3. Unpacks the model outputs from each view
     4. Returns all necessary outputs for NT-Xent loss calculation
-    
+
     Args:
         model (nn.Module): The model to perform forward passes with
         inputs (torch.Tensor): Input data batch
         config (dataClass): Configuration object containing NT-Xent parameters
-        
+
     Returns:
         tuple: A tuple containing:
             - recon_i: Reconstruction from the first view
@@ -1271,19 +1275,19 @@ def get_ntxent_outputs(model, inputs, config):
             - zk_j: Final latent vector from the second view
     """
     from ..utils.ntxent_utils import generate_augmented_views
-    
+
     # Generate two augmented views using naive gaussian smearing strategy
     # The sigma (noise level) is controlled by the config
     x_i, x_j = generate_augmented_views(inputs, sigma=config.ntxent_sigma)
-    
+
     # Perform forward pass with the first view
     out_i = call_forward(model, x_i)
     recon_i, mu_i, logvar_i, ldj_i, z0_i, zk_i = unpack_model_outputs(out_i)
-    
+
     # Perform forward pass with the second view (we only need zk_j for NT-Xent)
     out_j = call_forward(model, x_j)
     _, _, _, _, _, zk_j = unpack_model_outputs(out_j)
-    
+
     # Return all outputs needed for loss calculation
     return recon_i, mu_i, logvar_i, ldj_i, z0_i, zk_i, zk_j
 

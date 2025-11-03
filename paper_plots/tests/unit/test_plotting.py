@@ -15,16 +15,14 @@ import os
 import numpy as np
 import tempfile
 import shutil
-import matplotlib.pyplot as plt
 from types import SimpleNamespace
-from unittest.mock import patch, MagicMock, call, ANY
+from unittest.mock import patch, call
 
 from bead.src.utils.plotting import (
     plot_losses,
     plot_latent_variables,
     plot_mu_logvar,
     plot_roc_curve,
-    reduce_dim_subsampled
 )
 
 
@@ -48,8 +46,14 @@ class TestPlotLosses(unittest.TestCase):
         # Create dummy loss data files
         self.train_epoch_loss = np.random.rand(10)
         self.val_epoch_loss = np.random.rand(10)
-        np.save(os.path.join(self.output_dir, "train_epoch_loss_data.npy"), self.train_epoch_loss)
-        np.save(os.path.join(self.output_dir, "val_epoch_loss_data.npy"), self.val_epoch_loss)
+        np.save(
+            os.path.join(self.output_dir, "train_epoch_loss_data.npy"),
+            self.train_epoch_loss,
+        )
+        np.save(
+            os.path.join(self.output_dir, "val_epoch_loss_data.npy"),
+            self.val_epoch_loss,
+        )
 
         # Create dummy loss component files for different categories
         self.categories = ["train", "val", "test"]
@@ -59,14 +63,16 @@ class TestPlotLosses(unittest.TestCase):
             for component in self.loss_components:
                 # Create dummy data with 10 epochs, 100 events per epoch
                 data = np.random.rand(10 * 100)
-                np.save(os.path.join(self.output_dir, f"{component}_{category}.npy"), data)
+                np.save(
+                    os.path.join(self.output_dir, f"{component}_{category}.npy"), data
+                )
 
     def tearDown(self):
         """Clean up after each test method."""
         # Remove the temporary directory and all its contents
         shutil.rmtree(self.temp_dir)
 
-    @patch('matplotlib.pyplot.savefig')
+    @patch("matplotlib.pyplot.savefig")
     def test_plot_losses_generates_files(self, mock_savefig):
         """Test that plot_losses generates the expected files."""
         # Run the function
@@ -80,7 +86,9 @@ class TestPlotLosses(unittest.TestCase):
         # Check specific calls
         mock_savefig.assert_any_call(os.path.join(self.save_dir, "train_metrics.pdf"))
         for category in self.categories:
-            mock_savefig.assert_any_call(os.path.join(self.save_dir, f"loss_components_{category}.pdf"))
+            mock_savefig.assert_any_call(
+                os.path.join(self.save_dir, f"loss_components_{category}.pdf")
+            )
 
     def test_plot_losses_missing_files(self):
         """Test that plot_losses raises FileNotFoundError when files are missing."""
@@ -103,7 +111,7 @@ class TestLatentVariablesPlotting(unittest.TestCase):
         # Create directory structure
         self.paths = {
             "output_path": os.path.join(self.temp_dir, "output"),
-            "data_path": os.path.join(self.temp_dir, "data")
+            "data_path": os.path.join(self.temp_dir, "data"),
         }
 
         # Create required subdirectories
@@ -111,7 +119,9 @@ class TestLatentVariablesPlotting(unittest.TestCase):
         os.makedirs(os.path.join(self.paths["output_path"], "plots", "latent_space"))
 
         self.file_type = "h5"
-        h5_tensor_path = os.path.join(self.paths["data_path"], self.file_type, "tensors", "processed")
+        h5_tensor_path = os.path.join(
+            self.paths["data_path"], self.file_type, "tensors", "processed"
+        )
         os.makedirs(h5_tensor_path, exist_ok=True)
 
         # Create dummy config
@@ -135,10 +145,24 @@ class TestLatentVariablesPlotting(unittest.TestCase):
         self.train_gen_labels = np.random.randint(0, 3, self.n_samples)
 
         # Save training set data
-        np.save(os.path.join(self.paths["output_path"], "results", "train_z0_data.npy"), self.train_z0)
-        np.save(os.path.join(self.paths["output_path"], "results", "train_zk_data.npy"), self.train_zk)
-        np.save(os.path.join(self.paths["data_path"], self.file_type, "tensors", "processed",
-                f"train_gen_label_{self.config.input_level}.npy"), self.train_gen_labels)
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "train_z0_data.npy"),
+            self.train_z0,
+        )
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "train_zk_data.npy"),
+            self.train_zk,
+        )
+        np.save(
+            os.path.join(
+                self.paths["data_path"],
+                self.file_type,
+                "tensors",
+                "processed",
+                f"train_gen_label_{self.config.input_level}.npy",
+            ),
+            self.train_gen_labels,
+        )
 
         # Create dummy data for test set with signal
         self.n_background = self.n_samples  # Make all samples background for test
@@ -150,20 +174,43 @@ class TestLatentVariablesPlotting(unittest.TestCase):
         self.test_labels = np.zeros(self.n_samples)  # All samples are background
 
         # Save test set data
-        np.save(os.path.join(self.paths["output_path"], "results", "test_z0_data.npy"), self.test_z0)
-        np.save(os.path.join(self.paths["output_path"], "results", "test_zk_data.npy"), self.test_zk)
-        np.save(os.path.join(self.paths["data_path"], self.file_type, "tensors", "processed",
-                f"test_gen_label_{self.config.input_level}.npy"), self.test_gen_labels)
-        np.save(os.path.join(self.paths["output_path"], "results",
-                f"test_{self.config.input_level}_label.npy"), self.test_labels)
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "test_z0_data.npy"),
+            self.test_z0,
+        )
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "test_zk_data.npy"),
+            self.test_zk,
+        )
+        np.save(
+            os.path.join(
+                self.paths["data_path"],
+                self.file_type,
+                "tensors",
+                "processed",
+                f"test_gen_label_{self.config.input_level}.npy",
+            ),
+            self.test_gen_labels,
+        )
+        np.save(
+            os.path.join(
+                self.paths["output_path"],
+                "results",
+                f"test_{self.config.input_level}_label.npy",
+            ),
+            self.test_labels,
+        )
 
     def tearDown(self):
         """Clean up after each test method."""
         # Remove the temporary directory and all its contents
         shutil.rmtree(self.temp_dir)
 
-    @patch('matplotlib.pyplot.savefig')
-    @patch('bead.src.utils.plotting.reduce_dim_subsampled', return_value=(np.random.randn(100, 2), "pca", np.arange(100)))
+    @patch("matplotlib.pyplot.savefig")
+    @patch(
+        "bead.src.utils.plotting.reduce_dim_subsampled",
+        return_value=(np.random.randn(100, 2), "pca", np.arange(100)),
+    )
     def test_plot_latent_variables(self, mock_reduce_dim, mock_savefig):
         """Test plotting latent variables."""
         # Run the function
@@ -176,10 +223,18 @@ class TestLatentVariablesPlotting(unittest.TestCase):
 
         # Check for specific filenames in the calls
         expected_filenames = [
-            os.path.join(self.paths["output_path"], "plots", "latent_space", "train_z0.pdf"),
-            os.path.join(self.paths["output_path"], "plots", "latent_space", "train_zk.pdf"),
-            os.path.join(self.paths["output_path"], "plots", "latent_space", "test_z0.pdf"),
-            os.path.join(self.paths["output_path"], "plots", "latent_space", "test_zk.pdf")
+            os.path.join(
+                self.paths["output_path"], "plots", "latent_space", "train_z0.pdf"
+            ),
+            os.path.join(
+                self.paths["output_path"], "plots", "latent_space", "train_zk.pdf"
+            ),
+            os.path.join(
+                self.paths["output_path"], "plots", "latent_space", "test_z0.pdf"
+            ),
+            os.path.join(
+                self.paths["output_path"], "plots", "latent_space", "test_zk.pdf"
+            ),
         ]
 
         for filename in expected_filenames:
@@ -197,7 +252,7 @@ class TestMuLogvarPlotting(unittest.TestCase):
         # Create directory structure
         self.paths = {
             "output_path": os.path.join(self.temp_dir, "output"),
-            "data_path": os.path.join(self.temp_dir, "data")
+            "data_path": os.path.join(self.temp_dir, "data"),
         }
 
         # Create required subdirectories
@@ -205,7 +260,9 @@ class TestMuLogvarPlotting(unittest.TestCase):
         os.makedirs(os.path.join(self.paths["output_path"], "plots", "latent_space"))
 
         self.file_type = "h5"
-        h5_tensor_path = os.path.join(self.paths["data_path"], self.file_type, "tensors", "processed")
+        h5_tensor_path = os.path.join(
+            self.paths["data_path"], self.file_type, "tensors", "processed"
+        )
         os.makedirs(h5_tensor_path, exist_ok=True)
 
         # Create dummy config
@@ -229,10 +286,24 @@ class TestMuLogvarPlotting(unittest.TestCase):
         self.train_gen_labels = np.random.randint(0, 3, self.n_samples)
 
         # Save training set data
-        np.save(os.path.join(self.paths["output_path"], "results", "train_mu_data.npy"), self.train_mu)
-        np.save(os.path.join(self.paths["output_path"], "results", "train_logvar_data.npy"), self.train_logvar)
-        np.save(os.path.join(self.paths["data_path"], self.file_type, "tensors", "processed",
-                f"train_gen_label_{self.config.input_level}.npy"), self.train_gen_labels)
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "train_mu_data.npy"),
+            self.train_mu,
+        )
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "train_logvar_data.npy"),
+            self.train_logvar,
+        )
+        np.save(
+            os.path.join(
+                self.paths["data_path"],
+                self.file_type,
+                "tensors",
+                "processed",
+                f"train_gen_label_{self.config.input_level}.npy",
+            ),
+            self.train_gen_labels,
+        )
 
         # Create dummy data for test set with signal
         self.n_background = self.n_samples  # Make all samples background for test
@@ -244,20 +315,43 @@ class TestMuLogvarPlotting(unittest.TestCase):
         self.test_labels = np.zeros(self.n_samples)  # All samples are background
 
         # Save test set data
-        np.save(os.path.join(self.paths["output_path"], "results", "test_mu_data.npy"), self.test_mu)
-        np.save(os.path.join(self.paths["output_path"], "results", "test_logvar_data.npy"), self.test_logvar)
-        np.save(os.path.join(self.paths["data_path"], self.file_type, "tensors", "processed",
-                f"test_gen_label_{self.config.input_level}.npy"), self.test_gen_labels)
-        np.save(os.path.join(self.paths["output_path"], "results",
-                f"test_{self.config.input_level}_label.npy"), self.test_labels)
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "test_mu_data.npy"),
+            self.test_mu,
+        )
+        np.save(
+            os.path.join(self.paths["output_path"], "results", "test_logvar_data.npy"),
+            self.test_logvar,
+        )
+        np.save(
+            os.path.join(
+                self.paths["data_path"],
+                self.file_type,
+                "tensors",
+                "processed",
+                f"test_gen_label_{self.config.input_level}.npy",
+            ),
+            self.test_gen_labels,
+        )
+        np.save(
+            os.path.join(
+                self.paths["output_path"],
+                "results",
+                f"test_{self.config.input_level}_label.npy",
+            ),
+            self.test_labels,
+        )
 
     def tearDown(self):
         """Clean up after each test method."""
         # Remove the temporary directory and all its contents
         shutil.rmtree(self.temp_dir)
 
-    @patch('matplotlib.pyplot.savefig')
-    @patch('bead.src.utils.plotting.reduce_dim_subsampled', return_value=(np.random.randn(100, 2), "pca", np.arange(100)))
+    @patch("matplotlib.pyplot.savefig")
+    @patch(
+        "bead.src.utils.plotting.reduce_dim_subsampled",
+        return_value=(np.random.randn(100, 2), "pca", np.arange(100)),
+    )
     def test_plot_mu_logvar(self, mock_reduce_dim, mock_savefig):
         """Test plotting mu and logvar visualization."""
         # Run the function
@@ -270,10 +364,30 @@ class TestMuLogvarPlotting(unittest.TestCase):
 
         # Check for specific filenames in the calls
         expected_filenames = [
-            os.path.join(self.paths["output_path"], "plots", "latent_space", f"{self.config.project_name}_train_mu.pdf"),
-            os.path.join(self.paths["output_path"], "plots", "latent_space", "train_uncertainty.pdf"),
-            os.path.join(self.paths["output_path"], "plots", "latent_space", f"{self.config.project_name}_test_mu.pdf"),
-            os.path.join(self.paths["output_path"], "plots", "latent_space", "test_uncertainty.pdf")
+            os.path.join(
+                self.paths["output_path"],
+                "plots",
+                "latent_space",
+                f"{self.config.project_name}_train_mu.pdf",
+            ),
+            os.path.join(
+                self.paths["output_path"],
+                "plots",
+                "latent_space",
+                "train_uncertainty.pdf",
+            ),
+            os.path.join(
+                self.paths["output_path"],
+                "plots",
+                "latent_space",
+                f"{self.config.project_name}_test_mu.pdf",
+            ),
+            os.path.join(
+                self.paths["output_path"],
+                "plots",
+                "latent_space",
+                "test_uncertainty.pdf",
+            ),
         ]
 
         for filename in expected_filenames:
@@ -291,7 +405,7 @@ class TestROCCurvePlotting(unittest.TestCase):
         # Create directory structure
         self.paths = {
             "output_path": os.path.join(self.temp_dir, "output"),
-            "data_path": os.path.join(self.temp_dir, "data")
+            "data_path": os.path.join(self.temp_dir, "data"),
         }
 
         # Create required subdirectories
@@ -310,28 +424,39 @@ class TestROCCurvePlotting(unittest.TestCase):
 
         # Binary labels (0 for background, 1 for signal)
         self.labels = np.zeros(self.n_samples)
-        self.labels[self.n_background:] = 1  # Signal samples
+        self.labels[self.n_background :] = 1  # Signal samples
 
         # Create loss data for different components
         self.loss_components = ["loss", "reco", "kl"]
         for component in self.loss_components:
             # Create loss values that are lower for background, higher for signal
             loss_data = np.random.rand(self.n_samples)
-            loss_data[:self.n_background] *= 0.5  # Lower scores for background
-            loss_data[self.n_background:] += 0.5  # Higher scores for signal
+            loss_data[: self.n_background] *= 0.5  # Lower scores for background
+            loss_data[self.n_background :] += 0.5  # Higher scores for signal
 
-            np.save(os.path.join(self.paths["output_path"], "results", f"{component}_test.npy"), loss_data)
+            np.save(
+                os.path.join(
+                    self.paths["output_path"], "results", f"{component}_test.npy"
+                ),
+                loss_data,
+            )
 
         # Save labels
-        np.save(os.path.join(self.paths["output_path"], "results",
-                f"test_{self.config.input_level}_label.npy"), self.labels)
+        np.save(
+            os.path.join(
+                self.paths["output_path"],
+                "results",
+                f"test_{self.config.input_level}_label.npy",
+            ),
+            self.labels,
+        )
 
     def tearDown(self):
         """Clean up after each test method."""
         # Remove the temporary directory and all its contents
         shutil.rmtree(self.temp_dir)
 
-    @patch('matplotlib.pyplot.savefig')
+    @patch("matplotlib.pyplot.savefig")
     def test_plot_roc_curve_basic(self, mock_savefig):
         """Test basic ROC curve plotting."""
         # Run the function
@@ -342,8 +467,8 @@ class TestROCCurvePlotting(unittest.TestCase):
             os.path.join(self.paths["output_path"], "plots", "loss", "roc.pdf")
         )
 
-    @patch('matplotlib.pyplot.savefig')
-    @patch('matplotlib.pyplot.figure')
+    @patch("matplotlib.pyplot.savefig")
+    @patch("matplotlib.pyplot.figure")
     def test_plot_roc_curve_overlay(self, mock_figure, mock_savefig):
         """Test ROC curve overlay functionality."""
         # Setup the overlay config
@@ -354,7 +479,10 @@ class TestROCCurvePlotting(unittest.TestCase):
         self.config.overlay_roc_filename = "combined_roc.pdf"
 
         # Create directory for overlay ROC
-        os.makedirs(os.path.join(self.paths["output_path"], "plots", "overlay_roc"), exist_ok=True)
+        os.makedirs(
+            os.path.join(self.paths["output_path"], "plots", "overlay_roc"),
+            exist_ok=True,
+        )
 
         # Run the function
         plot_roc_curve(self.config, self.paths, verbose=True)
@@ -362,7 +490,14 @@ class TestROCCurvePlotting(unittest.TestCase):
         # Check that savefig was called with expected filenames
         expected_calls = [
             # call(os.path.join(self.paths["output_path"], "plots", "loss", "roc.pdf")),
-            call(os.path.join(self.paths["output_path"], "plots", "overlay_roc", "combined_roc.pdf"))
+            call(
+                os.path.join(
+                    self.paths["output_path"],
+                    "plots",
+                    "overlay_roc",
+                    "combined_roc.pdf",
+                )
+            )
         ]
         mock_savefig.assert_has_calls(expected_calls, any_order=False)
 
@@ -370,10 +505,12 @@ class TestROCCurvePlotting(unittest.TestCase):
         # Note: The actual implementation may create multiple figures for internal purposes
         self.assertGreaterEqual(mock_figure.call_count, 2)
 
-    @patch('matplotlib.pyplot.savefig')
-    @patch('matplotlib.pyplot.figure')
-    @patch('matplotlib.pyplot.xscale')
-    def test_plot_roc_curve_overlay_log_scale(self, mock_xscale, mock_figure, mock_savefig):
+    @patch("matplotlib.pyplot.savefig")
+    @patch("matplotlib.pyplot.figure")
+    @patch("matplotlib.pyplot.xscale")
+    def test_plot_roc_curve_overlay_log_scale(
+        self, mock_xscale, mock_figure, mock_savefig
+    ):
         """Test ROC curve overlay uses log scale."""
         # Setup the overlay config
         self.config.overlay_roc = True
@@ -382,19 +519,27 @@ class TestROCCurvePlotting(unittest.TestCase):
         self.config.overlay_roc_filename = "combined_roc.pdf"
 
         # Create directory for overlay ROC
-        os.makedirs(os.path.join(self.paths["output_path"], "plots", "overlay_roc"), exist_ok=True)
+        os.makedirs(
+            os.path.join(self.paths["output_path"], "plots", "overlay_roc"),
+            exist_ok=True,
+        )
 
         # Run the function
         plot_roc_curve(self.config, self.paths, verbose=True)
 
         # Verify log scale was set for x-axis
-        mock_xscale.assert_called_once_with('log')
+        mock_xscale.assert_called_once_with("log")
 
     def test_plot_roc_curve_missing_files(self):
         """Test ROC curve plotting with missing files."""
         # Remove the labels file
-        os.remove(os.path.join(self.paths["output_path"], "results",
-                  f"test_{self.config.input_level}_label.npy"))
+        os.remove(
+            os.path.join(
+                self.paths["output_path"],
+                "results",
+                f"test_{self.config.input_level}_label.npy",
+            )
+        )
 
         # Run the function, expecting an exception
         with self.assertRaises(FileNotFoundError):

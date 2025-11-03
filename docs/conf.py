@@ -12,7 +12,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join('..')))
+sys.path.insert(0, os.path.abspath(os.path.join("..")))
 
 # project_root = os.path.abspath('..')  # Adjust based on your actual structure
 # package_dir = os.path.join(project_root, 'bead')
@@ -22,19 +22,19 @@ sys.path.insert(0, os.path.abspath(os.path.join('..')))
 # sys.path.insert(0, os.path.join(package_dir, 'src'))
 
 # conf.py
-autodoc_mock_imports = ['trimap']  # Remove any mocked dependencies if not needed
+autodoc_mock_imports = ["trimap"]  # Remove any mocked dependencies if not needed
 autodoc_default_options = {
-    'members': True,
-    'undoc-members': True,
-    'show-inheritance': True
+    "members": True,
+    "undoc-members": True,
+    "show-inheritance": True,
 }
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'bead'
-copyright = '2025, Pratik Jawahar'
-author = 'Pratik Jawahar'
-release = '0.1.0'
+project = "bead"
+copyright = "2025, Pratik Jawahar"
+author = "Pratik Jawahar"
+release = "0.1.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -47,17 +47,16 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autodoc",
     "sphinx_rtd_theme",
-    'sphinx.ext.napoleon',
+    "sphinx.ext.napoleon",
     "sphinx.ext.githubpages",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**tests**']
-
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**tests**"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]

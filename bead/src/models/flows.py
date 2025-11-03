@@ -223,12 +223,12 @@ class IAF(nn.Module):
         flip_idx = torch.arange(self.z_size - 1, -1, -1).long()
         self.register_buffer("flip_idx", flip_idx)
 
-        for k in range(num_flows):
+        for _k in range(num_flows):
             arch_z = [ar_layer(z_size, h_size), self.activation()]
             self.param_list += list(arch_z[0].parameters())
             z_feats = torch.nn.Sequential(*arch_z)
             arch_zh = []
-            for j in range(num_hidden):
+            for _j in range(num_hidden):
                 arch_zh += [ar_layer(h_size, h_size), self.activation()]
                 self.param_list += list(arch_zh[-2].parameters())
             zh_feats = torch.nn.Sequential(*arch_zh)
@@ -278,7 +278,7 @@ class CNN_Flow(nn.Module):
             self.R = self.R.cuda()
 
         self.layers = nn.ModuleList()
-        for i in range(cnn_layers):
+        for _i in range(cnn_layers):
             block = Dilation_Block(dim, kernel_size, test_mode)
             self.layers.append(block)
 

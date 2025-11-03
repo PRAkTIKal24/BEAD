@@ -747,10 +747,15 @@ def run_plots(paths, config, verbose: bool = False):
     output_path = os.path.join(paths["output_path"], "plots", "loss")
 
     # Check if only test loss histograms should be plotted
-    if hasattr(config, 'plot_only_test_loss_histogram') and config.plot_only_test_loss_histogram:
+    if (
+        hasattr(config, "plot_only_test_loss_histogram")
+        and config.plot_only_test_loss_histogram
+    ):
         try:
             # Get the loss component to plot (default to 'loss_test')
-            loss_component = getattr(config, 'test_loss_histogram_component', 'loss_test')
+            loss_component = getattr(
+                config, "test_loss_histogram_component", "loss_test"
+            )
             plotting.plot_test_loss_histogram(config, paths, loss_component, verbose)
         except Exception as e:
             print(f"Error plotting test loss histogram: {e}")
@@ -773,19 +778,26 @@ def run_plots(paths, config, verbose: bool = False):
                 print(e)
             except Exception as e:
                 print(f"Error plotting mu/logvar: {e}")
-                
+
         try:
             plotting.plot_roc_curve(config, paths, verbose)
         except ValueError as e:
             print(e)
         except Exception as e:
             print(f"Error plotting ROC curve: {e}")
-            
+
         # Also plot test loss histogram if not skipping other plots
-        if hasattr(config, 'plot_test_loss_histogram') and config.plot_test_loss_histogram:
+        if (
+            hasattr(config, "plot_test_loss_histogram")
+            and config.plot_test_loss_histogram
+        ):
             try:
-                loss_component = getattr(config, 'test_loss_histogram_component', 'loss_test')
-                plotting.plot_test_loss_histogram(config, paths, loss_component, verbose)
+                loss_component = getattr(
+                    config, "test_loss_histogram_component", "loss_test"
+                )
+                plotting.plot_test_loss_histogram(
+                    config, paths, loss_component, verbose
+                )
             except Exception as e:
                 print(f"Error plotting test loss histogram: {e}")
 

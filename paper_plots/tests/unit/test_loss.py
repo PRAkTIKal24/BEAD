@@ -3,18 +3,19 @@ Unit tests for loss functions.
 """
 
 import torch
-import pytest
-import numpy as np
 from bead.src.utils.loss import NTXentLoss
 
 
 class MockConfig:
     """Mock configuration class for testing."""
-    def __init__(self, temperature=0.07, is_ddp_active=False, world_size=1, device=None):
+
+    def __init__(
+        self, temperature=0.07, is_ddp_active=False, world_size=1, device=None
+    ):
         self.contrastive_temperature = temperature
         self.is_ddp_active = is_ddp_active
         self.world_size = world_size
-        self.device = device if device is not None else torch.device('cpu')
+        self.device = device if device is not None else torch.device("cpu")
 
 
 class TestNTXentLoss:
@@ -33,7 +34,7 @@ class TestNTXentLoss:
         z1 = torch.nn.functional.normalize(z1, dim=1)
         z2 = torch.nn.functional.normalize(z2, dim=1)
 
-        loss, = loss_fn.calculate(z1, z2)
+        (loss,) = loss_fn.calculate(z1, z2)
 
         # For identical vectors, the loss should be relatively small
         # But not necessarily zero due to how negatives are handled in the batch
@@ -54,7 +55,7 @@ class TestNTXentLoss:
         z1 = torch.nn.functional.normalize(z1, dim=1)
         z2 = torch.nn.functional.normalize(z2, dim=1)
 
-        loss, = loss_fn.calculate(z1, z2)
+        (loss,) = loss_fn.calculate(z1, z2)
 
         # For completely different vectors, the loss should be higher than for identical vectors
         # But the absolute threshold depends on batch size, dimensionality, and implementation
@@ -65,7 +66,7 @@ class TestNTXentLoss:
         same_vectors_z1 = torch.nn.functional.normalize(same_vectors_z1, dim=1)
         same_vectors_z2 = torch.nn.functional.normalize(same_vectors_z2, dim=1)
 
-        same_vectors_loss, = loss_fn.calculate(same_vectors_z1, same_vectors_z2)
+        (same_vectors_loss,) = loss_fn.calculate(same_vectors_z1, same_vectors_z2)
 
         # Loss for different vectors should be higher than for identical vectors
         assert loss > same_vectors_loss
@@ -90,8 +91,8 @@ class TestNTXentLoss:
         z1 = torch.nn.functional.normalize(z1, dim=1)
         z2 = torch.nn.functional.normalize(z2, dim=1)
 
-        loss1, = loss_fn1.calculate(z1, z2)
-        loss2, = loss_fn2.calculate(z1, z2)
+        (loss1,) = loss_fn1.calculate(z1, z2)
+        (loss2,) = loss_fn2.calculate(z1, z2)
 
         # Lower temperature should yield lower loss for similar pairs
         # This is because lower temperature makes the distribution more "peaked" around positive pairs

@@ -93,7 +93,7 @@ def fit(
         else:
             inputs, gen_labels = batch
             efp_features = None
-            
+
         inputs = inputs.to(device, non_blocking=True)
         gen_labels = gen_labels.to(device, non_blocking=True)
         optimizer.zero_grad(set_to_none=True)
@@ -108,15 +108,17 @@ def fit(
             # Check if NT-Xent is needed based on the loss function name
             # This will match NTXentLoss, NTXentVAELoss, NTXentVAEFlowLoss, NTXentDVAELoss, etc.
             is_ntxent = "ntxent" in config.loss_function.lower()
-            
+
             # Prepare model input with optional EFP features
             model_input = inputs
             if efp_features is not None and config.should_use_efp():
                 efp_flat = efp_features.view(efp_features.size(0), -1)
                 model_input = torch.cat([inputs, efp_flat], dim=1)
-            
+
             if is_ntxent:
-                recon, mu, logvar, ldj, z0, zk, zk_j = helper.get_ntxent_outputs(ddp_model, model_input, config)
+                recon, mu, logvar, ldj, z0, zk, zk_j = helper.get_ntxent_outputs(
+                    ddp_model, model_input, config
+                )
             else:
                 # Standard single forward pass
                 out = helper.call_forward(ddp_model, model_input)
@@ -131,14 +133,16 @@ def fit(
                 "logvar": logvar,
                 "zk": zk,
                 "parameters": model_for_loss_params.parameters(),
-                "log_det_jacobian": ldj if hasattr(ldj, "item") else torch.tensor(0.0, device=device),
+                "log_det_jacobian": ldj
+                if hasattr(ldj, "item")
+                else torch.tensor(0.0, device=device),
                 "generator_labels": gen_labels,
             }
-            
+
             # Only include zk_j for NT-Xent loss functions
             if is_ntxent:
                 loss_args["zk_j"] = zk_j
-                
+
             losses = loss_fn.calculate(**loss_args)
         loss, *_ = losses
 
@@ -229,7 +233,7 @@ def validate(
             else:
                 inputs, gen_labels = batch
                 efp_features = None
-                
+
             inputs = inputs.to(device, non_blocking=True)
             gen_labels = gen_labels.to(device, non_blocking=True)
 
@@ -243,15 +247,17 @@ def validate(
                 # Check if NT-Xent is needed based on the loss function name
                 # This will match NTXentLoss, NTXentVAELoss, NTXentVAEFlowLoss, NTXentDVAELoss, etc.
                 is_ntxent = "ntxent" in config.loss_function.lower()
-                
+
                 # Prepare model input with optional EFP features
                 model_input = inputs
                 if efp_features is not None and config.should_use_efp():
                     efp_flat = efp_features.view(efp_features.size(0), -1)
                     model_input = torch.cat([inputs, efp_flat], dim=1)
-                
+
                 if is_ntxent:
-                    recon, mu, logvar, ldj, z0, zk, zk_j = helper.get_ntxent_outputs(ddp_model, model_input, config)
+                    recon, mu, logvar, ldj, z0, zk, zk_j = helper.get_ntxent_outputs(
+                        ddp_model, model_input, config
+                    )
                 else:
                     # Standard single forward pass
                     out = helper.call_forward(ddp_model, model_input)
@@ -266,14 +272,16 @@ def validate(
                     "logvar": logvar,
                     "zk": zk,
                     "parameters": model_for_loss_params.parameters(),
-                    "log_det_jacobian": ldj if hasattr(ldj, "item") else torch.tensor(0.0, device=device),
+                    "log_det_jacobian": ldj
+                    if hasattr(ldj, "item")
+                    else torch.tensor(0.0, device=device),
                     "generator_labels": gen_labels,
                 }
-                
+
                 # Only include zk_j for NT-Xent loss functions
                 if is_ntxent:
                     loss_args["zk_j"] = zk_j
-                    
+
                 losses = loss_fn.calculate(**loss_args)
             loss, *_ = losses
             running_loss += loss.item()
@@ -346,7 +354,7 @@ def train(
     local_rank = config.local_rank
     world_size = config.world_size
     device = helper.get_device(config)
-    
+
     # Store device in config for access by loss functions (needed for NT-Xent)
     config.device = device
 
@@ -403,18 +411,37 @@ def train(
     # Create datasets with optional EFP features
     if efp_train is not None:
         datasets = helper.create_datasets(
-            events_train, jets_train, constituents_train,
-            events_val, jets_val, constituents_val,
-            events_train_label, jets_train_label, constituents_train_label,
-            events_val_label, jets_val_label, constituents_val_label,
-            efp_train, efp_val, efp_train_label, efp_val_label
+            events_train,
+            jets_train,
+            constituents_train,
+            events_val,
+            jets_val,
+            constituents_val,
+            events_train_label,
+            jets_train_label,
+            constituents_train_label,
+            events_val_label,
+            jets_val_label,
+            constituents_val_label,
+            efp_train,
+            efp_val,
+            efp_train_label,
+            efp_val_label,
         )
     else:
         datasets = helper.create_datasets(
-            events_train, jets_train, constituents_train,
-            events_val, jets_val, constituents_val,
-            events_train_label, jets_train_label, constituents_train_label,
-            events_val_label, jets_val_label, constituents_val_label
+            events_train,
+            jets_train,
+            constituents_train,
+            events_val,
+            jets_val,
+            constituents_val,
+            events_train_label,
+            jets_train_label,
+            constituents_train_label,
+            events_val_label,
+            jets_val_label,
+            constituents_val_label,
         )
 
     if verbose and (not is_ddp_active or local_rank == 0):
@@ -749,7 +776,7 @@ def train(
                     else:
                         inputs, _ = batch
                         efp_features = None
-                        
+
                     inputs = inputs.to(device, non_blocking=True)
                     with torch.amp.autocast(
                         device_type=device.type,
@@ -760,7 +787,9 @@ def train(
                         if efp_features is not None and config.should_use_efp():
                             efp_flat = efp_features.view(efp_features.size(0), -1)
                             model_input = torch.cat([inputs, efp_flat], dim=1)
-                        out = helper.call_forward(actual_model_for_evaluation, model_input)
+                        out = helper.call_forward(
+                            actual_model_for_evaluation, model_input
+                        )
                         _, mu, logvar, ldj, z0, zk = helper.unpack_model_outputs(out)
                     mu_data_list.append(mu.detach().cpu().numpy())
                     logvar_data_list.append(logvar.detach().cpu().numpy())

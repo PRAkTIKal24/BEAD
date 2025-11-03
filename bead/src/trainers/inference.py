@@ -286,7 +286,7 @@ def infer(
             else:
                 inputs, labels = batch
                 efp_features = None
-                
+
             inputs = inputs.to(device)
 
             # Prepare model input with optional EFP features
