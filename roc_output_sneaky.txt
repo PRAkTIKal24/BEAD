@@ -284,3 +284,119 @@ Saved per-signal ROC plot: bead/workspaces/csf_results/convvae_house/output/plot
 Plotting complete
 /Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
   from . import conversion, data_processing, diagnostics, helper, plotting
+Generating per-signal ROC plots...
+Info: CSV events (156177) != actual signal events (155377)
+Likely due to drop_last=True in DataLoader. Adjusting indices proportionally.
+Actual data length: 1563282
+Background events: 1407905
+Available signal events: 155377
+Found 15 signal files for per-signal ROC plotting
+Background test event count: 1407905
+  sneaky2000R05: 10024 events (indices 1407905:1417929)
+  sneaky1000R075: 5305 events (indices 1417929:1423234)
+  sneaky4000R05: 11642 events (indices 1423234:1434876)
+  sneaky4000R075: 6673 events (indices 1434876:1441549)
+  sneaky5000R025: 15317 events (indices 1441549:1456866)
+  sneaky2000R025: 13294 events (indices 1456866:1470160)
+  sneaky3000R075: 6612 events (indices 1470160:1476772)
+  sneaky3000R05: 11300 events (indices 1476772:1488072)
+  sneaky5000R05: 11747 events (indices 1488072:1499819)
+  sneaky4000R025: 15042 events (indices 1499819:1514861)
+  sneaky5000R075: 6940 events (indices 1514861:1521801)
+  sneaky1000R025: 11797 events (indices 1521801:1533598)
+  sneaky1000R05: 8904 events (indices 1533598:1542502)
+  sneaky2000R075: 6043 events (indices 1542502:1548545)
+  sneaky3000R025: 14730 events (indices 1548545:1563275)
+Processing signal file: sneaky2000R05 (indices 1407905:1417929)
+  sneaky2000R05 - LOSS AUC: 0.6861
+    TPR at FPR 1.0e-04: 0.0032
+    TPR at FPR 1.0e-03: 0.0186
+    TPR at FPR 1.0e-02: 0.0812
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky2000R05.pdf
+Processing signal file: sneaky1000R075 (indices 1417929:1423234)
+  sneaky1000R075 - LOSS AUC: 0.6785
+    TPR at FPR 1.0e-04: 0.0028
+    TPR at FPR 1.0e-03: 0.0124
+    TPR at FPR 1.0e-02: 0.0658
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky1000R075.pdf
+Processing signal file: sneaky4000R05 (indices 1423234:1434876)
+  sneaky4000R05 - LOSS AUC: 0.6705
+    TPR at FPR 1.0e-04: 0.0014
+    TPR at FPR 1.0e-03: 0.0099
+    TPR at FPR 1.0e-02: 0.0595
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky4000R05.pdf
+Processing signal file: sneaky4000R075 (indices 1434876:1441549)
+  sneaky4000R075 - LOSS AUC: 0.6707
+    TPR at FPR 1.0e-04: 0.0016
+    TPR at FPR 1.0e-03: 0.0112
+    TPR at FPR 1.0e-02: 0.0644
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky4000R075.pdf
+Processing signal file: sneaky5000R025 (indices 1441549:1456866)
+  sneaky5000R025 - LOSS AUC: 0.6786
+    TPR at FPR 1.0e-04: 0.0025
+    TPR at FPR 1.0e-03: 0.0168
+    TPR at FPR 1.0e-02: 0.0744
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky5000R025.pdf
+Processing signal file: sneaky2000R025 (indices 1456866:1470160)
+  sneaky2000R025 - LOSS AUC: 0.6775
+    TPR at FPR 1.0e-04: 0.0035
+    TPR at FPR 1.0e-03: 0.0156
+    TPR at FPR 1.0e-02: 0.0686
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky2000R025.pdf
+Processing signal file: sneaky3000R075 (indices 1470160:1476772)
+  sneaky3000R075 - LOSS AUC: 0.6768
+    TPR at FPR 1.0e-04: 0.0014
+    TPR at FPR 1.0e-03: 0.0129
+    TPR at FPR 1.0e-02: 0.0673
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky3000R075.pdf
+Processing signal file: sneaky3000R05 (indices 1476772:1488072)
+  sneaky3000R05 - LOSS AUC: 0.6856
+    TPR at FPR 1.0e-04: 0.0027
+    TPR at FPR 1.0e-03: 0.0140
+    TPR at FPR 1.0e-02: 0.0725
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky3000R05.pdf
+Processing signal file: sneaky5000R05 (indices 1488072:1499819)
+  sneaky5000R05 - LOSS AUC: 0.6827
+    TPR at FPR 1.0e-04: 0.0024
+    TPR at FPR 1.0e-03: 0.0148
+    TPR at FPR 1.0e-02: 0.0751
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky5000R05.pdf
+Processing signal file: sneaky4000R025 (indices 1499819:1514861)
+  sneaky4000R025 - LOSS AUC: 0.6857
+    TPR at FPR 1.0e-04: 0.0036
+    TPR at FPR 1.0e-03: 0.0176
+    TPR at FPR 1.0e-02: 0.0761
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky4000R025.pdf
+Processing signal file: sneaky5000R075 (indices 1514861:1521801)
+  sneaky5000R075 - LOSS AUC: 0.6709
+    TPR at FPR 1.0e-04: 0.0020
+    TPR at FPR 1.0e-03: 0.0121
+    TPR at FPR 1.0e-02: 0.0607
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky5000R075.pdf
+Processing signal file: sneaky1000R025 (indices 1521801:1533598)
+  sneaky1000R025 - LOSS AUC: 0.6713
+    TPR at FPR 1.0e-04: 0.0022
+    TPR at FPR 1.0e-03: 0.0109
+    TPR at FPR 1.0e-02: 0.0609
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky1000R025.pdf
+Processing signal file: sneaky1000R05 (indices 1533598:1542502)
+  sneaky1000R05 - LOSS AUC: 0.6809
+    TPR at FPR 1.0e-04: 0.0012
+    TPR at FPR 1.0e-03: 0.0095
+    TPR at FPR 1.0e-02: 0.0650
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky1000R05.pdf
+Processing signal file: sneaky2000R075 (indices 1542502:1548545)
+  sneaky2000R075 - LOSS AUC: 0.6855
+    TPR at FPR 1.0e-04: 0.0038
+    TPR at FPR 1.0e-03: 0.0204
+    TPR at FPR 1.0e-02: 0.0889
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky2000R075.pdf
+Processing signal file: sneaky3000R025 (indices 1548545:1563275)
+  sneaky3000R025 - LOSS AUC: 0.6888
+    TPR at FPR 1.0e-04: 0.0053
+    TPR at FPR 1.0e-03: 0.0236
+    TPR at FPR 1.0e-02: 0.0994
+Saved per-signal ROC plot: bead/workspaces/csf_results/ntx_convvae/output/plots/loss/roc_sneaky3000R025.pdf
+Plotting complete
+/Users/user/Desktop/GitBead/BEAD/bead/src/utils/ggl.py:39: UserWarning: cuML not installed. Using sklearn CPU implementations instead.
+  from . import conversion, data_processing, diagnostics, helper, plotting
