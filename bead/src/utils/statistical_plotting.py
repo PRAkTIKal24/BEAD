@@ -26,6 +26,103 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def detect_signal_type(signal_name):
+    """
+    Detect the signal type based on signal name pattern.
+    
+    Parameters
+    ----------
+    signal_name : str
+        The signal name to analyze
+        
+    Returns
+    -------
+    str
+        Signal type: 'sneaky', 'zprime', or 'unknown'
+    """
+    if signal_name.startswith('sneaky'):
+        return 'sneaky'
+    elif re.match(r'(h7|py8)zp\d+', signal_name):
+        return 'zprime'
+    return 'unknown'
+
+
+def extract_sneaky_params(signal_name):
+    """
+    Extract parameters from sneaky signal names.
+    
+    Parameters
+    ----------
+    signal_name : str
+        Signal name like 'sneaky1000R025'
+        
+    Returns
+    -------
+    tuple
+        (mass, r_inv) or (None, None) if parsing fails
+    """
+    match = re.match(r'sneaky(\d+)R(\d+)', signal_name)
+    if match:
+        mass = int(match.group(1))
+        r_inv_str = match.group(2)
+        # Convert R_invisible string to float (025 -> 0.25, 05 -> 0.5, 075 -> 0.75)
+        if r_inv_str == '025':
+            r_inv = 0.25
+        elif r_inv_str == '05':
+            r_inv = 0.5
+        elif r_inv_str == '075':
+            r_inv = 0.75
+        else:
+            r_inv = float(r_inv_str) / 100  # fallback
+        return mass, r_inv
+    return None, None
+
+
+def extract_zprime_params(signal_name):
+    """
+    Extract parameters from zprime signal names.
+    
+    Parameters
+    ----------
+    signal_name : str
+        Signal name like 'h7zp1000' or 'py8zp1000'
+        
+    Returns
+    -------
+    tuple
+        (mass, generator) or (None, None) if parsing fails
+    """
+    match = re.match(r'(h7|py8)zp(\d+)', signal_name)
+    if match:
+        generator_code = match.group(1)
+        mass = int(match.group(2))
+        # Convert generator code to readable name
+        generator = 'herwig' if generator_code == 'h7' else 'pythia'
+        return mass, generator
+    return None, None
+
+
+def get_signal_display_name(signal_type):
+    """
+    Get display name for signal type.
+    
+    Parameters
+    ----------
+    signal_type : str
+        Signal type ('sneaky', 'zprime', etc.)
+        
+    Returns
+    -------
+    str
+        Display name for plots
+    """
+    if signal_type == 'sneaky':
+        return 'Sneaky'
+    elif signal_type == 'zprime':
+        return "Z'"
+    return signal_type.capitalize()
+
+
 def parse_roc_output(output_file_path, verbose=False):
     """
     Parse ROC output file to extract AUC and TPR values for each model and signal.
@@ -67,8 +164,9 @@ def parse_roc_output(output_file_path, verbose=False):
             if signal_match:
                 signal_name = signal_match.group(1)
                 
-                # Skip if this is the problematic sneaky5000R075 signal
-                if signal_name == "sneaky5000R075":
+                # Skip known problematic 5000 GeV signals
+                if (signal_name == "sneaky5000R075" or 
+                    signal_name in ["h7zp5000", "py8zp5000"]):
                     continue
                 
                 # Look for the next lines containing AUC and TPR values
@@ -139,9 +237,12 @@ def _convert_to_dataframe(parsed_data, workspace_name, skip_5000=False):
     
     for model_name, model_data in workspace_data.items():
         for entry in model_data:
-            # Skip 5000 GeV signals if requested
-            if skip_5000 and 'sneaky5000' in entry['signal_name']:
-                continue
+            # Skip 5000 GeV signals if requested (applies to both sneaky and zprime)
+            if skip_5000:
+                signal_name = entry['signal_name']
+                # Skip any signal containing "5000" (covers sneaky5000*, h7zp5000, py8zp5000, etc.)
+                if '5000' in signal_name:
+                    continue
                 
             plot_data.append({
                 'model': model_name,
@@ -549,22 +650,14 @@ def create_parameterized_violin_plots(parsed_data, save_dir, verbose=False, skip
     
     # Parameter extraction function
     def extract_signal_params(signal_name):
-        """Extract mediator mass and R_invisible from signal name."""
-        import re
-        match = re.match(r'sneaky(\d+)R(\d+)', signal_name)
-        if match:
-            mass = int(match.group(1))
-            r_inv_str = match.group(2)
-            # Convert R_invisible string to float (025 -> 0.25, 05 -> 0.5, 075 -> 0.75)
-            if r_inv_str == '025':
-                r_inv = 0.25
-            elif r_inv_str == '05':
-                r_inv = 0.5
-            elif r_inv_str == '075':
-                r_inv = 0.75
-            else:
-                r_inv = float(r_inv_str) / 100  # fallback
-            return mass, r_inv
+        """Extract parameters from signal name based on signal type."""
+        signal_type = detect_signal_type(signal_name)
+        
+        if signal_type == 'sneaky':
+            return extract_sneaky_params(signal_name)
+        elif signal_type == 'zprime':
+            return extract_zprime_params(signal_name)
+        
         return None, None
     
     for workspace_name in parsed_data.keys():
@@ -755,22 +848,14 @@ def create_parameterized_box_plots(parsed_data, save_dir, verbose=False, skip_50
     
     # Parameter extraction function
     def extract_signal_params(signal_name):
-        """Extract mediator mass and R_invisible from signal name."""
-        import re
-        match = re.match(r'sneaky(\d+)R(\d+)', signal_name)
-        if match:
-            mass = int(match.group(1))
-            r_inv_str = match.group(2)
-            # Convert R_invisible string to float (025 -> 0.25, 05 -> 0.5, 075 -> 0.75)
-            if r_inv_str == '025':
-                r_inv = 0.25
-            elif r_inv_str == '05':
-                r_inv = 0.5
-            elif r_inv_str == '075':
-                r_inv = 0.75
-            else:
-                r_inv = float(r_inv_str) / 100  # fallback
-            return mass, r_inv
+        """Extract parameters from signal name based on signal type."""
+        signal_type = detect_signal_type(signal_name)
+        
+        if signal_type == 'sneaky':
+            return extract_sneaky_params(signal_name)
+        elif signal_type == 'zprime':
+            return extract_zprime_params(signal_name)
+        
         return None, None
     
     for workspace_name in parsed_data.keys():
@@ -956,22 +1041,14 @@ def create_parameterized_combined_plots(parsed_data, save_dir, verbose=False, sk
     
     # Parameter extraction function
     def extract_signal_params(signal_name):
-        """Extract mediator mass and R_invisible from signal name."""
-        import re
-        match = re.match(r'sneaky(\d+)R(\d+)', signal_name)
-        if match:
-            mass = int(match.group(1))
-            r_inv_str = match.group(2)
-            # Convert R_invisible string to float (025 -> 0.25, 05 -> 0.5, 075 -> 0.75)
-            if r_inv_str == '025':
-                r_inv = 0.25
-            elif r_inv_str == '05':
-                r_inv = 0.5
-            elif r_inv_str == '075':
-                r_inv = 0.75
-            else:
-                r_inv = float(r_inv_str) / 100  # fallback
-            return mass, r_inv
+        """Extract parameters from signal name based on signal type."""
+        signal_type = detect_signal_type(signal_name)
+        
+        if signal_type == 'sneaky':
+            return extract_sneaky_params(signal_name)
+        elif signal_type == 'zprime':
+            return extract_zprime_params(signal_name)
+        
         return None, None
     
     for workspace_name in parsed_data.keys():
@@ -1161,21 +1238,14 @@ def create_parameterized_combined_plots(parsed_data, save_dir, verbose=False, sk
     
     # Parameter extraction function
     def extract_signal_params(signal_name):
-        """Extract mediator mass and R_invisible from signal name."""
-        import re
-        match = re.match(r'sneaky(\d+)R(\d+)', signal_name)
-        if match:
-            mass = int(match.group(1))
-            r_inv_str = match.group(2)
-            if r_inv_str == '025':
-                r_inv = 0.25
-            elif r_inv_str == '05':
-                r_inv = 0.5
-            elif r_inv_str == '075':
-                r_inv = 0.75
-            else:
-                r_inv = float(r_inv_str) / 100
-            return mass, r_inv
+        """Extract parameters from signal name based on signal type."""
+        signal_type = detect_signal_type(signal_name)
+        
+        if signal_type == 'sneaky':
+            return extract_sneaky_params(signal_name)
+        elif signal_type == 'zprime':
+            return extract_zprime_params(signal_name)
+        
         return None, None
     
     for workspace_name in parsed_data.keys():
