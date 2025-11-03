@@ -707,18 +707,16 @@ def create_parameterized_violin_plots(
     }
 
     # Parameter extraction function for violin plots
-    def extract_signal_params_violin(signal_name):
+    def extract_signal_params(signal_name):
         """Extract parameters from signal name based on signal type."""
         signal_type = detect_signal_type(signal_name)
 
         if signal_type == "sneaky":
-            mass, r_inv = extract_sneaky_params(signal_name)
-            return mass, r_inv, "sneaky"
+            return extract_sneaky_params(signal_name)
         elif signal_type == "zprime":
-            mass, generator = extract_zprime_params(signal_name)
-            return mass, generator, "zprime"
+            return extract_zprime_params(signal_name)
 
-        return None, None, "unknown"
+        return None, None
 
     for workspace_name in parsed_data.keys():
         if verbose:
